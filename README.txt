@@ -1,21 +1,17 @@
 WeaponForge - a weapon set in, a world-weapon pack out.
-
 Requires Python 3.12 and numpy. Nothing else.
 
 RUN a set:
 
-    RUN_SET.bat <set>
-
-    ...or drag a set folder from sets\ onto RUN_SET.bat.
+    RUN_SET.bat <set>      (or drag a set folder from sets\ onto it)
 
 It stops at the first failure and prints one line saying why.
 Exit code 0 only when every stage passed.
 
 RE-CHECK everything that has already passed:
 
-    CHECK_ALL.bat
-
-    Must stay green. If it is not, the last change broke a set.
+    CHECK_ALL.bat          Must stay green. If it is not, the last
+                           change broke a set.
 
 WHAT YOU EDIT:
 

@@ -122,6 +122,7 @@ def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
         grab = parts.grabs.get(pid)
         if grab is not None:
             L.append(f"  grab       = {_triple(grab.grab)}")
+            L.append(f"  grabradius = {_trim(grab.radius, 2)}")
         for n, dof in enumerate(parts.dofs.get(pid, [])):
             L.append("  dof" if n == 0 else f"  dof{n + 1}")
             L.append(f"    kind     = {'slide' if dof.kind == 'feed' else dof.kind}")
@@ -132,6 +133,11 @@ def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
                     L.append(f"    pivot    = {_triple(dof.pivot)}")
             else:
                 L.append(f"    distance = {_trim(dof.distance, 3)}")
+            # How far through the travel the part comes free. A behaviour default
+            # per role, not a measurement: a magazine is loose near the end of its
+            # run, an action stays on the gun.
+            if dof.kind == "feed":
+                L.append("    detach   = 0.9")
             L.append("  end")
         L.append("end")
 

@@ -109,6 +109,7 @@ class Grab:
     part: str
     grab: Tuple[float, float, float]
     handseat: Tuple[float, float, float]
+    radius: float = 3.0
 
 
 def _verts(surf, frame: int) -> np.ndarray:
@@ -495,15 +496,52 @@ def measure_muzzle(model, body_index: int, rest: int, t: Sequence[float]):
     return tuple(front.mean(axis=0)), (1.0, 0.0, 0.0)
 
 
+GRAB_BAND = 2.0          # how deep a slice of the part's trailing end to average
+# How close a hand has to be to take the part. This is a COMFORT NUMBER, not a
+# measurement: a hand is a hand. It narrows for a small part so that two nearby
+# parts on the same gun do not both answer to the same reach.
+GRAB_RADIUS_BY_SIZE = ((10.0, 3.0), (6.0, 2.5), (0.0, 2.0))
+
+
 def measure_grab(model, part_surfaces: Sequence[int], rest: int, t: Sequence[float],
-                 part_id: str = "") -> Grab:
-    """A forend or handle: the grab is the surface centroid, and the seat is
-    under it -- the hand closes round the part, so the seat sits at the bottom
-    of it rather than in its middle."""
+                 part_id: str = "", axis: Optional[Sequence[float]] = None,
+                 hinge: bool = False) -> Grab:
+    """Where a hand takes this part.
+
+    WITH AN AXIS -- a part that slides, hinges or feeds -- the grab is the mean of
+    the vertices at the part's TRAILING end along that axis: the end that leads as
+    the part comes toward you, which is the end you can actually get hold of. That
+    is a charging handle's rear and a magazine's floorplate, and it reproduces the
+    shipped cards exactly: the SMG magazine's 0.94, -0.16, -22.23 and the rifle
+    handle's -16.48, 0.97, 2.59, both to the digit, with a two-unit band.
+
+    ON A HINGE there is no travel direction to trail, and what you take is the
+    forward tip: the SMG's folding charging handle is grabbed at its front, and
+    the mean of the vertices within one unit of the part's greatest x reproduces
+    its card exactly -- 20.16, 2.81, 3.65.
+
+    WITHOUT EITHER -- a forend, a support -- the grab is the centroid, because a
+    hand wraps the middle of a forend rather than pulling its end.
+
+    The seat is under the grab: the hand closes round the part, so it sits at the
+    bottom of it rather than in its middle.
+    """
     cloud = _part_cloud(model, part_surfaces, rest) + np.asarray(t)
-    c = cloud.mean(axis=0)
-    return Grab(part=part_id, grab=tuple(c), handseat=(float(c[0]), float(c[1]),
-                                                       float(cloud[:, 2].min())))
+    if hinge:
+        front = cloud[cloud[:, 0] >= cloud[:, 0].max() - 1.0]
+        c = front.mean(axis=0) if len(front) else cloud.mean(axis=0)
+    elif axis is not None and np.linalg.norm(np.asarray(axis, dtype=float)) > 1e-9:
+        a = np.asarray(axis, dtype=float)
+        a = a / np.linalg.norm(a)
+        p = cloud @ a
+        end = cloud[p >= p.max() - GRAB_BAND]
+        c = end.mean(axis=0) if len(end) else cloud.mean(axis=0)
+    else:
+        c = cloud.mean(axis=0)
+    span = float(np.max(cloud.max(axis=0) - cloud.min(axis=0)))
+    radius = next(r for lim, r in GRAB_RADIUS_BY_SIZE if span >= lim)
+    return Grab(part=part_id, grab=tuple(c), radius=radius,
+                handseat=(float(c[0]), float(c[1]), float(cloud[:, 2].min())))
 
 
 def carve_part(model, part_surfaces: Sequence[int], rest: int, t: Sequence[float],

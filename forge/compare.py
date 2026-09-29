@@ -251,8 +251,10 @@ def build_gun(sf: SF.SetFile, gun, out_dir: str) -> BuiltGun:
                                   os.path.join(out_dir, f"{gun.id}_{pid}.md3"),
                                   abs(prop.scale[0]), pid)
             parts.carves[pid] = carve
-            parts.dofs[pid] = [ME.measure_feed(model, gun.body, d.rest_frame, pid, surfaces,
-                                               mesh.t, carve)]
+            feed = ME.measure_feed(model, gun.body, d.rest_frame, pid, surfaces, mesh.t, carve)
+            parts.dofs[pid] = [feed]
+            parts.grabs[pid] = ME.measure_grab(model, surfaces, d.rest_frame, mesh.t, pid,
+                                               axis=feed.axis)
         else:
             dof = ME.measure_dof(model, gun.body, d.rest_frame, pid, surfaces, mesh.t)
             if dof.kind == "hinge" and dof.degrees > ME.SMALL_HINGE_DEG:
@@ -266,6 +268,13 @@ def build_gun(sf: SF.SetFile, gun, out_dir: str) -> BuiltGun:
                                      f"360/{fold} and it lands on itself to {miss:.4f}")
                     dof.degrees = deg
             parts.dofs[pid] = [dof]
+            # A TRIGGER IS NOT GRABBED. Your finger pulls it because you are holding
+            # the gun; it is not a thing you reach out and take, and the shipped
+            # cards give a trigger a dof and no grab. A grab on it would make it
+            # grabbable, which is a different gun.
+            if part.role != "trigger":
+                parts.grabs[pid] = ME.measure_grab(model, surfaces, d.rest_frame, mesh.t, pid,
+                                                   axis=dof.axis, hinge=(dof.kind == "hinge"))
     return BuiltGun(gun=gun, donor=d, mesh=mesh, prop=prop, muzzle=muzzle, barrel=barrel,
                     parts=parts, surface_names=mesh.names, skipped=skipped)
 

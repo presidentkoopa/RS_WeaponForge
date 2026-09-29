@@ -492,9 +492,18 @@ def _turn_miss(point: np.ndarray, pivot: np.ndarray, axis: np.ndarray, degrees: 
     return float(np.linalg.norm(turned + pivot - target))
 
 
-def measure_muzzle(model, body_index: int, rest: int, t: Sequence[float]):
-    """(muzzle point, barrel direction) in _wm space."""
-    body = _verts(model.surfaces[body_index], rest) + np.asarray(t)
+def measure_muzzle(model, body_index: int, rest: int, t: Sequence[float], drawn=None):
+    """(muzzle point, barrel direction) in _wm space.
+
+    MEASURED ACROSS THE WHOLE DRAWN GUN, not the body surface alone. Where the
+    barrel lives in another surface -- the minigun's and the SSG's barrels are
+    parts of their own, and the M79's body is a 241-vertex stub -- the body's
+    forward tip is the back of the receiver, and the muzzle came out as much as
+    54% of the gun's length short of where the barrel actually ends. Anything
+    collapsed at rest is left out: it is not drawn, so it is not the muzzle.
+    """
+    body = (np.asarray(drawn, dtype=float) if drawn is not None and len(drawn)
+            else _verts(model.surfaces[body_index], rest) + np.asarray(t))
     front = body[body[:, 0] >= body[:, 0].max() - MUZZLE_BAND]
     if not len(front):
         front = body
@@ -639,7 +648,7 @@ def measure_ejection(model, body_index: int, rest: int, t: Sequence[float],
 
 def measure_support(model, body_index: int, rest: int, t: Sequence[float],
                     feed_surfaces: Optional[Sequence[int]] = None,
-                    feed_points=None) -> Grab:
+                    feed_points=None, drawn=None) -> Grab:
     """Where the off hand goes: under the handguard.
 
     THE HEIGHT IS MEASURED -- the underside of the body at that point, which is
@@ -660,7 +669,10 @@ def measure_support(model, body_index: int, rest: int, t: Sequence[float],
     rather than left out, because an off hand with nowhere to go is worse than one
     with a considered place to start.
     """
-    body = _part_cloud(model, [body_index], rest) + np.asarray(t, dtype=float)
+    # The whole drawn gun, for the same reason as the muzzle: a hand rests on the
+    # handguard, which is often not part of the body surface.
+    body = (np.asarray(drawn, dtype=float) if drawn is not None and len(drawn)
+            else _part_cloud(model, [body_index], rest) + np.asarray(t, dtype=float))
     x = body[:, 0]
     lo, hi = float(x.min()), float(x.max())
     bins = 40

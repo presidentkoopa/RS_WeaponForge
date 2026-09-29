@@ -49,6 +49,10 @@ class MeshResult:
     centroid: Tuple[float, float, float]
     t: Tuple[float, float, float]
     names: Dict[int, str] = field(default_factory=dict)   # donor index -> written name
+    # part id -> the names its surfaces were written under. An island part's
+    # geometry is a surface of its own in the written mesh, and the card has to
+    # name THAT, not the host it was cut from.
+    part_names: Dict[str, List[str]] = field(default_factory=dict)
     verts: int = 0
     surfaces: int = 0
 
@@ -276,6 +280,24 @@ def emit_mesh(model, gun, rest_frame: int, out: str, cut_dir: str = "") -> MeshR
         raise ValueError(f"{gun.id}: rest frame {rest_frame} is outside the {frames} frames "
                          f"every surface of {os.path.basename(model.source)} has")
 
+    # A BODY WITH NO EXTENT IS NOT A POSE. Several donors flicker between two
+    # copies of a part to animate it -- the chainsaw carries its saw twice, one
+    # drawn on even frames and one on odd, each collapsed to a single point on the
+    # other's frames. Freezing the collapsed one writes a body of 15,188 vertices
+    # all at the same place: a gun that draws nothing, with its muzzle and its
+    # support point on top of each other. Nothing downstream can tell that from a
+    # small gun.
+    if gun.body is not None:
+        b = model.surfaces[gun.body].verts[rest_frame]
+        lo = [min(v[a] for v in b) for a in range(3)]
+        hi = [max(v[a] for v in b) for a in range(3)]
+        if max(hi[a] - lo[a] for a in range(3)) < 0.001:
+            raise ValueError(
+                f"{gun.id}: surface #{gun.body} is collapsed to a point on frame "
+                f"{rest_frame}, so it cannot be the body there. A donor that "
+                f"flickers between two copies of a part draws one on even frames "
+                f"and the other on odd; name the one with extent on this frame.")
+
     centroid, t = recentre_shift(model, rest_frame)
 
     # Resolve every island first: which host surface it lives in and which of its
@@ -316,18 +338,30 @@ def emit_mesh(model, gun, rest_frame: int, out: str, cut_dir: str = "") -> MeshR
             triangles=tris, st=st, verts=[moved], normals=[normals], normals_packed=packed)
 
     out_surfaces: List[MD3.MD3Surface] = []
+    part_names: Dict[str, List[str]] = {}
+    for pid, part in gun.parts.items():
+        if not part.island:
+            part_names[pid] = [names[i] for i in part.surfaces if i in names]
     total_verts = 0
     for i, s in enumerate(model.surfaces):
         if i in islands:
             taken: set = set()
             for pid, ids in islands[i].items():
-                out_surfaces.append(shifted(s, ids, names.get(f"island:{pid}", pid)))
+                out_surfaces.append(shifted(s, ids, pid))
+                part_names[pid] = [pid]
                 total_verts += len(ids)
                 taken |= set(ids)
             rest_ids = [v for v in range(len(s.st)) if v not in taken]
             out_surfaces.append(shifted(s, rest_ids, names[i]))
             total_verts += len(rest_ids)
         else:
+            vs = s.verts[rest_frame]
+            span = max(max(v[a] for v in vs) - min(v[a] for v in vs) for a in range(3))
+            if span < 0.001 and i in set(gun.hidden):
+                # A HIDDEN PART COLLAPSED AT REST IS NOT GEOMETRY. The chainsaw's
+                # spare body is 15,188 vertices at one point on this frame; writing
+                # it ships half the mesh as nothing.
+                continue
             out_surfaces.append(shifted(s, None, names[i]))
             total_verts += s.num_verts
     for n, surf in enumerate(out_surfaces):
@@ -343,4 +377,5 @@ def emit_mesh(model, gun, rest_frame: int, out: str, cut_dir: str = "") -> MeshR
     MD3.write(written, out)
 
     return MeshResult(out=out, rest_frame=rest_frame, centroid=centroid, t=t,
-                      names=names, verts=total_verts, surfaces=len(out_surfaces))
+                      names=names, part_names=part_names, verts=total_verts,
+                      surfaces=len(out_surfaces))

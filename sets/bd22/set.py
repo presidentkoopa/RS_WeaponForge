@@ -176,6 +176,12 @@ GUNS = {
             # it hinges 53.7 degrees, which is the barrel tipping open -- the M79
             # is a break-action single-shot and loads at the breech, which its
             # store and load blocks above now say. #1 tips with it.
+            # ITS BARRELS ARE MOST OF THE GUN, and that is correct. #1 and #4 are
+            # 5,647 of 6,858 vertices -- 82% -- which looks like the break tipping
+            # the whole weapon, but an M79 IS a fat 40mm tube on a small frame:
+            # the body is a 241-vertex stub because there is hardly any receiver.
+            # Both surfaces fit as one rigid body turning 45 degrees, so the
+            # geometry agrees: they are the barrel assembly, not the gun.
             "barrels": {"surfaces": ["#1", "#4"], "subject": "barrels"},
         },
         "fixed":     ["#2"],
@@ -280,11 +286,19 @@ GUNS = {
         "hand":      "main",
         "type":      "melee",
         "firesfrom": "none",   # a blade takes no ammunition
-        "body":      "#0",
+        # TWO BODIES, ALTERNATING. #0 and #1 are the same 15,188-vertex saw at two
+        # chain positions, and the donor flickers between them: #0 has extent only
+        # on even frames, #1 only on odd. The Ready frame is 15, odd, so the body
+        # that is actually drawn there is #1 -- with #0 collapsed to a point.
+        # Freezing #0 gave a body of 15,188 vertices all at one place: a gun that
+        # draws nothing.
+        "body":      "#1",
         # NO MOVING PARTS, and its shipped card carried none either: nothing
         # on this gun is driven by hand.
         "parts":     {},
-        "fixed":     ["#1", "#2", "#3", "#4"],
+        "fixed":     ["#2", "#3", "#4"],
+        "hidden":    ["#0"],   # collapsed on the rest frame
+
     },
     "assaultshotgun": {
         "class":     "BD_AssaultShotgun",

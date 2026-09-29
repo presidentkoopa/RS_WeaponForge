@@ -1,52 +1,52 @@
-chainsaw: what each surface does, measured against #0 at the rest frame
+chainsaw: what each surface does, measured against #1 at the rest frame
   mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\Chain_saw\Chain_saw.md3
   rest frame  15 of 65
-  body        #0 'Cube.002_Cube'
+  body        #1 'Cube.002_Cube'
 
   These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
   until it is written into set.py by hand.
 
     # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
   ----------------------------------------------------------------------------------------------------------
-    0 Cube.002_Cube           15188     0.00    0    (+0.00,+0.00,+0.00)    0.0d  18.295  30.528  body
-    1 Cube.002_Cube           15189     1.75   47    (+0.61,+0.00,-0.79)   85.0d   0.013   0.028  turns 85.0 deg -- needs a ruling
-                                                                       collapsed on some frame: may be hidden mid-animation
-    2 chainsaw                  230     7.29   30 (-0.36,-0.92,+0.15) -Y   85.0d   0.012   0.019  turns 85.0 deg -- needs a ruling
-    3 chainsaw                 4233    34.26   47 (+0.41,+0.00,-0.91) -Z   85.0d   0.015   0.034  turns 85.0 deg -- needs a ruling
-    4 chainsaw                  456    29.02   47    (+0.47,+0.00,-0.88)   85.0d   0.014   0.024  turns 85.0 deg -- needs a ruling
+    0 Cube.002_Cube           15188     2.98   18 (-0.99,-0.01,-0.16) -X    0.0d  18.295  30.528  not rigid: needs an island split
+                                                                       RMS 18.295, worst vertex 30.528, on frame 48
+    1 Cube.002_Cube           15189     0.00   25    (+0.00,+0.00,+0.00)    0.0d   0.013   0.028  body
+    2 chainsaw                  230     7.50   30    (-0.65,-0.76,+0.07)   85.0d   0.012   0.019  turns 85.0 deg -- needs a ruling
+    3 chainsaw                 4233    31.07   48 (+0.31,-0.00,-0.95) -Z   85.0d   0.015   0.034  turns 85.0 deg -- needs a ruling
+    4 chainsaw                  456    27.20   38 (+0.14,-0.95,+0.28) -Y   85.0d   0.014   0.024  turns 85.0 deg -- needs a ruling
 
   WARNINGS
-    - the body itself does not fit rigidly on frame 0 (worst 18.295) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 2 (worst 18.295) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 4 (worst 18.295) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 6 (worst 18.294) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 8 (worst 18.294) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 10 (worst 18.294) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 12 (worst 18.294) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 14 (worst 18.295) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 16 (worst 18.294) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 18 (worst 18.295) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 20 (worst 18.294) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 22 (worst 18.295) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 24 (worst 18.294) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 26 (worst 18.294) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 28 (worst 18.294) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 30 (worst 18.293) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 32 (worst 18.293) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 34 (worst 18.295) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 36 (worst 18.295) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 38 (worst 18.295) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 40 (worst 18.295) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 42 (worst 18.295) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 44 (worst 18.293) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 46 (worst 18.295) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 48 (worst 18.295) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 50 (worst 18.295) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 52 (worst 18.294) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 54 (worst 18.294) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 56 (worst 18.295) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 58 (worst 18.295) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 60 (worst 18.295) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 62 (worst 18.293) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
-    - the body itself does not fit rigidly on frame 64 (worst 18.293) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 0 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 2 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 4 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 6 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 8 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 10 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 12 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 14 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 16 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 18 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 20 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 22 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 24 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 26 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 28 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 30 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 32 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 34 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 36 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 38 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 40 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 42 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 44 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 46 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 48 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 50 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 52 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 54 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 56 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 58 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 60 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 62 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
+    - the body itself does not fit rigidly on frame 64 (worst 18.598) -- either the body surface is two parts, or 'Cube.002_Cube' is not the body
     - every surface moves relative to 'Cube.002_Cube' -- the body is probably wrong (the minigun's largest surface is its spinning barrels, not its frame)

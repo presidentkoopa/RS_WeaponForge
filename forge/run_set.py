@@ -126,7 +126,7 @@ def stage_emit(sf: SF.SetFile, out_dir: str) -> Tuple[Optional[str], List[str]]:
                                    sf.model_path, f"{gid}_wm.md3", sf.model_path,
                                    f"{gid}.png", built.surface_names,
                                    ejection=built.ejection, support=built.support,
-                                   load=built.load))
+                                   load=built.load, part_names=built.mesh.part_names))
         props.append(built.prop.modeldef())
         cvars.append(built.prop.cvarinfo())
 

@@ -565,6 +565,16 @@ def extract(src: str, surfaces: Sequence[str], out: str, axis=None,
         _require(ln > 1e-9, f"{src}: extract axis {list(axis)} has no length")
         R = _rotation_onto([q / ln for q in axis], [0.0, 0.0, -1.0])
 
+    # UNIQUE NAMES IN THE CARVE. Donor surfaces share names freely -- the
+    # Unmaker's three are all `mp_salvocannon` -- and a lifted part that keeps two
+    # of them writes a mesh with two surfaces of one name, which anything looking a
+    # surface up by name then resolves by luck.
+    used_names: dict = {}
+
+    def unique(name: str) -> str:
+        used_names[name] = used_names.get(name, 0) + 1
+        return name if used_names[name] == 1 else f"{name}{used_names[name]}"
+
     new_surfs = []
     for idx, s in enumerate(picked):
         moved = [tuple(v[i] - c[i] for i in range(3)) for v in s.verts[frame]]
@@ -578,7 +588,7 @@ def extract(src: str, surfaces: Sequence[str], out: str, axis=None,
             packed = []          # reposed: the raw shorts no longer describe it
         shaders = [MD3Shader(name=skin or sh.name, shader_index=0) for sh in s.shaders] \
             or [MD3Shader(name=skin or "", shader_index=0)]
-        new_surfs.append(MD3Surface(index=idx, name=s.name, num_frames=1, shaders=shaders,
+        new_surfs.append(MD3Surface(index=idx, name=unique(s.name), num_frames=1, shaders=shaders,
                                     triangles=list(s.triangles), st=list(s.st),
                                     verts=[verts], normals=[norms], normals_packed=packed))
 

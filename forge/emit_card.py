@@ -67,6 +67,7 @@ class CardParts:
 def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
                parts: CardParts, model_path: str, mesh: str, skin_path: str, skin: str,
                surface_names: Dict[int, str], notes: Optional[Sequence[str]] = None,
+               part_names: Optional[Dict[str, List[str]]] = None,
                ejection=None, support=None, load=None) -> str:
     """The card text for one gun."""
     L: List[str] = []
@@ -163,8 +164,14 @@ def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
             L.append(f"  subject = {part.subject}")
         if part.take:
             L.append(f"  take    = {part.take}")
-        for idx in part.surfaces:
-            L.append(f"  surface = {surface_names.get(idx, idx)}")
+        # THE NAMES THE MESH WAS WRITTEN WITH. An island part's surfaces list
+        # holds the host it was cut from, whose written name is still `body`; the
+        # island itself went out under the part's own name. Naming the host here
+        # points the card at the whole gun again -- the same failure the split was
+        # made to fix, moved from the mesh to the card.
+        for name in (part_names or {}).get(pid, [surface_names.get(i, i)
+                                                 for i in part.surfaces]):
+            L.append(f"  surface = {name}")
         grab = parts.grabs.get(pid)
         if grab is not None:
             L.append(f"  grab       = {_triple(grab.grab)}")

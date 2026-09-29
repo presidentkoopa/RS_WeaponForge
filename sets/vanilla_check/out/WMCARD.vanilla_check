@@ -26,7 +26,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 12.834, 0.000, -4.031
+  grab       = -4.697, 0.000, -15.078
   grabradius = 3.0
 end
 
@@ -95,7 +95,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 11.614, 0.000, -4.469
+  grab       = 15.596, 0.000, -1.391
   grabradius = 3.0
 end
 
@@ -164,7 +164,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 8.793, 0.000, -3.594
+  grab       = 8.793, 0.000, -20.219
   grabradius = 3.0
 end
 
@@ -234,7 +234,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 22.255, 0.000, -23.172
+  grab       = 14.681, 0.000, -25.203
   grabradius = 3.0
 end
 
@@ -288,7 +288,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 16.500, 0.000, -10.438
+  grab       = 15.406, 0.000, -8.094
   grabradius = 3.0
 end
 
@@ -379,7 +379,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 2.965, 0.000, -3.516
+  grab       = 2.965, 0.000, -11.375
   grabradius = 3.0
 end
 
@@ -432,7 +432,7 @@ end
 part magazine
   role    = feed
   subject = magazine
-  surface = body
+  surface = magazine
   grab       = -9.599, -0.476, -12.730
   grabradius = 3.0
   dof
@@ -450,7 +450,7 @@ weapon "WM_Chaingun"
   model     = "models/vanilla_check" "chaingun_wm.md3"
   skin      = "models/vanilla_check" "chaingun.png"
 
-  muzzle    = -2.203, -0.290, -0.106
+  muzzle    = 54.015, -0.174, 0.673
   barrel    = 1, 0, 0
   # side measured (258 vertices on -y against 274 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = -15.380, -9.578, -5.873
@@ -464,7 +464,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = -17.666, 0.000, -10.766
+  grab       = -26.269, 0.000, -10.688
   grabradius = 3.0
 end
 
@@ -648,7 +648,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 0.464, 0.000, -11.781
+  grab       = -0.118, 0.000, -11.781
   grabradius = 3.0
 end
 

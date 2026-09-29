@@ -8,13 +8,9 @@
 # ---- (the shotgun, SSG, revolver and M79 no longer need a ruling: their
 # stores and load points are declared in set.py and written into the card)
 
-# ---- ITS FEED PART IS AN ISLAND NOBODY CAN CUT YET ------------------------
-# In the shipped meshes each of these has its magazine or canister cut by hand
-# out of the middle of the body surface, and no box reproduces the cut. The gun
-# builds and draws whole; it cannot be reloaded until that part can be lifted.
-BD_Buzzsaw       its magazine is an uncuttable island inside the body
-BD_Machinegun    its magazine is an uncuttable island inside the body
-BD_Flamethrower  its canister is an uncuttable island inside the body
+# (the buzzsaw, machinegun and flamethrower no longer need a ruling: their
+# magazines are cut out of the body surface now and each ships its own loose
+# mesh)
 
 # ---- NOTHING IN THE MESH TO RELOAD ---------------------------------------
 # One surface, no moving parts: there is no magazine in these meshes to find.

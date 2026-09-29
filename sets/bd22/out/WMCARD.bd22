@@ -31,7 +31,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 0.680, 0.000, -4.188
+  grab       = -0.539, 0.000, -10.609
   grabradius = 3.0
 end
 
@@ -104,7 +104,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = -9.084, 0.000, -11.234
+  grab       = -4.519, 0.000, -7.391
   grabradius = 3.0
 end
 
@@ -195,7 +195,7 @@ weapon "BD_SSG"
   magfamily = "12ga"
   mechanism = breakaction
 
-  muzzle    = 10.066, -0.386, 0.138
+  muzzle    = 34.216, -0.123, 3.464
   barrel    = 1, 0, 0
   # side measured (2539 vertices on -y against 2276 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = -2.003, 1.938, -0.434
@@ -222,7 +222,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = -5.844, 0.000, -4.297
+  grab       = -2.607, 0.000, -4.516
   grabradius = 3.0
 end
 
@@ -259,7 +259,7 @@ weapon "BD_MP40"
   capacity  = 32
   magfamily = "bd_9mm"
 
-  muzzle    = 14.828, -0.163, 2.643
+  muzzle    = 42.422, -0.191, 3.002
   barrel    = 1, 0, 0
   # side measured (14 vertices on -y against 11 on +y), the side away from the action; the point and the direction are estimates
   ejectport = 13.578, -1.078, 1.660
@@ -283,7 +283,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 14.609, 0.000, 1.266
+  grab       = 15.722, 0.000, -23.172
   grabradius = 3.0
 end
 
@@ -326,7 +326,7 @@ weapon "BD_M79"
   magfamily = "bd_40mm"
   mechanism = breakaction
 
-  muzzle    = -6.603, 0.047, 3.653
+  muzzle    = 33.441, 0.044, 1.552
   barrel    = 1, 0, 0
   # side measured (9 vertices on -y against 13 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = -8.693, -0.188, 3.375
@@ -353,7 +353,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = -8.608, 0.000, 2.828
+  grab       = -12.766, 0.000, -5.094
   grabradius = 3.0
 end
 
@@ -461,7 +461,7 @@ part magazine
   role    = feed
   subject = magazine
   take    = no
-  surface = body
+  surface = magazine
   grab       = -4.803, 13.788, 1.016
   grabradius = 3.0
   dof
@@ -491,7 +491,7 @@ weapon "BD_Axe"
   skin      = "models/bd22" "axe.png"
   firesfrom = none
 
-  muzzle    = 13.111, -0.031, 16.095
+  muzzle    = 18.977, -0.035, 11.475
   barrel    = 1, 0, 0
   # side measured (97 vertices on -y against 81 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = -4.760, 1.266, -4.078
@@ -505,7 +505,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = -6.599, 0.000, -10.422
+  grab       = -4.453, 0.000, -7.656
   grabradius = 3.0
 end
 
@@ -543,10 +543,10 @@ weapon "BD_Chainsaw"
   skin      = "models/bd22" "chainsaw.png"
   firesfrom = none
 
-  muzzle    = 5.156, -0.828, -0.344
+  muzzle    = 34.028, -0.872, 1.252
   barrel    = 1, 0, 0
-  # side measured (15188 vertices on -y against 0 on +y), the emptier wall of the receiver; the point and the direction are estimates
-  ejectport = 5.156, -0.828, -0.344
+  # side measured (299 vertices on -y against 0 on +y), the emptier wall of the receiver; the point and the direction are estimates
+  ejectport = -4.325, -0.594, 2.621
   ejectdir  = -0.2914, 0.8742, 0.3885
 end
 
@@ -557,7 +557,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 5.156, 0.000, -0.344
+  grab       = -29.812, 0.000, -6.141
   grabradius = 3.0
 end
 
@@ -594,7 +594,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 12.834, 0.000, -4.031
+  grab       = -4.697, 0.000, -15.078
   grabradius = 3.0
 end
 
@@ -712,7 +712,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 11.614, 0.000, -4.469
+  grab       = 15.596, 0.000, -1.391
   grabradius = 3.0
 end
 
@@ -750,7 +750,7 @@ weapon "BD_Flamethrower"
   capacity  = 200
   magfamily = "bd_fuel"
 
-  muzzle    = 55.701, 3.494, -1.070
+  muzzle    = 56.609, 3.531, 2.328
   barrel    = 1, 0, 0
   # side measured (1458 vertices on -y against 1231 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = 3.781, 6.234, -1.630
@@ -769,7 +769,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 19.325, 0.000, -6.203
+  grab       = 15.605, 0.000, -6.016
   grabradius = 3.0
 end
 
@@ -777,7 +777,7 @@ part canister
   role    = feed
   subject = magazine
   take    = no
-  surface = body
+  surface = canister
   grab       = 0.326, -0.458, -7.697
   grabradius = 3.0
   dof
@@ -822,7 +822,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 0.464, 0.000, -11.781
+  grab       = -0.118, 0.000, -11.781
   grabradius = 3.0
 end
 
@@ -854,7 +854,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 2.957, 0.000, -3.531
+  grab       = 2.957, 0.000, -11.391
   grabradius = 3.0
 end
 
@@ -872,7 +872,7 @@ part magazine
   role    = feed
   subject = magazine
   take    = no
-  surface = body
+  surface = magazine
   grab       = -9.626, -0.476, -12.724
   grabradius = 3.0
   dof
@@ -930,7 +930,7 @@ weapon "BD_Minigun"
   capacity  = 200
   magfamily = "bd_762"
 
-  muzzle    = -2.203, -0.290, -0.106
+  muzzle    = 54.015, -0.174, 0.673
   barrel    = 1, 0, 0
   # side measured (258 vertices on -y against 274 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = -15.380, -9.578, -5.873
@@ -944,7 +944,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = -17.666, 0.000, -10.766
+  grab       = -26.269, 0.000, -10.688
   grabradius = 3.0
 end
 
@@ -1011,7 +1011,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 16.500, 0.000, -10.438
+  grab       = 15.406, 0.000, -8.094
   grabradius = 3.0
 end
 
@@ -1053,7 +1053,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 22.255, 0.000, -23.172
+  grab       = 14.681, 0.000, -25.203
   grabradius = 3.0
 end
 
@@ -1173,7 +1173,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 8.793, 0.000, -3.594
+  grab       = 8.793, 0.000, -20.219
   grabradius = 3.0
 end
 

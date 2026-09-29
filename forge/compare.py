@@ -220,7 +220,18 @@ def build_gun(sf: SF.SetFile, gun, out_dir: str) -> BuiltGun:
     prop = EP.emit_prop(gun, d, mesh.t, EP.prop_class(gun.cls, sf.prefix),
                         f"{gun.id}_wm.md3", f"{gun.id}.png", sf.model_path,
                         f"{sf.cvar_prefix}_{gun.id}")
-    muzzle, barrel = ME.measure_muzzle(model, gun.body, d.rest_frame, mesh.t)
+    # Everything the gun actually draws: every surface except the ones set.py
+    # calls hidden, and any that is collapsed to a point at the rest frame.
+    drawn = []
+    for i, surf in enumerate(model.surfaces):
+        if i in set(gun.hidden):
+            continue
+        vs = surf.verts[d.rest_frame]
+        span = max(max(v[a] for v in vs) - min(v[a] for v in vs) for a in range(3))
+        if span < 0.001:
+            continue
+        drawn.extend([tuple(a + b for a, b in zip(v, mesh.t)) for v in vs])
+    muzzle, barrel = ME.measure_muzzle(model, gun.body, d.rest_frame, mesh.t, drawn=drawn)
     # THE POINTS, NOT THE SURFACE INDICES. An island part's `surfaces` is the
     # surface it lives inside -- the whole gun -- so handing these its indices
     # measured the eject port and the off-hand seat against the entire weapon, and
@@ -247,7 +258,8 @@ def build_gun(sf: SF.SetFile, gun, out_dir: str) -> BuiltGun:
     feed_pts = role_points("feed")
     ejection = ME.measure_ejection(model, gun.body, d.rest_frame, mesh.t,
                                    action_points=action_pts, feed_points=feed_pts)
-    support = ME.measure_support(model, gun.body, d.rest_frame, mesh.t, feed_points=feed_pts)
+    support = ME.measure_support(model, gun.body, d.rest_frame, mesh.t, feed_points=feed_pts,
+                                 drawn=drawn)
     load = (ME.measure_load(model, gun.body, d.rest_frame, mesh.t, gun.load.where,
                             feed_points=feed_pts) if gun.load else None)
 

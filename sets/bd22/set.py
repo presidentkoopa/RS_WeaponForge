@@ -74,6 +74,10 @@ GUNS = {
         "capacity":  6,
         "magfamily": "bd_357",
         "sounds":    {"magoutsound": "bd22/revolver/magout", "maginsound": "bd22/revolver/magin"},
+        # SIX CHAMBERS, loaded at the breech: the shipped card had no store at all,
+        # so the gun could not be reloaded by hand.
+        "stores":    {"chambers": {"kind": "slotted", "slots": 6}},
+        "load":      {"id": "breech", "where": "breech"},
         "body":      "#0",
         # NO MOVING PARTS, and its shipped card carried none either: nothing
         # on this gun is driven by hand.
@@ -92,6 +96,11 @@ GUNS = {
         "capacity":  8,
         "magfamily": "12ga",
         "sounds":    {"rackapexsound": "bd22/shotgun/rackback", "rackresetsound": "bd22/shotgun/rackfwd"},
+        # IT LOADS THROUGH A GATE UNDERNEATH, eight in the tube and one in the
+        # chamber, as its shipped card declared before this rebuild.
+        "stores":    {"tube": {"kind": "counted", "capacity": 8, "detach": "no"},
+                      "chamber": {"kind": "slotted", "slots": 1}},
+        "load":      {"id": "gate", "where": "under", "size": [2.5, 1.5, 2.0]},
         "body":      "#6",
         "parts": {
             "forend": {"surfaces": ["#4"], "subject": "forend"},
@@ -109,6 +118,9 @@ GUNS = {
         "type":      "breakaction",
         "capacity":  2,
         "magfamily": "12ga",
+        # IT BREAKS OPEN AND TAKES TWO, loaded at the breech.
+        "stores":    {"chambers": {"kind": "slotted", "slots": 2}},
+        "load":      {"id": "breech", "where": "breech"},
         "body":      "#1",
         "parts": {
             "barrels": {"surfaces": ["#0"], "subject": "forend"},
@@ -144,6 +156,9 @@ GUNS = {
         "type":      "launcher",
         "capacity":  1,
         "magfamily": "bd_40mm",
+        # ONE IN THE BREECH: a single-shot break-action.
+        "stores":    {"chamber": {"kind": "slotted", "slots": 1}},
+        "load":      {"id": "breech", "where": "breech"},
         "body":      "#0",
         "parts": {
             "magazine": {"surfaces": ["#4"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
@@ -435,7 +450,11 @@ GUNS = {
             # NO ACTION. The shipped card drove #1 as one, and #1 travels 0.01
             # units -- it does not move. Nothing on this launcher is racked; it is
             # loaded through its drum.
-            "drum": {"surfaces": ["#5"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
+            "drum": {"surfaces": ["#5"], "role": "feed", "subject": "magazine", "take": "no",
+                     # SEVEN CHAMBERS: #6..#12 are the seven rockets. The drum
+                     # indexes a seventh of a turn per rocket short of seven, and
+                     # stays on the gun, so it is not carved.
+                     "chambers": 7},
         },
         "fixed":     ["#1", "#10", "#11", "#12", "#2", "#3", "#6", "#7", "#8", "#9"],
     },

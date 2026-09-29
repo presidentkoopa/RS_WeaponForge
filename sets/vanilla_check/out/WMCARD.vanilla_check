@@ -220,6 +220,11 @@ weapon "WM_RPG"
   # side measured (62 vertices on -y against 685 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = -5.203, -2.156, -2.027
   ejectdir  = -0.2914, -0.8742, 0.3885
+
+  magmodel  = "models/vanilla_check" "rpg_drum.md3"
+  magskin   = "models/vanilla_check" "rpg.png"
+  magscale  = 0.34
+  magcenter = 3.636, -4.595, 2.353
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -247,6 +252,14 @@ part drum
   role    = feed
   subject = magazine
   surface = drum
+  grab       = 3.515, -16.109, 3.483
+  grabradius = 3.0
+  dof
+    kind     = slide
+    axis     = 0.000, -1.000, 0.000
+    distance = 10.094
+    detach   = 0.9
+  end
 end
 
 weapon "WM_PlasmaRifle"
@@ -532,6 +545,11 @@ weapon "WM_Unmaker"
   # side measured (599 vertices on -y against 655 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = 0.070, -17.656, -6.202
   ejectdir  = -0.2914, -0.8742, 0.3885
+
+  magmodel  = "models/vanilla_check" "unmaker_skull.md3"
+  magskin   = "models/vanilla_check" "unmaker.png"
+  magscale  = 0.34
+  magcenter = -16.828, -0.126, 6.614
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -550,6 +568,14 @@ part skull
   subject = magazine
   surface = skull
   surface = skull2
+  grab       = -16.149, -0.072, 7.874
+  grabradius = 3.0
+  dof
+    kind     = slide
+    axis     = 0.000, 0.000, 1.000
+    distance = 6.312
+    detach   = 0.9
+  end
 end
 
 weapon "WM_Flamethrower"

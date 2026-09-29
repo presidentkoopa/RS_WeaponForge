@@ -674,6 +674,110 @@ def measure_support(model, body_index: int, rest: int, t: Sequence[float],
                 handseat=(xs, 0.0, z))
 
 
+LOAD_FACES = {"under": (0, 0, -1), "left": (0, -1, 0), "right": (0, 1, 0),
+              "breech": (-1, 0, 0)}
+# A gate is a hand-sized opening; the shipped cards use this box and it is a
+# comfort figure, not a measurement.
+LOAD_GATE_SIZE = (2.5, 1.5, 2.0)
+
+
+def measure_load(model, body_index: int, rest: int, t: Sequence[float], where: str,
+                 feed_surfaces: Optional[Sequence[int]] = None):
+    """Where a round goes in, on the face the set file names.
+
+    THE FACE IS THE DECISION -- a pump shotgun loads underneath, a break-action at
+    its breech -- and the point on it is measured: the body's own surface on that
+    face, at the breech along the gun. The direction is into the gun, normal to
+    the face, which is the way a round is pushed.
+    """
+    body = _part_cloud(model, [body_index], rest) + np.asarray(t, dtype=float)
+    n = np.asarray(LOAD_FACES.get(where, LOAD_FACES["under"]), dtype=float)
+    x = body[:, 0]
+    if feed_surfaces:
+        fed = _part_cloud(model, feed_surfaces, rest) + np.asarray(t, dtype=float)
+        mid = float(fed[:, 0].mean())
+    else:
+        mid = float((x.min() + x.max()) / 2.0)
+    if where == "breech":
+        # The breech is the rear face of the receiver, so the point is the back of
+        # the body's thick run rather than a point along its length.
+        band = body[x <= float(np.percentile(x, 25))]
+        at = band.mean(axis=0) if len(band) else body.mean(axis=0)
+        return tuple(at), tuple(-n)
+    band = body[(x >= mid - 3.0) & (x <= mid + 3.0)]
+    if not len(band):
+        band = body
+    axis = int(np.argmax(np.abs(n)))
+    edge = band[:, axis].min() if n[axis] < 0 else band[:, axis].max()
+    at = list(band.mean(axis=0))
+    at[axis] = float(edge)
+    return tuple(at), tuple(-n)
+
+
+CLEARANCE_SPARE = 0.5      # a little past the obstruction, so it is not grazing it
+
+
+def measure_clearance(model, body_index: int, rest: int, part_surfaces: Sequence[int],
+                      t: Sequence[float], part_id: str = "") -> DOF:
+    """How far a part must move to come clear of the body, when no frame moves it.
+
+    Several donors never animate the magazine leaving. The shipped cards measure
+    those from the geometry instead, and say so: the Unmaker's skull "lifts
+    STRAIGHT UP (+z) ... to come clear", the grenade's pin needs 5.92 because "the
+    body reaches y 3.94 ... the pin's trailing end starts at y -1.48. 5.92 along
+    +y puts the trailing end past both with half a unit to spare".
+
+    So: of the six axes, take the one where the part has the shortest run to clear
+    everything the body puts inside its own footprint, and add that half unit. This
+    is a measurement of the mesh, not a guess -- but it is a measurement of where
+    the part CAN go, not of where the author moved it, and it says so on the card.
+    """
+    part = _part_cloud(model, part_surfaces, rest) + np.asarray(t, dtype=float)
+    body = _part_cloud(model, [body_index], rest) + np.asarray(t, dtype=float)
+    lo, hi = part.min(axis=0), part.max(axis=0)
+    best = None
+    for axis in range(3):
+        for sign in (+1, -1):
+            other = [a for a in range(3) if a != axis]
+            inside = body
+            for a in other:
+                inside = inside[(inside[:, a] >= lo[a]) & (inside[:, a] <= hi[a])]
+            if not len(inside):
+                need = 0.0
+            elif sign > 0:
+                need = float(inside[:, axis].max() - lo[axis])
+            else:
+                need = float(hi[axis] - inside[:, axis].min())
+            if need <= 0:
+                continue
+            if best is None or need < best[0]:
+                best = (need, axis, sign)
+    dof = DOF(part=part_id, kind="feed")
+    if best is None:
+        dof.notes.append("nothing in the body obstructs this part on any axis")
+        return dof
+    need, axis, sign = best
+    v = [0.0, 0.0, 0.0]
+    v[axis] = float(sign)
+    dof.axis = tuple(v)
+    dof.distance = need + CLEARANCE_SPARE
+    dof.notes.append(f"no frame moves this part; {dof.distance:.2f} along "
+                     f"{'+' if sign > 0 else '-'}{'xyz'[axis].upper()} is what clears the body "
+                     f"inside its own footprint, with {CLEARANCE_SPARE} to spare")
+    return dof
+
+
+def index_step(chambers: int) -> float:
+    """A revolving feed's step: the circle divided by its chambers.
+
+    The RPG's drum turns a seventh of a turn for every rocket short of seven, and
+    its shipped card carries -51.43 for exactly that reason -- the count, not the
+    animation, which turns it 76.74. Nothing in a mesh's symmetry gives this
+    either: the drum's own geometry does not land on itself at 51.43.
+    """
+    return 360.0 / max(1, int(chambers))
+
+
 def carve_part(model, part_surfaces: Sequence[int], rest: int, t: Sequence[float],
                feed_axis: Sequence[float], out: str, mag_scale: float,
                part_id: str = "", skin: Optional[str] = None) -> Carve:

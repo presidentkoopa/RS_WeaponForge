@@ -5,15 +5,8 @@
 #
 # Each line below says which it is.
 
-# ---- LOADS ROUNDS, AND ITS STORE IS NOT EMITTED YET -----------------------
-# These three do reload, from a tube or a chamber rather than a magazine. The
-# shipped BD22 card declares that with `store` and `load` blocks -- a tube for
-# the shotgun, chambers for the revolver, a chamber for the SSG. The tool does
-# not write those blocks yet, so for now these guns ship without their loading
-# mechanism and with this ruling instead of a false magazine.
-BD_Shotgun    loads from a tube; the store block is not emitted yet
-BD_SSG        breaks open and loads two; the store block is not emitted yet
-BD_Revolver   loads its chambers; the store block is not emitted yet
+# ---- (the shotgun, SSG, revolver and M79 no longer need a ruling: their
+# stores and load points are declared in set.py and written into the card)
 
 # ---- ITS FEED PART IS AN ISLAND NOBODY CAN CUT YET ------------------------
 # In the shipped meshes each of these has its magazine or canister cut by hand

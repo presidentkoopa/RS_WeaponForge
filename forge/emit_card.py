@@ -67,7 +67,7 @@ class CardParts:
 def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
                parts: CardParts, model_path: str, mesh: str, skin_path: str, skin: str,
                surface_names: Dict[int, str], notes: Optional[Sequence[str]] = None,
-               ejection=None, support=None) -> str:
+               ejection=None, support=None, load=None) -> str:
     """The card text for one gun."""
     L: List[str] = []
     if notes:
@@ -113,6 +113,31 @@ def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
         for key in sorted(set(sounds) - set(SOUND_ORDER)):
             L.append(f'  {key:14s} = "{sounds[key]}"')
     L.append("end")
+
+    for st in getattr(gun, "stores", []) or []:
+        L.append("")
+        L.append(f"store {st.id}")
+        L.append(f"  kind     = {st.kind}")
+        if st.capacity is not None:
+            L.append(f"  capacity = {st.capacity}")
+        if st.slots is not None:
+            L.append(f"  slots    = {st.slots}")
+        if st.detach:
+            L.append(f"  detach   = {st.detach}")
+        L.append("end")
+
+    if load is not None and getattr(gun, "load", None) is not None:
+        at, direction = load
+        L.append("")
+        L.append(f"# WHERE A ROUND GOES IN. The face is the set file's choice ({gun.load.where});")
+        L.append("# the point is the body's own surface on that face at the breech, and the")
+        L.append("# direction is into the gun.")
+        L.append(f"load {gun.load.id}")
+        L.append(f"  at   = {_triple(at)}")
+        if gun.load.size:
+            L.append(f"  size = {_triple(gun.load.size, 2)}")
+        L.append(f"  dir  = {_triple(direction, 4)}")
+        L.append("end")
 
     if support is not None:
         L.append("")

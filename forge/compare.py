@@ -186,6 +186,7 @@ class BuiltGun:
     skipped: List[str] = field(default_factory=list)
     ejection: object = None
     support: object = None
+    load: object = None
 
 
 def _part_surfaces(model, gun, part, rest_frame, t, where: str):
@@ -223,6 +224,8 @@ def build_gun(sf: SF.SetFile, gun, out_dir: str) -> BuiltGun:
     ejection = ME.measure_ejection(model, gun.body, d.rest_frame, mesh.t,
                                    action or None, feed or None)
     support = ME.measure_support(model, gun.body, d.rest_frame, mesh.t, feed or None)
+    load = (ME.measure_load(model, gun.body, d.rest_frame, mesh.t, gun.load.where, feed or None)
+            if gun.load else None)
 
     parts = EC.CardParts()
     skipped: List[str] = []
@@ -241,9 +244,40 @@ def build_gun(sf: SF.SetFile, gun, out_dir: str) -> BuiltGun:
             skipped.append(f"{pid}: island parts are lifted but not yet measured over frames "
                            f"({len(island_ids)} vertices)")
             continue
+        if part.chambers:
+            # A REVOLVING FEED indexes by its chamber count, not by how far the
+            # animation turns it: seven rockets, a seventh of a turn.
+            turn = ME.measure_dof(model, gun.body, d.rest_frame, pid, surfaces, mesh.t,
+                                  kind="hinge")
+            turn.kind = "hinge"
+            turn.notes.append(f"turned {turn.degrees:.2f} in the animation; the step is "
+                              f"360/{part.chambers} for its {part.chambers} chambers")
+            turn.degrees = ME.index_step(part.chambers)
+            # A CYLINDER SPINS ABOUT ITS OWN CENTRE. The fixed point of the fitted
+            # rotation is not that centre when the animation also carries the drum
+            # somewhere -- it came out 27 units below the launcher, which would swing
+            # the drum through an arc instead of indexing it in place. Its axis runs
+            # through its own centroid.
+            import numpy as _np
+            cloud = (_np.vstack([_np.asarray(model.surfaces[i].verts[d.rest_frame], float)
+                                 for i in surfaces]) + _np.asarray(mesh.t))
+            centre = cloud.mean(axis=0)
+            a = _np.asarray(turn.axis, float)
+            a = a / (_np.linalg.norm(a) or 1.0)
+            centre = centre - float(_np.dot(centre, a)) * a
+            turn.pivot = tuple(centre)
+            parts.dofs[pid] = [turn]
+            parts.grabs[pid] = ME.measure_grab(model, surfaces, d.rest_frame, mesh.t, pid,
+                                               axis=turn.axis, hinge=True)
+            continue
         if part.role == "feed" or part.subject == "magazine":
             slide = ME.measure_dof(model, gun.body, d.rest_frame, pid, surfaces, mesh.t,
                                    kind="slide")
+            if max(abs(c) for c in slide.axis) < 1e-9:
+                # Nothing animates it, so measure where it CAN go: the clearance out
+                # of the body, which is how the shipped cards did these too.
+                slide = ME.measure_clearance(model, gun.body, d.rest_frame, surfaces,
+                                             mesh.t, pid)
             if max(abs(c) for c in slide.axis) < 1e-9:
                 # THE MESH DOES NOT CONTAIN THIS MOTION. Several donors never
                 # animate the magazine leaving -- the Unmaker's skull and the
@@ -258,7 +292,11 @@ def build_gun(sf: SF.SetFile, gun, out_dir: str) -> BuiltGun:
                                   os.path.join(out_dir, f"{gun.id}_{pid}.md3"),
                                   abs(prop.scale[0]), pid)
             parts.carves[pid] = carve
-            feed = ME.measure_feed(model, gun.body, d.rest_frame, pid, surfaces, mesh.t, carve)
+            if slide.notes and "clears the body" in slide.notes[-1]:
+                feed = slide            # a clearance IS the answer; do not re-measure
+            else:
+                feed = ME.measure_feed(model, gun.body, d.rest_frame, pid, surfaces,
+                                       mesh.t, carve)
             parts.dofs[pid] = [feed]
             parts.grabs[pid] = ME.measure_grab(model, surfaces, d.rest_frame, mesh.t, pid,
                                                axis=feed.axis)
@@ -286,6 +324,7 @@ def build_gun(sf: SF.SetFile, gun, out_dir: str) -> BuiltGun:
                    parts=parts, surface_names=mesh.names, skipped=skipped)
     out.ejection = ejection
     out.support = support
+    out.load = load
     return out
 
 

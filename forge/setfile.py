@@ -49,9 +49,10 @@ _HASH = re.compile(r"^#(\d+)$")
 GUN_KEYS = {
     "class", "donor", "modeldef", "decorate", "actor", "hand", "type",
     "capacity", "magfamily", "sounds", "body", "parts", "hidden", "fixed",
-    "rest_frame", "notes", "firesfrom",
+    "rest_frame", "notes", "firesfrom", "stores", "load",
 }
-PART_KEYS = {"surfaces", "role", "subject", "carve", "notes", "island", "take"}
+PART_KEYS = {"surfaces", "role", "subject", "carve", "notes", "island", "take",
+             "chambers"}
 SET_KEYS = {
     "SET_ID", "PREFIX", "DONOR_ROOT", "PARENT_MOD", "PACK", "MODEL_PATH",
     "CVAR_PREFIX", "PARENT_RULINGS", "GUNS", "NOTES",
@@ -86,12 +87,35 @@ class Part:
     # measurement: the RPG's drum comes out by its button and goes back in by the
     # hand carrying one, so its shipped card says take = no.
     take: str = ""
+    # A revolving feed's chamber count. A DECISION about the gun, and what its
+    # index step is divided from: seven rockets, a seventh of a turn.
+    chambers: Optional[int] = None
     notes: str = ""
     # An island inside one donor surface, when a part shares a surface with the
     # body: {"of": "#5", "verts": 415}. The vertex count is checked against the
     # island actually found, so a mapping written against a different export of
     # the mesh is refused rather than lifting whatever happens to be there.
     island: Optional[dict] = None
+
+
+@dataclass
+class Store:
+    """Where rounds live on the gun. A DECISION: how many a tube holds, how many
+    chambers a breech has. Nothing in a mesh says it."""
+    id: str
+    kind: str = "counted"          # counted (a tube) | slotted (chambers)
+    capacity: Optional[int] = None
+    slots: Optional[int] = None
+    detach: str = ""
+
+
+@dataclass
+class Load:
+    """Which face of the gun rounds go in by. The FACE is the decision; the point
+    and the direction on it are measured from the body."""
+    id: str = "gate"
+    where: str = "under"           # under | left | right | breech
+    size: Optional[tuple] = None
 
 
 @dataclass
@@ -122,6 +146,8 @@ class Gun:
     # nobody has mapped yet. Without the difference, every melee weapon in a set
     # would block the build for ever waiting on a part map it does not need.
     parts_declared: bool = False
+    stores: List[Store] = field(default_factory=list)
+    load: Optional[Load] = None
 
     @property
     def mapped(self) -> bool:
@@ -245,6 +271,7 @@ def load_set(path: str) -> SetFile:
                 role=praw.get("role", ""), subject=praw.get("subject", ""),
                 carve=bool(praw.get("carve", False)), notes=praw.get("notes", ""),
                 take=str(praw.get("take", "")),
+                chambers=praw.get("chambers"),
                 island=island)
 
         body = raw.get("body")
@@ -259,7 +286,17 @@ def load_set(path: str) -> SetFile:
             hidden=[_surface_index(s, f"{where}, hidden") for s in (raw.get("hidden") or [])],
             fixed=[_surface_index(s, f"{where}, fixed") for s in (raw.get("fixed") or [])],
             rest_frame=raw.get("rest_frame"), notes=raw.get("notes", ""),
-            parts_declared=("parts" in raw))
+            parts_declared=("parts" in raw),
+            stores=[Store(id=k,
+                          kind=str(v.get("kind", "counted")),
+                          capacity=v.get("capacity"), slots=v.get("slots"),
+                          detach=str(v.get("detach", "")))
+                    for k, v in (raw.get("stores") or {}).items()],
+            load=(Load(id=str((raw.get("load") or {}).get("id", "gate")),
+                       where=str((raw.get("load") or {}).get("where", "under")),
+                       size=tuple((raw.get("load") or {}).get("size", ()))
+                       or None)
+                  if raw.get("load") else None))
 
         # Who claims what, listed per claimant rather than looked up per index:
         # owner_of answers with the FIRST owner it finds, so asking it about a

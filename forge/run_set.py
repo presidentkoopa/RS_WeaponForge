@@ -274,6 +274,49 @@ def stage_copy(sf: SF.SetFile, out_dir: str, do_copy: bool) -> Optional[str]:
     return None
 
 
+def stage_pack(sf: SF.SetFile) -> Optional[str]:
+    """PACK THE ARCHIVE AND LET THE ENGINE READ IT. The last gate, and the only one that
+    is not a statement about text.
+
+    WHY THIS IS A STAGE AND NOT A CHORE. Everything above checks the data by reading it:
+    card_lint knows the keys, sheet_lint knows the profiles, set_gate knows the classes.
+    None of them LOADS it, and the reload system refuses a card at load for things no
+    reader here knows to ask -- BD22's revolver was refused three separate times, for a
+    missing `into`, then a missing `slot`, then a missing `size`, each found by the engine
+    in seven seconds and by nothing else at all. A refused card is skipped whole and the
+    player just has no gun.
+
+    AND THE ARCHIVE HAS TO BE THE ONE BEING LOADED. Copying into the pack folder is not
+    shipping: BD22's pk3 was a day older than its own cards, so a day of fixes sat in the
+    folder while the game read the archive beside it. `<pack>/build.ps1` packs and then
+    runs the compile check, which is exactly this question asked once.
+    """
+    if not sf.pack:
+        return None
+    script = os.path.join(sf.pack, "build.ps1")
+    if not os.path.isfile(script):
+        print("  7 pack         no build.ps1 in the pack -- NOT PACKED, and the archive "
+              "the game loads is whatever it was")
+        return None
+    code, text = _run_ps(script)
+    tail = [l for l in text.strip().splitlines() if l.strip()]
+    last = tail[-1].strip() if tail else ""
+    # The compile check passes on this and on nothing else: an error never says "error".
+    if code != 0 or "script parsing took" not in text:
+        print(text.strip()[-2000:])
+        return f"pack/compile: {last}"
+    print(f"  7 pack         {last}")
+    return None
+
+
+def _run_ps(script: str):
+    """powershell -File <script>, output joined."""
+    p = subprocess.run(["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass",
+                        "-File", script],
+                       capture_output=True, text=True, errors="replace")
+    return p.returncode, (p.stdout or "") + (p.stderr or "")
+
+
 def stage_ingame(sf: SF.SetFile) -> None:
     print("  6 in game      load the pack, then:")
     print("                   logfile proof.txt")
@@ -316,7 +359,8 @@ def run(set_name: str, do_copy: bool = True, reference: Optional[str] = None) ->
         return 1
 
     for stage in (lambda: stage_check(sf, out_dir, reference),
-                  lambda: stage_copy(sf, out_dir, do_copy)):
+                  lambda: stage_copy(sf, out_dir, do_copy),
+                  lambda: stage_pack(sf)):
         why = stage()
         if why:
             print(f"\nSTOPPED: {why}")

@@ -522,7 +522,8 @@ def _apply(R: Sequence[Sequence[float]], v: Sequence[float]) -> Tuple[float, flo
 
 
 def extract(src: str, surfaces: Sequence[str], out: str, axis=None,
-            skin: Optional[str] = None, frame: int = 0) -> dict:
+            skin: Optional[str] = None, frame: int = 0,
+            indices: Optional[Sequence[int]] = None) -> dict:
     """Lift `surfaces` (by name) at `frame` out of `src` into its own
     single-frame MD3 at `out`, re-origined on their shared centroid and, if
     `axis` is given, rotated so that axis points to -Z.
@@ -540,10 +541,19 @@ def extract(src: str, surfaces: Sequence[str], out: str, axis=None,
     floor when it lies on its side.
     """
     m = MD3Model.load(src)
-    by = {s.name: s for s in m.surfaces}
-    missing = [n for n in surfaces if n not in by]
-    _require(not missing, f"{src}: no surface named {missing}; it has {list(by)}")
-    picked = [by[n] for n in surfaces]
+    if indices is not None:
+        # BY POSITION, which is the only way that is always right: donor surface
+        # names repeat (BrutalSMG.md3 has two called Sights), so a name can pick
+        # the wrong mesh and there is nothing in the result to say it did.
+        bad = [i for i in indices if not (0 <= i < len(m.surfaces))]
+        _require(not bad, f"{src}: surface {bad} is outside its {len(m.surfaces)} surfaces")
+        picked = [m.surfaces[i] for i in indices]
+        surfaces = [s.name for s in picked]
+    else:
+        by = {s.name: s for s in m.surfaces}
+        missing = [n for n in surfaces if n not in by]
+        _require(not missing, f"{src}: no surface named {missing}; it has {list(by)}")
+        picked = [by[n] for n in surfaces]
 
     pts = [tuple(v) for s in picked for v in s.verts[frame]]
     _require(len(pts) > 0, f"{src}: surfaces {list(surfaces)} have no vertices at frame {frame}")

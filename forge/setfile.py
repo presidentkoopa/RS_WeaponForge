@@ -49,7 +49,7 @@ _HASH = re.compile(r"^#(\d+)$")
 GUN_KEYS = {
     "class", "donor", "modeldef", "decorate", "actor", "hand", "type",
     "capacity", "magfamily", "sounds", "body", "parts", "hidden", "fixed",
-    "rest_frame", "notes",
+    "rest_frame", "notes", "firesfrom",
 }
 PART_KEYS = {"surfaces", "role", "subject", "carve", "notes", "island"}
 SET_KEYS = {
@@ -101,6 +101,10 @@ class Gun:
     type: str = ""
     capacity: Optional[int] = None
     magfamily: str = ""
+    # none | reserve | chamber. A gun that takes no magazine says so, and that is
+    # not the same as one whose magazine nobody has carved yet: an axe fires from
+    # nothing, and set_gate treats the two differently for good reason.
+    firesfrom: str = ""
     sounds: Dict[str, str] = field(default_factory=dict)
     actor: Optional[str] = None
     body: Optional[int] = None
@@ -109,11 +113,16 @@ class Gun:
     fixed: List[int] = field(default_factory=list)
     rest_frame: Optional[int] = None
     notes: str = ""
+    # Whether set.py said anything about parts at all. "parts": {} is a decision --
+    # an axe has nothing driven by hand -- and a gun with no parts KEY is a gun
+    # nobody has mapped yet. Without the difference, every melee weapon in a set
+    # would block the build for ever waiting on a part map it does not need.
+    parts_declared: bool = False
 
     @property
     def mapped(self) -> bool:
-        """A gun is built only once it has a body and at least one part."""
-        return self.body is not None and bool(self.parts)
+        """A gun is built once it has a body and its parts have been decided."""
+        return self.body is not None and (bool(self.parts) or self.parts_declared)
 
     @property
     def claimed(self) -> List[int]:
@@ -238,12 +247,14 @@ def load_set(path: str) -> SetFile:
             id=gid, cls=raw["class"], donor=raw["donor"], modeldef=raw["modeldef"],
             decorate=raw["decorate"], hand=raw.get("hand", "main"), type=raw.get("type", ""),
             capacity=raw.get("capacity"), magfamily=raw.get("magfamily", ""),
+            firesfrom=raw.get("firesfrom", ""),
             sounds=dict(raw.get("sounds") or {}), actor=raw.get("actor"),
             body=None if body is None else _surface_index(body, f"{where}, body"),
             parts=parts,
             hidden=[_surface_index(s, f"{where}, hidden") for s in (raw.get("hidden") or [])],
             fixed=[_surface_index(s, f"{where}, fixed") for s in (raw.get("fixed") or [])],
-            rest_frame=raw.get("rest_frame"), notes=raw.get("notes", ""))
+            rest_frame=raw.get("rest_frame"), notes=raw.get("notes", ""),
+            parts_declared=("parts" in raw))
 
         # Who claims what, listed per claimant rather than looked up per index:
         # owner_of answers with the FIRST owner it finds, so asking it about a

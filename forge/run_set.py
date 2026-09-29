@@ -138,8 +138,18 @@ def stage_emit(sf: SF.SetFile, out_dir: str) -> Tuple[Optional[str], List[str]]:
         f.write("// The owner tunes ofs_* in the headset; the angles are what the offset\n")
         f.write("// arithmetic is valid at.\n\n")
         f.write("\n".join(cvars))
+    # The set's own human files travel with it: a ruling belongs to the set, not to
+    # the pack it lands in, so it ships from beside set.py rather than being typed
+    # into the pack by hand.
+    carried = []
+    for name in ("RULINGS.txt", "PLACEMENT_TODO.txt"):
+        src = os.path.join(os.path.dirname(sf.path), name)
+        if os.path.exists(src):
+            shutil.copy2(src, os.path.join(out_dir, name))
+            carried.append(name)
     print(f"  3 emitted      {len(cards)} card(s), {len(props)} prop(s), meshes in "
-          f"{os.path.relpath(models_dir, ROOT)}")
+          f"{os.path.relpath(models_dir, ROOT)}"
+          + (f"; carried {', '.join(carried)}" if carried else ""))
     return None, skipped
 
 
@@ -167,14 +177,22 @@ def stage_check(sf: SF.SetFile, out_dir: str, reference: Optional[str]) -> Optio
                         f"{reference}")
             print(f"  4 compare      every value within tolerance of {reference}")
         return None
-    code, text = _run("card_lint.py", ["--file", card_path], pkg=out_dir)
+    # WHAT THE PACK WILL BE, not what out/ is on its own. card_lint asks whether a
+    # class is declared, whether a sound is in a SNDINFO, whether a mesh is on disk
+    # -- and those live in the pack this set ships into, while the meshes are the
+    # ones just written. So the two are staged together, exactly as the copy will
+    # leave them, and the card is checked against that. Checking out/ alone reports
+    # every class in the set as undeclared, which is true of the folder and false of
+    # the pack.
+    root = _stage(sf, out_dir) if ships else out_dir
+    code, text = _run("card_lint.py", ["--file", card_path], pkg=root)
     last = text.strip().splitlines()[-1] if text.strip() else ""
     if code != 0:
         print(text.strip()[-2000:])
         return f"card_lint: {last}"
     print(f"  4 card_lint    {last}")
 
-    code, text = _run("set_gate.py", [out_dir])
+    code, text = _run("set_gate.py", [root])
     gate = [l for l in text.splitlines() if l.strip().startswith(("FAIL", "PASS"))]
     print(f"  4 set_gate     {gate[-1].strip() if gate else 'ran'}")
     if code != 0:
@@ -187,6 +205,36 @@ def stage_check(sf: SF.SetFile, out_dir: str, reference: Optional[str]) -> Optio
             return f"compare: {len(findings)} value(s) outside tolerance against {reference}"
         print(f"  4 compare      every value within tolerance of {reference}")
     return None
+
+
+def _stage(sf: SF.SetFile, out_dir: str) -> str:
+    """The pack with this build overlaid on it, for the checkers to read.
+
+    Only what a checker reads is staged -- lumps, zscript, models -- and never the
+    pk3s, which are 175MB in BD22's case and are not what a checker looks at. The
+    overlay order is the copy's: ours wins, because ours is what will replace them.
+    """
+    stage = os.path.join(os.path.dirname(out_dir), "_staging")
+    if os.path.isdir(stage):
+        shutil.rmtree(stage)
+    os.makedirs(stage, exist_ok=True)
+    for root, dirs, files in os.walk(sf.pack):
+        rel = os.path.relpath(root, sf.pack)
+        if rel != "." and rel.split(os.sep)[0] in ("_staging", "out"):
+            continue
+        target = stage if rel == "." else os.path.join(stage, rel)
+        os.makedirs(target, exist_ok=True)
+        for f in files:
+            if f.lower().endswith((".pk3", ".wad", ".zip")):
+                continue
+            shutil.copy2(os.path.join(root, f), os.path.join(target, f))
+    for root, _dirs, files in os.walk(out_dir):
+        rel = os.path.relpath(root, out_dir)
+        target = stage if rel == "." else os.path.join(stage, rel)
+        os.makedirs(target, exist_ok=True)
+        for f in files:
+            shutil.copy2(os.path.join(root, f), os.path.join(target, f))
+    return stage
 
 
 def stage_copy(sf: SF.SetFile, out_dir: str, do_copy: bool) -> Optional[str]:

@@ -1,0 +1,12 @@
+bfg: what each surface does, measured against #0 at the rest frame
+  mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\BFG\BFG.md3
+  rest frame  6 of 16
+  body        #0 'Untitled'
+
+  These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
+  until it is written into set.py by hand.
+
+    # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
+  ----------------------------------------------------------------------------------------------------------
+    0 Untitled                 7121     0.00    2    (+0.00,+0.00,+0.00)    0.0d   0.013   0.032  body
+    1 Untitled                   52     0.69    7 (-0.99,+0.00,+0.13) -X   30.1d   0.011   0.015  trigger or hammer

@@ -84,6 +84,8 @@ def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
         L.append(f"  capacity  = {gun.capacity}")
     if gun.magfamily:
         L.append(f'  magfamily = "{gun.magfamily}"')
+    if gun.firesfrom:
+        L.append(f"  firesfrom = {gun.firesfrom}")
 
     L.append("")
     L.append(f"  muzzle    = {_triple(muzzle)}")

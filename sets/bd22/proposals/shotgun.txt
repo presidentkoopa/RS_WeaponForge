@@ -1,0 +1,21 @@
+shotgun: what each surface does, measured against #6 at the rest frame
+  mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\Shotgun\Shotgun.md3
+  rest frame  4 of 36
+  body        #6 'Runko'
+
+  These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
+  until it is written into set.py by hand.
+
+    # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
+  ----------------------------------------------------------------------------------------------------------
+    0 Cube                      342     0.01    3 (+0.12,+0.25,+0.96) +Z    0.4d   0.015   0.024  trigger or hammer
+    1 Cylinder                  152     0.01   10 (-0.11,-0.99,-0.02) -Y    0.2d   0.015   0.027  trigger or hammer
+    2 trigger                   831    17.08   23    (-0.68,+0.00,-0.73)   28.7d   0.016   0.028  magazine
+                                                                       mostly downward, not on one axis
+    3 trigger                   106     0.45    5 (-1.00,-0.00,+0.00) -X    0.4d   0.015   0.027  trigger or hammer
+    4 pump                     1220     6.27   18 (-1.00,+0.00,-0.00) -X    0.0d   0.014   0.032  slide / bolt / pump / handle
+    5 eject                     304     6.27   35 (-1.00,-0.00,+0.00) -X    0.4d   0.014   0.027  slide / bolt / pump / handle
+    6 Runko                   18929     0.00   15    (+0.00,+0.00,+0.00)    0.0d   0.015   0.034  body
+
+  WARNINGS
+    - every surface moves relative to 'Runko' -- the body is probably wrong (the minigun's largest surface is its spinning barrels, not its frame)

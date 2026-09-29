@@ -1,0 +1,16 @@
+machinegun: what each surface does, measured against #5 at the rest frame
+  mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\Machinegun\Machinegun.md3
+  rest frame  4 of 36
+  body        #5 'M249_lowpoly'
+
+  These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
+  until it is written into set.py by hand.
+
+    # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
+  ----------------------------------------------------------------------------------------------------------
+    0 alt-trig-reload           104     0.35   18 (+0.98,-0.00,+0.18) +X   19.1d   0.010   0.013  trigger or hammer
+    1 alt-frame                1014     0.01    0 (-0.09,-0.04,-1.00) -Z    0.0d   0.011   0.025  fixed
+    2 alt-trig                  106     0.48   11 (-0.93,-0.00,+0.37) -X   20.0d   0.010   0.018  trigger or hammer
+    3 alt-pipe                 3470     9.50   24 (+1.00,-0.00,-0.00) +X    0.0d   0.012   0.026  slides, but not along one axis
+    4 Trigger                    58     0.59    5 (-1.00,+0.00,+0.00) -X    0.1d   0.011   0.024  slide / bolt / pump / handle
+    5 M249_lowpoly            11996     0.00    5    (+0.00,+0.00,+0.00)    0.0d   0.012   0.028  body

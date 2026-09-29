@@ -1,0 +1,17 @@
+flamethrower: what each surface does, measured against #0 at the rest frame
+  mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\Flamethrower2\Flamethrower2.md3
+  rest frame  0 of 6
+  body        #0 '15.l'
+
+  These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
+  until it is written into set.py by hand.
+
+    # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
+  ----------------------------------------------------------------------------------------------------------
+    0 15.l                     5966     0.00    0    (+0.00,+0.00,+0.00)    0.0d   0.000   0.000  body
+    1 13.l                       80     0.98    3 (+0.04,-0.00,+1.00) +Z   15.0d   0.009   0.015  trigger or hammer
+    2 Cylinder                  109     0.91    3    (+0.52,-0.01,-0.86)   44.8d   0.353   0.384  not rigid: needs an island split
+                                                                       RMS 0.353, worst vertex 0.384, on frame 2
+
+  WARNINGS
+    - every surface moves relative to '15.l' -- the body is probably wrong (the minigun's largest surface is its spinning barrels, not its frame)

@@ -1,0 +1,11 @@
+hellish: what each surface does, measured against #0 at the rest frame
+  mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\HellishMissile\HellishMissile.md3
+  rest frame  0 of 10
+  body        #0 'mp_revenant'
+
+  These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
+  until it is written into set.py by hand.
+
+    # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
+  ----------------------------------------------------------------------------------------------------------
+    0 mp_revenant              1484     0.00    7    (+0.00,+0.00,+0.00)    0.0d   0.014   0.031  body

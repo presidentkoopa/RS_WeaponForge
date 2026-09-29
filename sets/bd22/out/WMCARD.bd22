@@ -1,0 +1,658 @@
+# WMCARD.bd22 -- written by WeaponForge. Do not edit by hand:
+# fix the tool or sets/bd22/set.py and run RUN_SET again.
+weapon "BD_Pistol"
+  hand      = main
+  type      = pistol
+  prop      = "BD_PropPistol"
+  model     = "models/bd22" "pistol_wm.md3"
+  skin      = "models/bd22" "pistol.png"
+  capacity  = 15
+  magfamily = "bd_9mm"
+
+  muzzle    = 15.593, -0.000, 3.614
+  barrel    = 1, 0, 0
+
+  magmodel  = "models/bd22" "pistol_magazine.md3"
+  magskin   = "models/bd22" "pistol.png"
+  magscale  = 0.34
+  magcenter = -3.508, -0.036, -4.916
+
+  magoutsound    = "bd22/pistol/magout"
+  maginsound     = "bd22/pistol/magin"
+end
+
+part bolt2
+  role    = action
+  subject = slide
+  surface = bolt2
+  dof
+    kind     = slide
+    axis     = -1.000, -0.000, 0.000
+    distance = 4.591
+  end
+end
+
+part magazine
+  role    = feed
+  subject = magazine
+  surface = magazine
+  dof
+    kind     = slide
+    axis     = -0.174, 0.000, -0.985
+    distance = 13.285
+  end
+end
+
+weapon "BD_Revolver"
+  hand      = main
+  type      = revolver
+  prop      = "BD_PropRevolver"
+  model     = "models/bd22" "revolver_wm.md3"
+  skin      = "models/bd22" "revolver.png"
+  capacity  = 6
+  magfamily = "bd_357"
+
+  muzzle    = 13.226, -0.031, 2.960
+  barrel    = 1, 0, 0
+
+  magoutsound    = "bd22/revolver/magout"
+  maginsound     = "bd22/revolver/magin"
+end
+
+weapon "BD_Shotgun"
+  hand      = main
+  type      = pump
+  prop      = "BD_PropShotgun"
+  model     = "models/bd22" "shotgun_wm.md3"
+  skin      = "models/bd22" "shotgun.png"
+  capacity  = 8
+  magfamily = "12ga"
+
+  muzzle    = 36.125, 0.104, 2.000
+  barrel    = 1, 0, 0
+
+  rackapexsound  = "bd22/shotgun/rackback"
+  rackresetsound = "bd22/shotgun/rackfwd"
+end
+
+part forend
+  subject = forend
+  surface = forend
+  dof
+    kind     = slide
+    axis     = -1.000, 0.000, -0.002
+    distance = 6.274
+  end
+end
+
+weapon "BD_SSG"
+  hand      = main
+  type      = breakaction
+  prop      = "BD_PropSSG"
+  model     = "models/bd22" "ssg_wm.md3"
+  skin      = "models/bd22" "ssg.png"
+  capacity  = 2
+  magfamily = "12ga"
+
+  muzzle    = 10.066, -0.386, 0.138
+  barrel    = 1, 0, 0
+end
+
+part barrels
+  subject = forend
+  surface = barrels
+  dof
+    kind     = hinge
+    axis     = 0.000, 1.000, 0.000
+    degrees  = 30.28
+    pivot    = 8.658, 0.000, -0.027
+  end
+end
+
+part trigger
+  role    = trigger
+  surface = trigger
+  dof
+    kind     = hinge
+    axis     = 0.000, 1.000, -0.000
+    degrees  = 30.32
+    pivot    = 8.674, 0.000, -0.022
+  end
+end
+
+weapon "BD_MP40"
+  hand      = main
+  type      = smg
+  prop      = "BD_PropMP40"
+  model     = "models/bd22" "mp40_wm.md3"
+  skin      = "models/bd22" "mp40.png"
+  capacity  = 32
+  magfamily = "bd_9mm"
+
+  muzzle    = 14.828, -0.163, 2.643
+  barrel    = 1, 0, 0
+
+  magmodel  = "models/bd22" "mp40_magazine.md3"
+  magskin   = "models/bd22" "mp40.png"
+  magscale  = 0.34
+  magcenter = 12.137, -0.171, -4.698
+
+  magoutsound    = "bd22/mp40/magout"
+  maginsound     = "bd22/mp40/magin"
+  rackapexsound  = "bd22/mp40/rackback"
+  rackresetsound = "bd22/mp40/rackfwd"
+end
+
+part bolt
+  role    = action
+  subject = slide
+  surface = bolt
+  dof
+    kind     = slide
+    axis     = -1.000, 0.000, -0.000
+    distance = 16.77
+  end
+end
+
+part magazine
+  role    = feed
+  subject = magazine
+  surface = magazine
+  dof
+    kind     = slide
+    axis     = -0.000, 0.000, -1.000
+    distance = 25.766
+  end
+end
+
+weapon "BD_M79"
+  hand      = main
+  type      = launcher
+  prop      = "BD_PropM79"
+  model     = "models/bd22" "m79_wm.md3"
+  skin      = "models/bd22" "m79.png"
+  capacity  = 1
+  magfamily = "bd_40mm"
+
+  muzzle    = -6.603, 0.047, 3.653
+  barrel    = 1, 0, 0
+
+  magmodel  = "models/bd22" "m79_magazine.md3"
+  magskin   = "models/bd22" "m79.png"
+  magscale  = 0.34
+  magcenter = 17.720, -0.072, 1.774
+end
+
+part magazine
+  role    = feed
+  subject = magazine
+  surface = magazine
+  dof
+    kind     = slide
+    axis     = 0.000, 0.000, 0.000
+    distance = 0.0
+  end
+end
+
+weapon "BD_FlameCannon"
+  hand      = main
+  type      = flamethrower
+  prop      = "BD_PropFlameCannon"
+  model     = "models/bd22" "flamecannon_wm.md3"
+  skin      = "models/bd22" "flamecannon.png"
+  capacity  = 100
+  magfamily = "bd_fuel"
+
+  muzzle    = 36.303, -1.976, 5.641
+  barrel    = 1, 0, 0
+end
+
+weapon "BD_Hellish"
+  hand      = main
+  type      = launcher
+  prop      = "BD_PropHellish"
+  model     = "models/bd22" "hellish_wm.md3"
+  skin      = "models/bd22" "hellish.png"
+  capacity  = 6
+  magfamily = "bd_hell"
+
+  muzzle    = 49.484, -0.729, 11.062
+  barrel    = 1, 0, 0
+end
+
+weapon "BD_Buzzsaw"
+  hand      = main
+  type      = chaingun
+  prop      = "BD_PropBuzzsaw"
+  model     = "models/bd22" "buzzsaw_wm.md3"
+  skin      = "models/bd22" "buzzsaw.png"
+  capacity  = 200
+  magfamily = "bd_762"
+
+  muzzle    = 80.345, -1.102, -1.550
+  barrel    = 1, 0, 0
+end
+
+part trigger
+  role    = trigger
+  surface = trigger
+  dof
+    kind     = hinge
+    axis     = -0.000, 1.000, -0.000
+    degrees  = 20.0
+    pivot    = -12.014, 0.000, -5.885
+  end
+end
+
+weapon "BD_Axe"
+  hand      = main
+  type      = melee
+  prop      = "BD_PropAxe"
+  model     = "models/bd22" "axe_wm.md3"
+  skin      = "models/bd22" "axe.png"
+  firesfrom = none
+
+  muzzle    = 13.111, -0.031, 16.095
+  barrel    = 1, 0, 0
+end
+
+weapon "BD_Dragonslayer"
+  hand      = main
+  type      = melee
+  prop      = "BD_PropDragonslayer"
+  model     = "models/bd22" "dragonslayer_wm.md3"
+  skin      = "models/bd22" "dragonslayer.png"
+  firesfrom = none
+
+  muzzle    = 63.703, 1.812, 134.219
+  barrel    = 1, 0, 0
+end
+
+weapon "BD_Chainsaw"
+  hand      = main
+  type      = melee
+  prop      = "BD_PropChainsaw"
+  model     = "models/bd22" "chainsaw_wm.md3"
+  skin      = "models/bd22" "chainsaw.png"
+  firesfrom = none
+
+  muzzle    = 5.156, -0.828, -0.344
+  barrel    = 1, 0, 0
+end
+
+weapon "BD_AssaultShotgun"
+  hand      = main
+  type      = pump
+  prop      = "BD_PropAssaultShotgun"
+  model     = "models/bd22" "assaultshotgun_wm.md3"
+  skin      = "models/bd22" "assaultshotgun.png"
+  capacity  = 8
+  magfamily = "12ga"
+
+  muzzle    = 36.164, 0.023, -0.114
+  barrel    = 1, 0, 0
+
+  magmodel  = "models/bd22" "assaultshotgun_magazine.md3"
+  magskin   = "models/bd22" "assaultshotgun.png"
+  magscale  = 0.34
+  magcenter = -10.056, 0.065, -9.462
+
+  magoutsound    = "bd22/asg/magout"
+  maginsound     = "bd22/asg/magin"
+  rackapexsound  = "bd22/asg/rackback"
+  rackresetsound = "bd22/asg/rackfwd"
+end
+
+part bolt
+  role    = action
+  subject = slide
+  surface = bolt
+  dof
+    kind     = slide
+    axis     = -1.000, -0.000, -0.001
+    distance = 10.003
+  end
+end
+
+part magazine
+  role    = feed
+  subject = magazine
+  surface = magazine
+  dof
+    kind     = slide
+    axis     = 0.000, 0.000, -1.000
+    distance = 12.156
+  end
+end
+
+weapon "BD_BFG"
+  hand      = main
+  type      = bfg
+  prop      = "BD_PropBFG"
+  model     = "models/bd22" "bfg_wm.md3"
+  skin      = "models/bd22" "bfg.png"
+  capacity  = 40
+  magfamily = "bd_cell"
+
+  muzzle    = 57.877, 0.078, 8.301
+  barrel    = 1, 0, 0
+end
+
+weapon "BD_BFG10k"
+  hand      = main
+  type      = bfg
+  prop      = "BD_PropBFG10k"
+  model     = "models/bd22" "bfg10k_wm.md3"
+  skin      = "models/bd22" "bfg10k.png"
+  capacity  = 99
+  magfamily = "bd_cell"
+
+  muzzle    = 58.516, 0.082, -4.222
+  barrel    = 1, 0, 0
+end
+
+weapon "BD_SMG"
+  hand      = main
+  type      = smg
+  prop      = "BD_PropSMG"
+  model     = "models/bd22" "smg_wm.md3"
+  skin      = "models/bd22" "smg.png"
+  capacity  = 40
+  magfamily = "bd_9mm"
+
+  muzzle    = 25.359, -0.156, 1.347
+  barrel    = 1, 0, 0
+
+  magmodel  = "models/bd22" "smg_magazine.md3"
+  magskin   = "models/bd22" "smg.png"
+  magscale  = 0.34
+  magcenter = 4.006, -0.182, -8.224
+
+  magoutsound    = "bd22/smg/magout"
+  maginsound     = "bd22/smg/magin"
+end
+
+part magazine
+  role    = feed
+  subject = magazine
+  surface = magazine
+  dof
+    kind     = slide
+    axis     = -0.299, 0.000, -0.954
+    distance = 26.162
+  end
+end
+
+part trigger
+  role    = trigger
+  surface = trigger
+  dof
+    kind     = slide
+    axis     = -1.000, 0.000, 0.000
+    distance = 0.978
+  end
+end
+
+weapon "BD_Flamethrower"
+  hand      = main
+  type      = flamethrower
+  prop      = "BD_PropFlamethrower"
+  model     = "models/bd22" "flamethrower_wm.md3"
+  skin      = "models/bd22" "flamethrower.png"
+  capacity  = 200
+  magfamily = "bd_fuel"
+
+  muzzle    = 55.701, 3.494, -1.070
+  barrel    = 1, 0, 0
+end
+
+part trigger
+  role    = trigger
+  surface = trigger
+  dof
+    kind     = hinge
+    axis     = -0.000, 1.000, -0.000
+    degrees  = 14.98
+    pivot    = -21.910, 0.000, 1.344
+  end
+end
+
+weapon "BD_Grenade"
+  hand      = main
+  type      = melee
+  prop      = "BD_PropGrenade"
+  model     = "models/bd22" "grenade_wm.md3"
+  skin      = "models/bd22" "grenade.png"
+  capacity  = 1
+  firesfrom = none
+
+  muzzle    = 4.602, -0.300, -4.616
+  barrel    = 1, 0, 0
+end
+
+weapon "BD_Machinegun"
+  hand      = main
+  type      = chaingun
+  prop      = "BD_PropMachinegun"
+  model     = "models/bd22" "machinegun_wm.md3"
+  skin      = "models/bd22" "machinegun.png"
+  capacity  = 100
+  magfamily = "bd_762"
+
+  muzzle    = 43.953, -0.241, 3.902
+  barrel    = 1, 0, 0
+end
+
+part bolt4
+  role    = action
+  subject = slide
+  surface = bolt4
+  dof
+    kind     = slide
+    axis     = 1.000, -0.000, -0.000
+    distance = 9.504
+  end
+end
+
+weapon "BD_Minigun"
+  hand      = main
+  type      = chaingun
+  prop      = "BD_PropMinigun"
+  model     = "models/bd22" "minigun_wm.md3"
+  skin      = "models/bd22" "minigun.png"
+  capacity  = 200
+  magfamily = "bd_762"
+
+  muzzle    = -2.203, -0.290, -0.106
+  barrel    = 1, 0, 0
+
+  magmodel  = "models/bd22" "minigun_magazine.md3"
+  magskin   = "models/bd22" "minigun.png"
+  magscale  = 0.34
+  magcenter = 23.611, -0.213, 0.657
+end
+
+part magazine
+  role    = feed
+  subject = magazine
+  surface = magazine
+  dof
+    kind     = slide
+    axis     = 0.000, 0.000, 0.000
+    distance = 0.0
+  end
+end
+
+part forend
+  subject = forend
+  surface = forend
+  dof
+    kind     = slide
+    axis     = -0.325, 0.106, -0.940
+    distance = 0.002
+  end
+end
+
+weapon "BD_Plasma"
+  hand      = main
+  type      = plasma
+  prop      = "BD_PropPlasma"
+  model     = "models/bd22" "plasma_wm.md3"
+  skin      = "models/bd22" "plasma.png"
+  capacity  = 60
+  magfamily = "bd_cell"
+
+  muzzle    = 39.278, 0.537, 0.134
+  barrel    = 1, 0, 0
+
+  magmodel  = "models/bd22" "plasma_cell.md3"
+  magskin   = "models/bd22" "plasma.png"
+  magscale  = 0.34
+  magcenter = -12.701, 0.469, -13.239
+end
+
+part cell
+  role    = feed
+  subject = magazine
+  surface = cell
+  dof
+    kind     = slide
+    axis     = 0.194, 0.000, -0.981
+    distance = 12.326
+  end
+end
+
+weapon "BD_RPG"
+  hand      = main
+  type      = launcher
+  prop      = "BD_PropRPG"
+  model     = "models/bd22" "rpg_wm.md3"
+  skin      = "models/bd22" "rpg.png"
+  capacity  = 1
+  magfamily = "bd_rocket"
+
+  muzzle    = 65.789, 3.235, -1.433
+  barrel    = 1, 0, 0
+end
+
+part bolt
+  role    = action
+  subject = slide
+  surface = bolt
+  dof
+    kind     = slide
+    axis     = 0.868, 0.004, -0.497
+    distance = 0.014
+  end
+end
+
+part drum
+  role    = feed
+  subject = magazine
+  surface = drum
+end
+
+weapon "BD_Railgun"
+  hand      = main
+  type      = plasma
+  prop      = "BD_PropRailgun"
+  model     = "models/bd22" "railgun_wm.md3"
+  skin      = "models/bd22" "railgun.png"
+  capacity  = 1
+  magfamily = "bd_rail"
+
+  muzzle    = 86.219, -0.113, -2.164
+  barrel    = 1, 0, 0
+
+  magmodel  = "models/bd22" "railgun_magazine.md3"
+  magskin   = "models/bd22" "railgun.png"
+  magscale  = 0.34
+  magcenter = -2.481, -0.098, -10.079
+end
+
+part bolt
+  role    = action
+  subject = slide
+  surface = bolt
+  dof
+    kind     = slide
+    axis     = 0.000, 0.000, -1.000
+    distance = 5.746
+  end
+end
+
+part magazine
+  role    = feed
+  subject = magazine
+  surface = magazine
+  dof
+    kind     = slide
+    axis     = -0.000, 0.000, -1.000
+    distance = 10.031
+  end
+end
+
+weapon "BD_Rifle"
+  hand      = main
+  type      = rifle
+  prop      = "BD_PropRifle"
+  model     = "models/bd22" "rifle_wm.md3"
+  skin      = "models/bd22" "rifle.png"
+  capacity  = 30
+  magfamily = "bd_762"
+
+  muzzle    = 54.241, 0.134, 0.203
+  barrel    = 1, 0, 0
+
+  magmodel  = "models/bd22" "rifle_magazine.md3"
+  magskin   = "models/bd22" "rifle.png"
+  magscale  = 0.34
+  magcenter = 1.343, 0.069, -8.068
+
+  magoutsound    = "bd22/rifle/magout"
+  maginsound     = "bd22/rifle/magin"
+  rackapexsound  = "bd22/rifle/rackback"
+  rackresetsound = "bd22/rifle/rackfwd"
+end
+
+part bolt2
+  role    = action
+  subject = slide
+  surface = bolt2
+  dof
+    kind     = slide
+    axis     = -1.000, -0.000, -0.000
+    distance = 10.439
+  end
+end
+
+part magazine
+  role    = feed
+  subject = magazine
+  surface = magazine
+  dof
+    kind     = slide
+    axis     = -0.025, 0.000, -1.000
+    distance = 22.467
+  end
+end
+
+weapon "BD_Unmaker"
+  hand      = main
+  type      = bfg
+  prop      = "BD_PropUnmaker"
+  model     = "models/bd22" "unmaker_wm.md3"
+  skin      = "models/bd22" "unmaker.png"
+  capacity  = 60
+  magfamily = "bd_rune"
+
+  muzzle    = 38.054, 0.012, 3.813
+  barrel    = 1, 0, 0
+end
+
+part skull
+  role    = feed
+  subject = magazine
+  surface = skull
+  surface = skull2
+end

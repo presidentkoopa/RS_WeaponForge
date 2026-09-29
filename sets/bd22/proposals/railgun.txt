@@ -1,0 +1,20 @@
+railgun: what each surface does, measured against #2 at the rest frame
+  mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\RailGun\RailGun.md3
+  rest frame  3 of 37
+  body        #2 'Gun'
+
+  These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
+  until it is written into set.py by hand.
+
+    # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
+  ----------------------------------------------------------------------------------------------------------
+    0 Scope                    2672     5.75   36 (+0.00,+0.00,-1.00) -Z    0.5d   0.633   1.673  not rigid: needs an island split
+                                                                       RMS 0.633, worst vertex 1.673, on frame 36
+    1 ScopeGlass                 18     6.25   36 (+0.00,+0.00,-1.00) -Z    0.7d   0.183   0.349  not rigid: needs an island split
+                                                                       RMS 0.183, worst vertex 0.349, on frame 36
+    2 Gun                      4660     0.00   14    (+0.00,+0.00,+0.00)    0.0d   0.014   0.036  body
+    3 Trigger                    46     0.80    4 (-0.97,-0.00,+0.24) -X   22.8d   0.014   0.022  trigger or hammer
+    4 Mag-Bat                   156    30.00   16 (-0.00,-0.00,-1.00) -Z    0.0d   0.014   0.024  magazine
+
+  WARNINGS
+    - every surface moves relative to 'Gun' -- the body is probably wrong (the minigun's largest surface is its spinning barrels, not its frame)

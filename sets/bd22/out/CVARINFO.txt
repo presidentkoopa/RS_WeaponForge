@@ -1,0 +1,278 @@
+// Written by WeaponForge for set bd22. Do not edit by hand.
+// The owner tunes ofs_* in the headset; the angles are what the offset
+// arithmetic is valid at.
+
+user float bd_pistol_yaw = -90;
+user float bd_pistol_pitch = 0;
+user float bd_pistol_roll = 0;
+user float bd_pistol_scale = 1;
+user float bd_pistol_scale_x = 1;
+user float bd_pistol_scale_y = 1;
+user float bd_pistol_scale_z = 1;
+user float bd_pistol_ofs_x = 0;
+user float bd_pistol_ofs_y = 9.69;
+user float bd_pistol_ofs_z = 2.295;
+
+user float bd_revolver_yaw = -90;
+user float bd_revolver_pitch = 0;
+user float bd_revolver_roll = 0;
+user float bd_revolver_scale = 1;
+user float bd_revolver_scale_x = 1;
+user float bd_revolver_scale_y = 1;
+user float bd_revolver_scale_z = 1;
+user float bd_revolver_ofs_x = 0;
+user float bd_revolver_ofs_y = 9.69;
+user float bd_revolver_ofs_z = 2.295;
+
+user float bd_shotgun_yaw = -90;
+user float bd_shotgun_pitch = 0;
+user float bd_shotgun_roll = 0;
+user float bd_shotgun_scale = 1;
+user float bd_shotgun_scale_x = 1;
+user float bd_shotgun_scale_y = 1;
+user float bd_shotgun_scale_z = 1;
+user float bd_shotgun_ofs_x = 0;
+user float bd_shotgun_ofs_y = 9.69;
+user float bd_shotgun_ofs_z = 2.295;
+
+user float bd_ssg_yaw = -90;
+user float bd_ssg_pitch = 0;
+user float bd_ssg_roll = 0;
+user float bd_ssg_scale = 1;
+user float bd_ssg_scale_x = 1;
+user float bd_ssg_scale_y = 1;
+user float bd_ssg_scale_z = 1;
+user float bd_ssg_ofs_x = 0;
+user float bd_ssg_ofs_y = 9.69;
+user float bd_ssg_ofs_z = 2.295;
+
+user float bd_mp40_yaw = -90;
+user float bd_mp40_pitch = 0;
+user float bd_mp40_roll = 0;
+user float bd_mp40_scale = 1;
+user float bd_mp40_scale_x = 1;
+user float bd_mp40_scale_y = 1;
+user float bd_mp40_scale_z = 1;
+user float bd_mp40_ofs_x = 0;
+user float bd_mp40_ofs_y = 9.69;
+user float bd_mp40_ofs_z = 2.295;
+
+user float bd_m79_yaw = -90;
+user float bd_m79_pitch = 0;
+user float bd_m79_roll = 0;
+user float bd_m79_scale = 1;
+user float bd_m79_scale_x = 1;
+user float bd_m79_scale_y = 1;
+user float bd_m79_scale_z = 1;
+user float bd_m79_ofs_x = 0;
+user float bd_m79_ofs_y = 9.69;
+user float bd_m79_ofs_z = 2.295;
+
+user float bd_flamecannon_yaw = -90;
+user float bd_flamecannon_pitch = 0;
+user float bd_flamecannon_roll = 0;
+user float bd_flamecannon_scale = 1;
+user float bd_flamecannon_scale_x = 1;
+user float bd_flamecannon_scale_y = 1;
+user float bd_flamecannon_scale_z = 1;
+user float bd_flamecannon_ofs_x = 0;
+user float bd_flamecannon_ofs_y = 9.69;
+user float bd_flamecannon_ofs_z = 2.295;
+
+user float bd_hellish_yaw = -90;
+user float bd_hellish_pitch = 0;
+user float bd_hellish_roll = 0;
+user float bd_hellish_scale = 1;
+user float bd_hellish_scale_x = 1;
+user float bd_hellish_scale_y = 1;
+user float bd_hellish_scale_z = 1;
+user float bd_hellish_ofs_x = 0;
+user float bd_hellish_ofs_y = 9.69;
+user float bd_hellish_ofs_z = 2.295;
+
+user float bd_buzzsaw_yaw = -90;
+user float bd_buzzsaw_pitch = 0;
+user float bd_buzzsaw_roll = 0;
+user float bd_buzzsaw_scale = 1;
+user float bd_buzzsaw_scale_x = 1;
+user float bd_buzzsaw_scale_y = 1;
+user float bd_buzzsaw_scale_z = 1;
+user float bd_buzzsaw_ofs_x = 0;
+user float bd_buzzsaw_ofs_y = 9.69;
+user float bd_buzzsaw_ofs_z = 2.295;
+
+user float bd_axe_yaw = -90;
+user float bd_axe_pitch = 0;
+user float bd_axe_roll = 0;
+user float bd_axe_scale = 1;
+user float bd_axe_scale_x = 1;
+user float bd_axe_scale_y = 1;
+user float bd_axe_scale_z = 1;
+user float bd_axe_ofs_x = 0;
+user float bd_axe_ofs_y = 9.69;
+user float bd_axe_ofs_z = 2.295;
+
+user float bd_dragonslayer_yaw = -90;
+user float bd_dragonslayer_pitch = 0;
+user float bd_dragonslayer_roll = 0;
+user float bd_dragonslayer_scale = 1;
+user float bd_dragonslayer_scale_x = 1;
+user float bd_dragonslayer_scale_y = 1;
+user float bd_dragonslayer_scale_z = 1;
+user float bd_dragonslayer_ofs_x = 0;
+user float bd_dragonslayer_ofs_y = 9.69;
+user float bd_dragonslayer_ofs_z = 2.295;
+
+user float bd_chainsaw_yaw = -90;
+user float bd_chainsaw_pitch = 0;
+user float bd_chainsaw_roll = 0;
+user float bd_chainsaw_scale = 1;
+user float bd_chainsaw_scale_x = 1;
+user float bd_chainsaw_scale_y = 1;
+user float bd_chainsaw_scale_z = 1;
+user float bd_chainsaw_ofs_x = 0;
+user float bd_chainsaw_ofs_y = 9.69;
+user float bd_chainsaw_ofs_z = 2.295;
+
+user float bd_assaultshotgun_yaw = -90;
+user float bd_assaultshotgun_pitch = 0;
+user float bd_assaultshotgun_roll = 0;
+user float bd_assaultshotgun_scale = 1;
+user float bd_assaultshotgun_scale_x = 1;
+user float bd_assaultshotgun_scale_y = 1;
+user float bd_assaultshotgun_scale_z = 1;
+user float bd_assaultshotgun_ofs_x = 0;
+user float bd_assaultshotgun_ofs_y = 9.69;
+user float bd_assaultshotgun_ofs_z = 2.295;
+
+user float bd_bfg_yaw = -90;
+user float bd_bfg_pitch = 0;
+user float bd_bfg_roll = 0;
+user float bd_bfg_scale = 1;
+user float bd_bfg_scale_x = 1;
+user float bd_bfg_scale_y = 1;
+user float bd_bfg_scale_z = 1;
+user float bd_bfg_ofs_x = 0;
+user float bd_bfg_ofs_y = 9.69;
+user float bd_bfg_ofs_z = 2.295;
+
+user float bd_bfg10k_yaw = -90;
+user float bd_bfg10k_pitch = 0;
+user float bd_bfg10k_roll = 0;
+user float bd_bfg10k_scale = 1;
+user float bd_bfg10k_scale_x = 1;
+user float bd_bfg10k_scale_y = 1;
+user float bd_bfg10k_scale_z = 1;
+user float bd_bfg10k_ofs_x = 0;
+user float bd_bfg10k_ofs_y = 9.69;
+user float bd_bfg10k_ofs_z = 2.295;
+
+user float bd_smg_yaw = -90;
+user float bd_smg_pitch = 0;
+user float bd_smg_roll = 0;
+user float bd_smg_scale = 1;
+user float bd_smg_scale_x = 1;
+user float bd_smg_scale_y = 1;
+user float bd_smg_scale_z = 1;
+user float bd_smg_ofs_x = 0;
+user float bd_smg_ofs_y = 9.69;
+user float bd_smg_ofs_z = 2.295;
+
+user float bd_flamethrower_yaw = -90;
+user float bd_flamethrower_pitch = 0;
+user float bd_flamethrower_roll = 0;
+user float bd_flamethrower_scale = 1;
+user float bd_flamethrower_scale_x = 1;
+user float bd_flamethrower_scale_y = 1;
+user float bd_flamethrower_scale_z = 1;
+user float bd_flamethrower_ofs_x = 0;
+user float bd_flamethrower_ofs_y = 9.69;
+user float bd_flamethrower_ofs_z = 2.295;
+
+user float bd_grenade_yaw = -90;
+user float bd_grenade_pitch = 0;
+user float bd_grenade_roll = 0;
+user float bd_grenade_scale = 1;
+user float bd_grenade_scale_x = 1;
+user float bd_grenade_scale_y = 1;
+user float bd_grenade_scale_z = 1;
+user float bd_grenade_ofs_x = 0;
+user float bd_grenade_ofs_y = 9.69;
+user float bd_grenade_ofs_z = 2.295;
+
+user float bd_machinegun_yaw = -90;
+user float bd_machinegun_pitch = 0;
+user float bd_machinegun_roll = 0;
+user float bd_machinegun_scale = 1;
+user float bd_machinegun_scale_x = 1;
+user float bd_machinegun_scale_y = 1;
+user float bd_machinegun_scale_z = 1;
+user float bd_machinegun_ofs_x = 0;
+user float bd_machinegun_ofs_y = 9.69;
+user float bd_machinegun_ofs_z = 2.295;
+
+user float bd_minigun_yaw = -90;
+user float bd_minigun_pitch = 0;
+user float bd_minigun_roll = 0;
+user float bd_minigun_scale = 1;
+user float bd_minigun_scale_x = 1;
+user float bd_minigun_scale_y = 1;
+user float bd_minigun_scale_z = 1;
+user float bd_minigun_ofs_x = 0;
+user float bd_minigun_ofs_y = 9.69;
+user float bd_minigun_ofs_z = 2.295;
+
+user float bd_plasma_yaw = -90;
+user float bd_plasma_pitch = 0;
+user float bd_plasma_roll = 0;
+user float bd_plasma_scale = 1;
+user float bd_plasma_scale_x = 1;
+user float bd_plasma_scale_y = 1;
+user float bd_plasma_scale_z = 1;
+user float bd_plasma_ofs_x = 0;
+user float bd_plasma_ofs_y = 9.69;
+user float bd_plasma_ofs_z = 2.295;
+
+user float bd_rpg_yaw = -90;
+user float bd_rpg_pitch = 0;
+user float bd_rpg_roll = 0;
+user float bd_rpg_scale = 1;
+user float bd_rpg_scale_x = 1;
+user float bd_rpg_scale_y = 1;
+user float bd_rpg_scale_z = 1;
+user float bd_rpg_ofs_x = 0;
+user float bd_rpg_ofs_y = 9.69;
+user float bd_rpg_ofs_z = 2.295;
+
+user float bd_railgun_yaw = -90;
+user float bd_railgun_pitch = 0;
+user float bd_railgun_roll = 0;
+user float bd_railgun_scale = 1;
+user float bd_railgun_scale_x = 1;
+user float bd_railgun_scale_y = 1;
+user float bd_railgun_scale_z = 1;
+user float bd_railgun_ofs_x = 0;
+user float bd_railgun_ofs_y = 9.69;
+user float bd_railgun_ofs_z = 2.295;
+
+user float bd_rifle_yaw = -90;
+user float bd_rifle_pitch = 0;
+user float bd_rifle_roll = 0;
+user float bd_rifle_scale = 1;
+user float bd_rifle_scale_x = 1;
+user float bd_rifle_scale_y = 1;
+user float bd_rifle_scale_z = 1;
+user float bd_rifle_ofs_x = 0;
+user float bd_rifle_ofs_y = 9.69;
+user float bd_rifle_ofs_z = 2.295;
+
+user float bd_unmaker_yaw = -90;
+user float bd_unmaker_pitch = 0;
+user float bd_unmaker_roll = 0;
+user float bd_unmaker_scale = 1;
+user float bd_unmaker_scale_x = 1;
+user float bd_unmaker_scale_y = 1;
+user float bd_unmaker_scale_z = 1;
+user float bd_unmaker_ofs_x = 0;
+user float bd_unmaker_ofs_y = 9.69;
+user float bd_unmaker_ofs_z = 2.295;

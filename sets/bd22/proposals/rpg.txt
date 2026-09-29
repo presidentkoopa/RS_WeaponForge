@@ -1,0 +1,23 @@
+rpg: what each surface does, measured against #0 at the rest frame
+  mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\RPG\RPG.md3
+  rest frame  5 of 39
+  body        #0 'Frame'
+
+  These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
+  until it is written into set.py by hand.
+
+    # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
+  ----------------------------------------------------------------------------------------------------------
+    0 Frame                    3762     0.00   13    (+0.00,+0.00,+0.00)    0.0d   0.014   0.033  body
+    1 Frame                     300     0.01   10    (+0.87,+0.00,-0.50)    0.0d   0.013   0.024  fixed
+    2 Cube                      151     0.01    1    (-0.35,-0.81,+0.47)    0.0d   0.016   0.026  fixed
+    3 Frame                      48     0.01    0 (+0.02,+0.15,-0.99) -Z    0.0d   0.013   0.022  fixed
+    4 Trigger                    46     1.39    8 (-1.00,-0.00,+0.00) -X    0.1d   0.015   0.021  slide / bolt / pump / handle
+    5 Cube                     2549    50.41   24 (+0.00,-0.44,-0.90) -Z   76.7d   0.015   0.033  turns 76.7 deg -- needs a ruling
+    6 Cube                      234    56.12   24    (+0.00,-0.46,-0.89)   76.7d   0.013   0.022  turns 76.7 deg -- needs a ruling
+    7 Cube                      230    55.12   24 (+0.00,-0.38,-0.93) -Z   76.7d   0.014   0.024  turns 76.7 deg -- needs a ruling
+    8 Cube                      232    51.13   24 (+0.00,-0.33,-0.94) -Z   76.8d   0.015   0.029  turns 76.8 deg -- needs a ruling
+    9 Cube                      234    46.02   24 (+0.00,-0.36,-0.93) -Z   76.7d   0.015   0.024  turns 76.7 deg -- needs a ruling
+   10 Cube                      234    44.73   24    (+0.00,-0.46,-0.89)   76.8d   0.013   0.021  turns 76.8 deg -- needs a ruling
+   11 Cube                      234    47.97   24    (+0.00,-0.53,-0.85)   76.8d   0.014   0.026  turns 76.8 deg -- needs a ruling
+   12 Cube                      228    53.07   24    (+0.00,-0.52,-0.85)   76.7d   0.013   0.024  turns 76.7 deg -- needs a ruling

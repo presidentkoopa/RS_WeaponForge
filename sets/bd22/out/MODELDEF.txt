@@ -1,0 +1,351 @@
+// Written by WeaponForge for set bd22. Do not edit by hand.
+
+Model BD_PropPistol
+{
+	Path "models/bd22"
+	Model 0 "pistol_wm.md3"
+	Skin 0 "pistol.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset 0.0000 -9.7591 -2.8953
+	PlacementCVars bd_pistol
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropRevolver
+{
+	Path "models/bd22"
+	Model 0 "revolver_wm.md3"
+	Skin 0 "revolver.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.0053 -12.6278 -1.9603
+	PlacementCVars bd_revolver
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropShotgun
+{
+	Path "models/bd22"
+	Model 0 "shotgun_wm.md3"
+	Skin 0 "shotgun.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset 0.0159 -19.4916 -2.3216
+	PlacementCVars bd_shotgun
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropSSG
+{
+	Path "models/bd22"
+	Model 0 "ssg_wm.md3"
+	Skin 0 "ssg.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.0531 -10.6303 -2.5181
+	PlacementCVars bd_ssg
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropMP40
+{
+	Path "models/bd22"
+	Model 0 "mp40_wm.md3"
+	Skin 0 "mp40.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.0531 -16.3200 -1.6575
+	PlacementCVars bd_mp40
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropM79
+{
+	Path "models/bd22"
+	Model 0 "m79_wm.md3"
+	Skin 0 "m79.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset 0.0159 -14.0409 -1.9816
+	PlacementCVars bd_m79
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropFlameCannon
+{
+	Path "models/bd22"
+	Model 0 "flamecannon_wm.md3"
+	Skin 0 "flamecannon.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.6747 -14.2853 -2.4331
+	PlacementCVars bd_flamecannon
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropHellish
+{
+	Path "models/bd22"
+	Model 0 "hellish_wm.md3"
+	Skin 0 "hellish.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.3134 -16.5431 -2.8263
+	PlacementCVars bd_hellish
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropBuzzsaw
+{
+	Path "models/bd22"
+	Model 0 "buzzsaw_wm.md3"
+	Skin 0 "buzzsaw.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.3241 -16.1819 -0.5578
+	PlacementCVars bd_buzzsaw
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropAxe
+{
+	Path "models/bd22"
+	Model 0 "axe_wm.md3"
+	Skin 0 "axe.png"
+	Scale -0.5100 0.5100 0.5100
+	Offset -0.0159 -18.5672 6.7256
+	PlacementCVars bd_axe
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropDragonslayer
+{
+	Path "models/bd22"
+	Model 0 "dragonslayer_wm.md3"
+	Skin 0 "dragonslayer.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset 0.7491 -11.0925 -1.4078
+	PlacementCVars bd_dragonslayer
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropChainsaw
+{
+	Path "models/bd22"
+	Model 0 "chainsaw_wm.md3"
+	Skin 0 "chainsaw.png"
+	Scale -0.5100 0.5100 0.5100
+	Offset 0.6694 -35.4689 -5.0362
+	PlacementCVars bd_chainsaw
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropAssaultShotgun
+{
+	Path "models/bd22"
+	Model 0 "assaultshotgun_wm.md3"
+	Skin 0 "assaultshotgun.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset 0.0159 -18.5831 -2.0081
+	PlacementCVars bd_assaultshotgun
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropBFG
+{
+	Path "models/bd22"
+	Model 0 "bfg_wm.md3"
+	Skin 0 "bfg.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset 0.0266 -18.5300 -1.3547
+	PlacementCVars bd_bfg
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropBFG10k
+{
+	Path "models/bd22"
+	Model 0 "bfg10k_wm.md3"
+	Skin 0 "bfg10k.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset 0.0266 -19.3534 -1.3228
+	PlacementCVars bd_bfg10k
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropSMG
+{
+	Path "models/bd22"
+	Model 0 "smg_wm.md3"
+	Skin 0 "smg.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.0531 -13.0688 -3.7347
+	PlacementCVars bd_smg
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropFlamethrower
+{
+	Path "models/bd22"
+	Model 0 "flamethrower_wm.md3"
+	Skin 0 "flamethrower.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.1594 -19.3906 -4.5422
+	PlacementCVars bd_flamethrower
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropGrenade
+{
+	Path "models/bd22"
+	Model 0 "grenade_wm.md3"
+	Skin 0 "grenade.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.1009 -9.3659 -2.7041
+	PlacementCVars bd_grenade
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropMachinegun
+{
+	Path "models/bd22"
+	Model 0 "machinegun_wm.md3"
+	Skin 0 "machinegun.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.0691 -17.9775 -1.4344
+	PlacementCVars bd_machinegun
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropMinigun
+{
+	Path "models/bd22"
+	Model 0 "minigun_wm.md3"
+	Skin 0 "minigun.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.1647 -23.5716 -4.5794
+	PlacementCVars bd_minigun
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropPlasma
+{
+	Path "models/bd22"
+	Model 0 "plasma_wm.md3"
+	Skin 0 "plasma.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset 0.1594 -20.6338 -2.1303
+	PlacementCVars bd_plasma
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropRPG
+{
+	Path "models/bd22"
+	Model 0 "rpg_wm.md3"
+	Skin 0 "rpg.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset 1.1050 -4.8184 1.3016
+	PlacementCVars bd_rpg
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropRailgun
+{
+	Path "models/bd22"
+	Model 0 "railgun_wm.md3"
+	Skin 0 "railgun.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.0478 -17.8553 -0.7650
+	PlacementCVars bd_railgun
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropRifle
+{
+	Path "models/bd22"
+	Model 0 "rifle_wm.md3"
+	Skin 0 "rifle.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.1169 -13.4353 -0.9297
+	PlacementCVars bd_rifle
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model BD_PropUnmaker
+{
+	Path "models/bd22"
+	Model 0 "unmaker_wm.md3"
+	Skin 0 "unmaker.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset 0.0053 -19.2153 -0.8341
+	PlacementCVars bd_unmaker
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}

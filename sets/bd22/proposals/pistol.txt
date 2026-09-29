@@ -1,0 +1,19 @@
+pistol: what each surface does, measured against #4 at the rest frame
+  mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\BrutalPistol\BrutalPistol.md3
+  rest frame  2 of 38
+  body        #4 'Cube'
+
+  These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
+  until it is written into set.py by hand.
+
+    # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
+  ----------------------------------------------------------------------------------------------------------
+    0 Cube                      158     1.18    3    (-0.86,-0.00,-0.51)   27.5d   0.013   0.026  trigger or hammer
+    1 Cube                     1659     4.59    4 (-1.00,-0.00,+0.00) -X    0.0d   0.016   0.030  slide / bolt / pump / handle
+    2 Cube                      414    13.35   10 (-0.19,-0.00,-0.98) -Z   23.5d   0.014   0.024  magazine
+    3 Cube                      352    30.00    9 (-0.00,-0.00,-1.00) -Z    0.1d   0.016   0.032  magazine
+    4 Cube                     4111     0.00   22    (+0.00,+0.00,+0.00)    0.0d   0.015   0.032  body
+    5 Cube                      134     1.31    3 (-1.00,+0.00,+0.10) -X   37.0d   0.016   0.026  trigger or hammer
+
+  WARNINGS
+    - every surface moves relative to 'Cube' -- the body is probably wrong (the minigun's largest surface is its spinning barrels, not its frame)

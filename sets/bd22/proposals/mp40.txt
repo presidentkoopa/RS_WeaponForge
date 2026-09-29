@@ -1,0 +1,21 @@
+mp40: what each surface does, measured against #7 at the rest frame
+  mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\MP40\MP40.md3
+  rest frame  2 of 14
+  body        #7 'srodek_low_Cube'
+
+  These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
+  until it is written into set.py by hand.
+
+    # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
+  ----------------------------------------------------------------------------------------------------------
+    0 zamek_low_Cube            259    16.80   10 (-1.00,-0.03,+0.05) -X   43.8d   0.015   0.040  turns 43.8 deg -- needs a ruling
+    1 korpus_low_Cube          3098     0.01    0 (+0.25,+0.03,-0.97) -Z    0.0d   0.014   0.034  fixed
+    2 srodek1_low_Cube           66     0.01    6 (+1.00,+0.00,-0.02) +X    0.1d   0.012   0.021  fixed
+    3 kolba1_low_Cube           242     0.01    1 (+0.20,+0.01,-0.98) -Z    0.1d   0.014   0.032  fixed
+    4 lock_low_Cube              36     0.02    1 (+0.10,+0.01,-0.99) -Z    0.1d   0.011   0.017  magazine
+    5 pokretlo_low_Cube         101     0.02    1 (+0.02,+0.01,-1.00) -Z    0.2d   0.012   0.022  magazine
+    6 szczerbinka_low_Cube       48     0.01    9    (+0.55,+0.73,+0.41)    0.7d   0.010   0.016  trigger or hammer
+    7 srodek_low_Cube           289     0.00    1    (+0.00,+0.00,+0.00)    0.0d   0.014   0.027  body
+    8 kolba_low_Cube            303     0.01    1 (+0.11,+0.01,-0.99) -Z    0.0d   0.013   0.026  fixed
+    9 spust_low_Cube             73     0.86    3 (-1.00,+0.00,+0.07) -X   28.5d   0.012   0.019  trigger or hammer
+   10 magazynek_low_Cube        364    24.99   13 (-0.00,-0.00,-1.00) -Z    0.0d   0.015   0.030  magazine

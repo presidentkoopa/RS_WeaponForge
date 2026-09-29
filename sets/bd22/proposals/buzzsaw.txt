@@ -1,0 +1,12 @@
+buzzsaw: what each surface does, measured against #0 at the rest frame
+  mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\HitlersBuzzsaw\HitlersBuzzsaw.md3
+  rest frame  0 of 3
+  body        #0 'Cylinder'
+
+  These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
+  until it is written into set.py by hand.
+
+    # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
+  ----------------------------------------------------------------------------------------------------------
+    0 Cylinder                18912     0.00    2    (+0.00,+0.00,+0.00)    0.0d   0.010   0.030  body
+    1 Cylinder                   60     1.05    2    (-0.81,-0.00,+0.58)   20.0d   0.008   0.011  trigger or hammer

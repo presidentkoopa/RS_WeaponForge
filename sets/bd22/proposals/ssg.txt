@@ -1,0 +1,17 @@
+ssg: what each surface does, measured against #1 at the rest frame
+  mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\SSG\ssg.md3
+  rest frame  1 of 52
+  body        #1 'Runko'
+
+  These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
+  until it is written into set.py by hand.
+
+    # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
+  ----------------------------------------------------------------------------------------------------------
+    0 Cube                     1785     5.74   32 (-0.01,+0.00,-1.00) -Z   30.3d   0.012   0.026  trigger or hammer
+    1 Runko                   12019     0.00   33    (+0.00,+0.00,+0.00)    0.0d   0.012   0.028  body
+    2 Trigger                   848     9.66   23    (-0.78,+0.00,+0.63)   30.3d   0.011   0.022  trigger or hammer
+    3 Trigger                   848     9.66   23    (-0.78,+0.00,+0.63)   30.3d   0.011   0.022  trigger or hammer
+    4 Open                      960     0.60   14 (+0.20,+0.98,+0.00) +Y   19.9d   0.014   0.031  trigger or hammer
+    5 Trigger                   416     1.18    3 (-0.92,+0.00,+0.40) -X   27.3d   0.011   0.024  trigger or hammer
+    6 Runko                    1075     0.01   44 (-0.41,+0.03,-0.91) -Z    0.1d   0.011   0.027  fixed

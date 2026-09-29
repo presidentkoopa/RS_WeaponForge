@@ -1,0 +1,11 @@
+flamecannon: what each surface does, measured against #0 at the rest frame
+  mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\FlameCannon\FlameCannon.md3
+  rest frame  0 of 8
+  body        #0 'cannon'
+
+  These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
+  until it is written into set.py by hand.
+
+    # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
+  ----------------------------------------------------------------------------------------------------------
+    0 cannon                   5085     0.00    4    (+0.00,+0.00,+0.00)    0.0d   0.013   0.034  body

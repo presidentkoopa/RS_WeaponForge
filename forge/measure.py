@@ -62,9 +62,18 @@ import numpy as np
 
 from . import md3 as MD3
 from .motion import (rigid_fit, rotation_angle_axis, fixed_point, PURE_TRANSLATION_DEG,
+                     NOT_RIGID,
                      SMALL_HINGE_DEG)
 
 MUZZLE_BAND = 0.5          # how deep a slice of the barrel's front face to average
+# A frame counts as pure translation when its turn BARELY MOVES the part: the
+# arc a vertex travels, radius times the angle, against the part's travel. A flat
+# angle gate is the wrong test at both ends -- 0.1 degrees swings a 30-unit drum
+# by 0.05, and on a trigger 1.5 units across it is 0.003, which is nothing. The
+# shipped machinegun card is the case that shows it: "axis = -1, 0, -0.008,
+# distance = 0.598" is its frame 5, whose turn measures 0.11 degrees, so a 0.1
+# gate throws away the frame the card was written from and takes 0.392 instead.
+PURE_ARC_FRACTION = 0.05
 SIGN_MARGIN = 0.05         # a sign check closer than this either way is a tie
 
 
@@ -127,10 +136,34 @@ def usable_frames(model) -> int:
     return min(model.num_frames, min(s.num_frames for s in model.surfaces))
 
 
+def turn_is_negligible(cloud: np.ndarray, degrees: float, travel: float) -> bool:
+    """Whether a frame's turn is small enough to call the motion a translation.
+
+    The arc the outermost vertex travels is radius x angle. Compared against how
+    far the part moved, that says whether the turn matters, which a bare angle
+    cannot: see PURE_ARC_FRACTION.
+    """
+    if degrees <= 0.0:
+        return True
+    radius = float(np.max(np.linalg.norm(cloud - cloud.mean(axis=0), axis=1)))
+    arc = radius * math.radians(degrees)
+    return arc <= max(PURE_ARC_FRACTION * travel, 1.0 / 64.0)
+
+
 def measure_dof(model, body_index: int, rest: int, part_id: str,
                 part_surfaces: Sequence[int], t: Sequence[float],
-                kind: str = "auto") -> DOF:
-    """The slide or hinge of one part, with the body's motion divided out."""
+                kind: str = "auto", _split_ok: bool = True) -> DOF:
+    """The slide or hinge of one part, with the body's motion divided out.
+
+    A PART WHOSE SURFACES DO NOT MOVE AS ONE BODY is measured on its largest
+    surface, and the others are reported. The rifle's charging handle is the
+    case: its handle and its dust cover both slide along -x, but 7.117 and
+    10.439 respectively, so fitted together as one rigid body they cannot fit at
+    all (error 1.366) and the fit reports a 3-degree turn about nothing. Its
+    shipped card carries 7.117 -- the handle. Most of the geometry is the part;
+    the rest is along for the ride, and saying so is better than averaging two
+    motions into a third that neither surface makes.
+    """
     frames = usable_frames(model)
     fits = _body_fits(model, body_index, rest, frames)
     rest_cloud = _part_cloud(model, part_surfaces, rest)
@@ -156,10 +189,32 @@ def measure_dof(model, body_index: int, rest: int, part_id: str,
         travel = float(np.linalg.norm(disp))
         per_frame[f] = (travel, deg, rms)
 
-        if deg < PURE_TRANSLATION_DEG and travel > best_pure[0]:
+        if turn_is_negligible(corrected, deg, travel) and travel > best_pure[0]:
             best_pure = (travel, f, disp / travel if travel > 1e-9 else np.zeros(3))
         if deg > best_turn[0]:
             best_turn = (deg, f, axis, fixed_point(Rs, ts, axis), rms)
+
+    # Do the surfaces move as one body? If not, fall back to the largest.
+    if _split_ok and len(part_surfaces) > 1:
+        probe = measure_dof(model, body_index, rest, part_id, part_surfaces, t, kind,
+                            _split_ok=False)
+        if probe.fit > NOT_RIGID:
+            biggest = max(part_surfaces, key=lambda i: model.surfaces[i].num_verts)
+            out = measure_dof(model, body_index, rest, part_id, [biggest], t, kind,
+                              _split_ok=False)
+            others = []
+            for i in part_surfaces:
+                if i == biggest:
+                    continue
+                one = measure_dof(model, body_index, rest, part_id, [i], t, kind,
+                                  _split_ok=False)
+                others.append(f"#{i} '{model.surfaces[i].name}' {one.kind} "
+                              f"{one.distance:.3f} / {one.degrees:.2f} deg")
+            out.notes.append(f"these surfaces do not move as one body (fitted together, "
+                             f"{probe.fit:.3f} off); measured on #{biggest} "
+                             f"'{model.surfaces[biggest].name}', the largest. The others: "
+                             + "; ".join(others))
+            return out
 
     want = kind
     if want == "auto":
@@ -338,10 +393,10 @@ def measure_insert(model, body_index: int, rest: int, part_id: str,
         corrected = cloud @ Rb.T + tb
         Rs, _ts, _rms, _worst = rigid_fit(corrected, rest_cloud)
         deg, _axis = rotation_angle_axis(Rs)
-        if deg >= PURE_TRANSLATION_DEG:
-            continue
         disp = corrected.mean(axis=0) - rest_c
         travel = float(np.linalg.norm(disp))
+        if not turn_is_negligible(corrected, deg, travel):
+            continue
         if travel > 0.05:
             samples.append((travel, f, disp / travel))
 
@@ -352,6 +407,24 @@ def measure_insert(model, body_index: int, rest: int, part_id: str,
     furthest = max(s[0] for s in samples)
     leg = [s for s in samples if s[0] >= fraction * furthest]
     travel, frame, direction = min(leg or samples, key=lambda s: s[0])
+    # A MAGAZINE FEEDS IN THE GUN'S MID-PLANE. Model space is x along the barrel,
+    # y across, z up, and a magazine drops straight down the well rather than
+    # sideways out of it, so a small y on a feed axis is the animation rocking the
+    # magazine in, not a direction the part travels.
+    #
+    # The shipped cards are written that way and it is exact: the plasma cell's
+    # card axis (0.1942, 0, -0.9810) is our measured (0.194, -0.041, -0.980) with
+    # y dropped and renormalised, and its distance 12.33 is the cell's length
+    # along THAT axis (12.326) rather than along the tilted one (12.446). The
+    # grenade pin's (0, 1, 0) is ours with a 0.011 z dropped. This is a rule about
+    # a FEED axis, not about axes generally -- the RPG's trigger card keeps a
+    # -0.011 in z, so nothing else is snapped.
+    direction = np.asarray(direction, dtype=float)
+    if 0.0 < abs(direction[1]) < 0.05:
+        dof.notes.append(f"y of {direction[1]:+.3f} dropped: a magazine feeds in the gun's "
+                         f"mid-plane")
+        direction[1] = 0.0
+        direction = direction / np.linalg.norm(direction)
     dof.axis = tuple(direction)
     dof.frame = frame
     dof.distance = travel

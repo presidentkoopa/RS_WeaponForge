@@ -61,7 +61,8 @@ from typing import Dict, List, Optional, Sequence, Tuple
 import numpy as np
 
 from . import md3 as MD3
-from .motion import rigid_fit, rotation_angle_axis, fixed_point, PURE_TRANSLATION_DEG
+from .motion import (rigid_fit, rotation_angle_axis, fixed_point, PURE_TRANSLATION_DEG,
+                     SMALL_HINGE_DEG)
 
 MUZZLE_BAND = 0.5          # how deep a slice of the barrel's front face to average
 SIGN_MARGIN = 0.05         # a sign check closer than this either way is a tie
@@ -178,7 +179,20 @@ def measure_dof(model, body_index: int, rest: int, part_id: str,
         n = np.linalg.norm(axis)
         if n > 1e-9:
             k = np.asarray(axis) / n
-            p = p - float(np.dot(p, k)) * k
+            # A PIN IS QUOTED IN THE PLANE IT TURNS IN. Where an axis is a
+            # cardinal direction to within the axis tolerance -- as every trigger
+            # pin in these donors is -- the dropped coordinate is that cardinal
+            # one. Dropping along the measured axis instead leaves the axis's own
+            # thousandth multiplied by the pin's distance from the origin: the
+            # chaingun trigger sits at x -35.63, and an axis of (0.001, 1, 0.001)
+            # leaves 0.016 in y, past the 0.01 the pivot is checked to. The
+            # shipped card writes that pin as two numbers, "-35.631, 6.618",
+            # which is the same convention said out loud.
+            dominant = int(np.argmax(np.abs(k)))
+            if abs(abs(k[dominant]) - 1.0) <= 0.01:
+                p[dominant] = 0.0
+            else:
+                p = p - float(np.dot(p, k)) * k
         dof.pivot = tuple(p)
         dof.span = _active_span(per_frame, frame)
         # The sign check: turn the rest cloud by +deg about the axis through the
@@ -231,6 +245,58 @@ def _active_span(per_frame: Dict[int, Tuple[float, float, float]], frame: int):
 
 
 INSERT_FRACTION = 0.25     # how far out a frame must be to be part of the insert leg
+# A spinning part's period is found by turning it onto itself; this is how close
+# it has to land to count, as a median over its vertices.
+SPIN_LANDS = 0.05
+SPIN_MAX_FOLD = 12         # nobody builds a thirteen-barrel gun
+
+
+def spin_period(model, part_surfaces: Sequence[int], rest: int, t: Sequence[float],
+                axis: Sequence[float], pivot: Sequence[float],
+                max_fold: int = SPIN_MAX_FOLD, lands: float = SPIN_LANDS):
+    """The angle a spinning part turns onto itself, from the MESH rather than
+    from the animation.
+
+    A barrel cluster's dof is not how far the animation happens to turn it: it is
+    one period of its own symmetry, because turning it by that lands every barrel
+    where the next one was and the part looks continuous. The animation stops
+    wherever the author left it -- the minigun's turns 106 degrees, which is not
+    a period of anything.
+
+    So each 360/k is tried and the part is turned onto itself about its measured
+    axis; the smallest k that lands is the period. On the BD minigun that is 120
+    degrees with a median miss of 0.015, while 60 misses by 0.174 -- three-fold
+    clamps on six barrels. The shipped card says the same in its own words:
+    "turned 120 the barrels land on themselves, median miss 0.017; turned 60 they
+    do not".
+
+    Returns (degrees, k, median_miss) or (None, None, best_miss) when nothing
+    lands, which is the answer for a part that is not a rotor.
+    """
+    pts = _part_cloud(model, part_surfaces, rest) + np.asarray(t, dtype=float)
+    a = np.asarray(axis, dtype=float)
+    n = np.linalg.norm(a)
+    if n < 1e-9 or len(pts) < 8:
+        return None, None, float("inf")
+    a = a / n
+    p = np.asarray(pivot, dtype=float)
+    K = np.array([[0.0, -a[2], a[1]], [a[2], 0.0, -a[0]], [-a[1], a[0], 0.0]])
+    best = float("inf")
+    for k in range(2, max_fold + 1):
+        th = 2.0 * math.pi / k
+        R = (math.cos(th) * np.eye(3) + math.sin(th) * K
+             + (1.0 - math.cos(th)) * np.outer(a, a))
+        turned = (pts - p) @ R.T + p
+        miss = np.empty(len(turned))
+        for i in range(0, len(turned), 512):
+            chunk = turned[i:i + 512]
+            d = np.linalg.norm(chunk[:, None, :] - pts[None, :, :], axis=2)
+            miss[i:i + 512] = d.min(axis=1)
+        med = float(np.median(miss))
+        best = min(best, med)
+        if med <= lands:
+            return 360.0 / k, k, med
+    return None, None, best
 
 
 def measure_insert(model, body_index: int, rest: int, part_id: str,

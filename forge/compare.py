@@ -245,9 +245,17 @@ def build_gun(sf: SF.SetFile, gun, out_dir: str) -> BuiltGun:
             parts.dofs[pid] = [ME.measure_feed(model, gun.body, d.rest_frame, pid, surfaces,
                                                mesh.t, carve)]
         else:
-            kind = "hinge" if part.role in ("action", "trigger") else "auto"
-            dof = ME.measure_dof(model, gun.body, d.rest_frame, pid, surfaces, mesh.t,
-                                 kind="auto" if kind == "auto" else "auto")
+            dof = ME.measure_dof(model, gun.body, d.rest_frame, pid, surfaces, mesh.t)
+            if dof.kind == "hinge" and dof.degrees > ME.SMALL_HINGE_DEG:
+                # A big turn may be a rotor rather than a hinge, and a rotor's
+                # angle is one period of its own symmetry, not how far the
+                # animation happened to turn it.
+                deg, fold, miss = ME.spin_period(model, surfaces, d.rest_frame, mesh.t,
+                                                 dof.axis, dof.pivot or (0, 0, 0))
+                if deg is not None:
+                    dof.notes.append(f"turned {dof.degrees:.2f} in the animation; the period is "
+                                     f"360/{fold} and it lands on itself to {miss:.4f}")
+                    dof.degrees = deg
             parts.dofs[pid] = [dof]
     return BuiltGun(gun=gun, donor=d, mesh=mesh, prop=prop, muzzle=muzzle, barrel=barrel,
                     parts=parts, surface_names=mesh.names, skipped=skipped)

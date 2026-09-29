@@ -1185,7 +1185,11 @@ def lint_sheets():
             # the RTCW set shipped with 68 names nothing was ever built under, and this lint said 0.
             # A profile that resolves to nothing is silent -- no flash, no smoke, no brass, no error.
             if PROFILES:
-                for key, kind in (("roundprofile", "round"), ("flashprofile", "flash"),
+                # A GUN'S `roundprofile` PICKS A `roundlook`, NOT A `round`
+                # (RS_Ballistics/zscript/rsb/projectiles.zs: "A gun's roundprofile picks a
+                # roundlook for an RSB_Bullet"). Mapped to `round`, this check passed names
+                # that resolve to nothing and failed names that are right.
+                for key, kind in (("roundprofile", "roundlook"), ("flashprofile", "flash"),
                                   ("altflashprofile", "flash"), ("recoilprofile", "recoil"),
                                   ("altrecoilprofile", "recoil"), ("ejectaprofile", "ejecta"),
                                   ("trailprofile", "trail")):

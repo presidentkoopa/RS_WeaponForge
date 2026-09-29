@@ -194,6 +194,18 @@ def stage_check(sf: SF.SetFile, out_dir: str, reference: Optional[str]) -> Optio
         return f"card_lint: {last}"
     print(f"  4 card_lint    {last}")
 
+    # THE WEAPON CARD (WMSHEET.*) IS CHECKED TOO. card_lint has always been able to do
+    # this and RUN_SET never asked it to, so what a gun IS went unchecked while how it
+    # MOVES was checked every run. BD22 shipped green with twelve ballistics profiles
+    # that resolved to nothing: eight guns firing with no recoil, two rounds with no
+    # look, and two beams declared as bullets. The check existed. Nothing called it.
+    code, text = _run("card_lint.py", ["--sheets"], pkg=root)
+    last = text.strip().splitlines()[-1] if text.strip() else ""
+    if code != 0:
+        print(text.strip()[-2000:])
+        return f"card_lint --sheets: {last}"
+    print(f"  4 sheet_lint   {last}")
+
     code, text = _run("set_gate.py", [root])
     gate = [l for l in text.splitlines() if l.strip().startswith(("FAIL", "PASS"))]
     print(f"  4 set_gate     {gate[-1].strip() if gate else 'ran'}")

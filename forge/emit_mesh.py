@@ -35,7 +35,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field
-from typing import Dict, List, Tuple
+from typing import Dict, List, Sequence, Tuple
 
 from . import md3 as MD3
 
@@ -74,6 +74,118 @@ def recentre_shift(model, rest_frame: int):
     centroid = tuple(c / n for c in total)
     t = tuple(-round(c * GRID) / GRID for c in centroid)
     return centroid, t
+
+
+def islands(surf, frame: int = 0) -> List[List[int]]:
+    """A surface's connected components, biggest first, as lists of vertex
+    indices.
+
+    A donor often packs two objects into one surface: the machinegun's
+    11,996-vertex receiver holds its 415-vertex magazine, and the
+    flamethrower's 5,966-vertex body holds its 1,306-vertex canister. They are
+    separate objects sharing a surface, not one object, and a part cannot be
+    driven until it is lifted out. Components are found through the triangle
+    list -- two vertices belong together when a triangle joins them -- so this
+    is the mesh's own answer, not a guess from positions.
+    """
+    n = len(surf.st)
+    parent = list(range(n))
+
+    def find(a: int) -> int:
+        while parent[a] != a:
+            parent[a] = parent[parent[a]]
+            a = parent[a]
+        return a
+
+    def union(a: int, b: int) -> None:
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[rb] = ra
+
+    for (a, b, c) in surf.triangles:
+        union(a, b)
+        union(b, c)
+    groups: Dict[int, List[int]] = {}
+    for i in range(n):
+        groups.setdefault(find(i), []).append(i)
+    return sorted(groups.values(), key=len, reverse=True)
+
+
+def islands_in_box(surf, frame: int, lo: Sequence[float], hi: Sequence[float],
+                   shift: Sequence[float] = (0.0, 0.0, 0.0), tol: float = 1.0 / 64.0) -> List[int]:
+    """Every vertex of every island that lies WHOLLY inside the box, with
+    `shift` added to the surface's positions first (so a box may be quoted in
+    _wm space, which is the space everything else the owner reads is in).
+
+    WHOLE islands, never part of one: a box that cuts an island in half tears a
+    mesh, leaving triangles with vertices in two different surfaces. Selecting by
+    island keeps every object intact.
+
+    THE BOX IS INCLUSIVE BY ONE QUANTUM (1/64), which is the mesh's own
+    resolution. Without that slack a box quoted to three decimals drops the
+    islands sitting exactly on its faces -- the machinegun's magazine came out
+    415 vertices with the slack and 249 without it, from a box whose true bounds
+    are -13.23438 and -5.59375. The margin is not delicate: anything from one
+    quantum to 0.2 gives the same 415, because the magazine stands clear of the
+    receiver. The count in the set file is what catches a box that is actually
+    wrong.
+
+    This is how the shipped machinegun was split. Its magazine is 415 of the
+    receiver's 11,996 vertices, spread across 31 separate islands -- it is not
+    one connected component, and 'the island containing the magazine' would have
+    found 81 vertices of it. Every island wholly inside the magazine's own box
+    is exactly those 415, with none missing and none extra.
+    """
+    import numpy as np
+    pts = np.asarray(surf.verts[frame], dtype=float) + np.asarray(shift, dtype=float)
+    lo = np.asarray(lo, dtype=float)
+    hi = np.asarray(hi, dtype=float)
+    out: List[int] = []
+    for group in islands(surf, frame):
+        g = np.asarray(group, dtype=int)
+        if bool(((pts[g] >= lo - tol) & (pts[g] <= hi + tol)).all()):
+            out.extend(group)
+    return sorted(out)
+
+
+def resolve_island(surf, frame: int, spec: dict, shift: Sequence[float],
+                   where: str = "") -> List[int]:
+    """The vertices an island spec names, refusing the spec if the count is not
+    what it claims.
+
+    The count is the guard. A box written against one export of a mesh, or
+    rounded a little too far, picks up a bolt from the receiver or drops a
+    corner of the magazine, and nothing downstream would ever say so -- the part
+    would simply be the wrong shape for the rest of the set's life.
+    """
+    if "box" not in spec:
+        raise ValueError(f"{where}: an island needs a box; only a count was given")
+    lo, hi = spec["box"]
+    got = islands_in_box(surf, frame, lo, hi, shift)
+    want = int(spec.get("verts", -1))
+    if want >= 0 and len(got) != want:
+        raise ValueError(f"{where}: the box holds {len(got)} vertices, the set file says {want}. "
+                         f"Either the box is wrong or this is not the mesh it was written for.")
+    return got
+
+
+def split_surface(surf, vertex_ids: Sequence[int], name: str, frame: int = 0):
+    """A new single-frame surface holding just those vertices and the triangles
+    entirely within them, renumbered."""
+    keep = sorted(set(vertex_ids))
+    remap = {v: i for i, v in enumerate(keep)}
+    tris = [tuple(remap[i] for i in t) for t in surf.triangles
+            if all(i in remap for i in t)]
+    out = MD3.MD3Surface(
+        index=0, name=name, num_frames=1,
+        shaders=[MD3.MD3Shader(name=sh.name, shader_index=0) for sh in surf.shaders]
+                or [MD3.MD3Shader(name="", shader_index=0)],
+        triangles=tris, st=[surf.st[v] for v in keep],
+        verts=[[surf.verts[frame][v] for v in keep]],
+        normals=[[surf.normals[frame][v] for v in keep]],
+        normals_packed=[[surf.normals_packed[frame][v] for v in keep]]
+                       if surf.normals_packed else [])
+    return out
 
 
 def surface_names(gun, n_surfaces: int) -> Dict[int, str]:

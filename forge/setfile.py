@@ -51,7 +51,7 @@ GUN_KEYS = {
     "capacity", "magfamily", "sounds", "body", "parts", "hidden", "fixed",
     "rest_frame", "notes",
 }
-PART_KEYS = {"surfaces", "role", "subject", "carve", "notes"}
+PART_KEYS = {"surfaces", "role", "subject", "carve", "notes", "island"}
 SET_KEYS = {
     "SET_ID", "PREFIX", "DONOR_ROOT", "PARENT_MOD", "PACK", "MODEL_PATH",
     "CVAR_PREFIX", "PARENT_RULINGS", "GUNS", "NOTES",
@@ -83,6 +83,11 @@ class Part:
     subject: str = ""
     carve: bool = False
     notes: str = ""
+    # An island inside one donor surface, when a part shares a surface with the
+    # body: {"of": "#5", "verts": 415}. The vertex count is checked against the
+    # island actually found, so a mapping written against a different export of
+    # the mesh is refused rather than lifting whatever happens to be there.
+    island: Optional[dict] = None
 
 
 @dataclass
@@ -202,11 +207,31 @@ def load_set(path: str) -> SetFile:
             _require(isinstance(surfaces, (list, tuple)) and len(surfaces) > 0,
                      f"{pwhere}: has no surfaces. A part with no geometry reaches the card as "
                      f"a part the reload code then tries to move.")
+            island = praw.get("island")
+            if island is not None:
+                _require(isinstance(island, dict) and {"of", "box", "verts"} <= set(island),
+                         f'{pwhere}: island must be {{"of": "#N", "box": [[lo],[hi]], '
+                         f'"verts": <count>}} -- the surface it lives in, the box in _wm space '
+                         f'that holds it, and how many vertices it has. Every island wholly '
+                         f'inside the box is taken, and the count is checked against what is '
+                         f'found so a box written for another mesh is refused.')
+                box = island["box"]
+                _require(isinstance(box, (list, tuple)) and len(box) == 2
+                         and all(isinstance(c, (list, tuple)) and len(c) == 3 for c in box),
+                         f"{pwhere}: island box must be [[x,y,z],[x,y,z]]")
+                island = {"of": _surface_index(island["of"], f"{pwhere}, island of"),
+                          "box": [[float(c) for c in box[0]], [float(c) for c in box[1]]],
+                          "verts": int(island["verts"])}
+                _require(island["of"] in [_surface_index(s, pwhere) for s in surfaces],
+                         f"{pwhere}: island of #{island['of']} but that surface is not in this "
+                         f"part's own surfaces")
+
             parts[pname] = Part(
                 id=pname,
                 surfaces=[_surface_index(s, f"{pwhere}") for s in surfaces],
                 role=praw.get("role", ""), subject=praw.get("subject", ""),
-                carve=bool(praw.get("carve", False)), notes=praw.get("notes", ""))
+                carve=bool(praw.get("carve", False)), notes=praw.get("notes", ""),
+                island=island)
 
         body = raw.get("body")
         gun = Gun(
@@ -234,9 +259,14 @@ def load_set(path: str) -> SetFile:
             claims.setdefault(idx, []).append("hidden")
         for idx in gun.fixed:
             claims.setdefault(idx, []).append("fixed")
+        # An ISLAND part shares its surface on purpose: the machinegun's magazine
+        # lives inside the same surface as its body, and lifting it out is the
+        # whole point. So a surface may be claimed twice when one of the
+        # claimants is an island of it -- and only then.
+        islanders = {p.island["of"] for p in gun.parts.values() if p.island}
         for idx in sorted(claims):
             owners = claims[idx]
-            if len(owners) > 1:
+            if len(owners) > 1 and idx not in islanders:
                 raise SetError(f"{where}: surface #{idx} is claimed by {' and '.join(owners)}. "
                                f"One mesh cannot belong to two parts.")
 

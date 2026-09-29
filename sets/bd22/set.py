@@ -29,10 +29,37 @@
 SET_ID      = "bd22"
 PREFIX      = "BD_"
 DONOR_ROOT  = r"D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels"
-PARENT_MOD  = r"E:\DOOMWork\RS_VR_BD22\brutal22test6.pk3"
-PACK        = r"E:\DOOMWork\RS_VR_BD22"
+PARENT_MOD  = r"E:\DOOMWork\RS_VR_Weapons\bd22\brutal22test6.pk3"
+PACK        = r"E:\DOOMWork\RS_VR_Weapons\bd22"
 MODEL_PATH  = "models/bd22"
 CVAR_PREFIX = "bd"
+
+# THE FIRING LINE (forge/emit_prop.firing_line). The owner, 09-29: recentre the set on the M4A3 through
+# the BD pistol, then every other gun from the pistol. Each gun's bore goes on the M4A3's bore line; the
+# pistol's grip on the M4A3's grip, and every gun moves along its length by what the pistol moved. The
+# reference numbers are the M4A3's own, copied from where they live: its tuned block (RS_VR_Weapons
+# MODELDEF, WM_PropM4A3) and its card (RS_VR_Weapons WMCARD.01_pistol: muzzle, and magcenter -- its grip).
+# Melee and thrown weapons have no bore to put on a line and keep their donor seat.
+FIRING_LINE = {
+    "scale":  (-0.2788, 0.2788, 0.2788),
+    "offset": (0.0044, -9.555, -2.8679),
+    "muzzle": (18.99, -0.07, 4.27),
+    "grip":   (-5.181, 0.022, -8.665),
+    "anchor": "pistol",
+    # The flamethrower too: its flame leaves a nozzle hung under the pipe, and putting that on the line
+    # lifts the whole gun a hand-width; BD's own seat already has its handle in the hand.
+    "skip":   ["axe", "dragonslayer", "chainsaw", "grenade", "flamethrower"],
+    # WHERE THE CARD'S MUZZLE IS NOT THE BORE (the middle of the mesh's cross-section 0-4 units behind
+    # the muzzle, measured 09-29). The BFG and BFG10k are ONE mesh with two barrels, and the card picked
+    # the top one for one and the bottom one for the other: both get the middle, so they sit alike.
+    # The flame cannon's and the Revenant launcher's front-most vertices are a rim, not the axis.
+    "bore": {
+        "bfg":         (0.08, 3.69),
+        "bfg10k":      (0.08, 3.69),
+        "flamecannon": (-2.00, -0.52),
+        "hellish":     (-0.75, 7.36),
+    },
+}
 
 # Owner rulings on parent_audit findings; RUN_SET stops on any finding not listed.
 PARENT_RULINGS = {

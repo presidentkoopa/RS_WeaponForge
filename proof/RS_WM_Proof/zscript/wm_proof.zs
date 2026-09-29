@@ -165,8 +165,38 @@ class WM_Proof : EventHandler
 
 	// ---- wm_why ---------------------------------------------------------------
 
+	// ---- IT RUNS ITSELF (2026-09-29) -----------------------------------------
+	//
+	// WHY. Every instruction we printed ended "load the pack, then type logfile proof.txt
+	// and wm_proof BD_". The owner plays in a headset. There is no keyboard in front of
+	// him, so a check that has to be typed is a check that never runs -- and this one was
+	// never run once, on a pack that spent a day failing to load.
+	//
+	// So it fires on its own, one second after the level is up: late enough that
+	// RS_VR_Reload has parsed its cards and the player exists, early enough to be in the
+	// log before anything is shot. No prefix, so it covers EVERY carded gun in the load
+	// order rather than one set -- the whole point is to learn which sets work.
+	//
+	// STILL READ-ONLY. RunProof builds a throwaway ammo state from the card; it spawns
+	// nothing, gives nothing and takes nothing. And still no cvar: a cvar for this would
+	// land in the owner's ini for ever, and he has enough of our leftovers in there.
+	private bool autoDone;
+
+	override void WorldLoaded(WorldEvent e)
+	{
+		autoDone = false;
+	}
+
 	override void WorldTick()
 	{
+		// One second in, once per level.
+		if (!autoDone && level.maptime >= 35 && playeringame[consoleplayer]
+			&& players[consoleplayer].mo)
+		{
+			autoDone = true;
+			Console.Printf("\cf==== WM PROOF runs itself; nothing was typed ====");
+			RunProof(consoleplayer, "");
+		}
 		if (level.maptime > whyUntil) return;
 		if (!playeringame[whyPlayer] || !players[whyPlayer].mo) return;
 		let pl = players[whyPlayer].mo.player;

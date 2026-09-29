@@ -318,9 +318,17 @@ def _run_ps(script: str):
 
 
 def stage_ingame(sf: SF.SetFile) -> None:
-    print("  6 in game      load the pack, then:")
-    print("                   logfile proof.txt")
-    print(f"                   wm_proof {sf.prefix}")
+    """WHAT HAPPENS WHEN HE PLAYS IT -- which is not a list of things to type.
+
+    This printed "load the pack, then: logfile proof.txt / wm_proof <prefix>" for as long
+    as it existed. The owner plays in a headset; there is no keyboard in front of him, so
+    every one of those instructions was a check that would never be run, and none of them
+    ever was. RS_WM_Proof now fires itself a second after the level loads and prints to
+    the log the launcher is already writing, so the answer arrives without anyone typing.
+    """
+    print("  6 in game      RS_WM_Proof.pk3 runs the proof by itself, one second in;")
+    print("                 its output lands in the launcher's logfile. Nothing to type.")
+    print(f"                 It covers every carded gun, not just {sf.prefix}*.")
 
 
 def run(set_name: str, do_copy: bool = True, reference: Optional[str] = None) -> int:

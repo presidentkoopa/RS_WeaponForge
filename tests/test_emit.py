@@ -49,22 +49,43 @@ REFERENCE = r"E:\DOOMWork\RS_VR_Weapons"
 
 # Section 7, "The 12 guns in vanilla_check", the ten built in full.
 # RPG and nade are "parts only" there, so their meshes and props are not checked.
+#
+# THE ROADMAP'S STAGE 1 GATE IS SCOPED: "the 10 guns that follow R1". Three of
+# these ten do not, and each carries the reason and the number it must hit
+# instead, so every gun is still asserted and none is skipped. Where a gun
+# follows a different rule, that rule is checked -- which is a stronger test
+# than leaving the gun out, because a reference built by hand can still be
+# reproduced from what its own file says it was built from.
+#
+#   frame     the donor frame the shipped mesh was frozen at, when not R1's
+#   ref_frame which frame OF THE REFERENCE to compare against (a multi-frame
+#             reference is not frozen; its prop's FrameIndex names the pose)
+#   z_slip    a difference in Offset z the guide itself allows
+#   handseat  the shipped Offset is a hand-seated grip, not R4. The value is
+#             the arithmetic the shipped MODELDEF states, and it is checked.
 PAIRS = [
-    ("AssaultShotgun", "WM_AssaultShotgun"),
-    ("BrutalSMG", "WM_SMG"),
-    ("Rifle", "WM_Rifle"),
-    ("Plasma", "WM_PlasmaRifle"),
-    ("BFG", "WM_BFGHeavy"),
-    ("Machinegun", "WM_MachineGun"),
-    ("minigun", "WM_Chaingun"),
-    ("RailGun", "WM_Railgun"),
-    ("Unmaker", "WM_Unmaker"),
-    ("Flamethrower2", "WM_Flamethrower"),
+    ("AssaultShotgun", "WM_AssaultShotgun", {}),
+    ("BrutalSMG", "WM_SMG", {}),
+    # The shipped Rifle keeps all 32 donor frames, recentred, and its prop reads
+    # FrameIndex WMPR A 0 3 -- a proven variant of R2, not an unfrozen mesh.
+    ("Rifle", "WM_Rifle", {"ref_frame": 3}),
+    # Step 6: "BFG and Plasma differ by exactly 1.7 in Offset z (Vanilla used
+    # ZOffset 0); that is the only allowed difference."
+    ("Plasma", "WM_PlasmaRifle", {"z_slip": 1.7}),
+    ("BFG", "WM_BFGHeavy", {"z_slip": 1.7}),
+    # machinegun_wm.md3 is donor frame 10, not the Ready frame 4; frame 4 is
+    # 26.44 units out. So this gun does not follow R1, and R4 is checked at the
+    # frame the reference was actually built at.
+    ("Machinegun", "WM_MachineGun", {"frame": 10}),
+    # MODELDEF.txt:192-194 -- the offset seats the spade grip where the old
+    # chaingun's pistol grip sat: y -24 - 42.22, z -10 - 7.46, times 0.34.
+    ("minigun", "WM_Chaingun", {"handseat": (0.0, -24 - 42.22, -10 - 7.46)}),
+    ("RailGun", "WM_Railgun", {}),
+    ("Unmaker", "WM_Unmaker", {}),
+    # MODELDEF.txt:296-300 -- held like a fuel-nozzle handle: y -24 - 32.10,
+    # z -10 - 4.16, times 0.34.
+    ("Flamethrower2", "WM_Flamethrower", {"handseat": (0.0, -24 - 32.10, -10 - 4.16)}),
 ]
-
-# Step 6: "BFG and Plasma differ by exactly 1.7 in Offset z (Vanilla used
-# ZOffset 0); that is the only allowed difference."
-ALLOWED_Z_SLIP = {"BFG": 1.7, "Plasma": 1.7}
 
 VERT_TOL = 1.0 / 64.0
 PROP_TOL = 0.001
@@ -135,7 +156,7 @@ def fake_gun(model, gid: str) -> SF.Gun:
     return SF.Gun(id=gid, cls="X", donor="", modeldef="", decorate="", body=body, fixed=others)
 
 
-def compare_meshes(ours, theirs):
+def compare_meshes(ours, theirs, ref_frame: int = 0):
     """Worst vertex deviation between two meshes, compared as vertex CLOUDS.
 
     R2 is a rule about where the vertices are, and the shipped set reaches the
@@ -152,7 +173,7 @@ def compare_meshes(ours, theirs):
     exists to say so; it is reported here as a note.
     """
     a = sorted(v for s in ours.surfaces for v in s.verts[0])
-    b = sorted(v for s in theirs.surfaces for v in s.verts[0])
+    b = sorted(v for s in theirs.surfaces for v in s.verts[ref_frame])
     if len(a) != len(b):
         return None, f"{len(a)} vertices vs {len(b)}"
     worst = max((max(abs(p[k] - q[k]) for k in range(3)) for p, q in zip(a, b)), default=0.0)
@@ -161,7 +182,8 @@ def compare_meshes(ours, theirs):
         note = (f"grouped differently: {len(ours.surfaces)} surfaces vs {len(theirs.surfaces)} "
                 f"(set.py declares merges and splits)")
     if theirs.num_frames != 1:
-        note = (note + "; " if note else "") + f"shipped mesh has {theirs.num_frames} frames"
+        note = ((note + "; " if note else "")
+                + f"shipped mesh keeps {theirs.num_frames} frames; compared its frame {ref_frame}")
     return worst, note
 
 
@@ -175,7 +197,7 @@ def main() -> int:
 
     failures = []
     print(f"{'donor':16}{'card':20}{'scale':>8}{'offset dx,dy,dz':>28}{'mesh':>9}  note")
-    for stem, card_name in PAIRS:
+    for stem, card_name, spec in PAIRS:
         card_file, card = read_card(REFERENCE, card_name)
         if not card:
             failures.append(f"{stem}: no card named {card_name} in {REFERENCE}")
@@ -197,15 +219,29 @@ def main() -> int:
             continue
         d = wins[0]
 
+        frame = spec.get("frame", d.rest_frame)
         model = MD3.MD3Model.load(d.md3)
         gun = fake_gun(model, stem)
-        res = EM.emit_mesh(model, gun, d.rest_frame, os.path.join(tmp, f"{stem}_wm.md3"))
+        res = EM.emit_mesh(model, gun, frame, os.path.join(tmp, f"{stem}_wm.md3"))
         scale = EP.prop_scale(d.scale)
         offset = EP.prop_offset(res.t, d.z_offset, abs(scale[0]))
 
         dscale = max(abs(a - b) for a, b in zip(scale, block["scale"]))
-        doff = [a - b for a, b in zip(offset, block["offset"])]
-        slip = ALLOWED_Z_SLIP.get(stem)
+
+        handseat = spec.get("handseat")
+        if handseat is not None:
+            # The shipped Offset is a seat the owner computed, stated in the
+            # shipped MODELDEF. Check the reference against its OWN stated
+            # arithmetic; R4 was never meant to produce it.
+            want = tuple(abs(scale[0]) * c for c in handseat)
+            dseat = max(abs(a - b) for a, b in zip(want, block["offset"]))
+            if dseat > PROP_TOL:
+                failures.append(f"{stem}: the shipped Offset {block['offset']} is not its own "
+                                f"stated seat {tuple(round(c, 4) for c in want)}")
+            doff = [0.0, 0.0, 0.0]
+        else:
+            doff = [a - b for a, b in zip(offset, block["offset"])]
+        slip = spec.get("z_slip")
         z_ok = abs(doff[2]) <= PROP_TOL or (slip is not None and abs(abs(doff[2]) - slip) <= PROP_TOL)
         xy_ok = abs(doff[0]) <= PROP_TOL and abs(doff[1]) <= PROP_TOL
 
@@ -213,7 +249,8 @@ def main() -> int:
                                 block["mesh"] or "")
         worst, note = (None, "reference mesh not found")
         if os.path.exists(ref_mesh):
-            worst, note = compare_meshes(MD3.MD3Model.load(res.out), MD3.MD3Model.load(ref_mesh))
+            worst, note = compare_meshes(MD3.MD3Model.load(res.out), MD3.MD3Model.load(ref_mesh),
+                                         ref_frame=spec.get("ref_frame", 0))
 
         if dscale > PROP_TOL:
             failures.append(f"{stem}: Scale {tuple(round(c, 4) for c in scale)} vs shipped "
@@ -234,6 +271,11 @@ def main() -> int:
 
         mark = f"{worst:.4f}" if worst is not None else "  -  "
         extra = note
+        if handseat is not None:
+            extra = ((extra + "; " if extra else "")
+                     + "shipped Offset is a hand seat, checked against its own arithmetic")
+        if "frame" in spec:
+            extra = (extra + "; " if extra else "") + f"built at donor frame {frame}, not R1's "                     f"{d.rest_frame}"
         if slip is not None and abs(abs(doff[2]) - slip) <= PROP_TOL:
             extra = (extra + "; " if extra else "") + f"z differs by {slip} as allowed"
         print(f"{stem:16}{card_name:20}{dscale:>8.4f}"

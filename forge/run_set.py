@@ -36,6 +36,7 @@ from . import compare as CM
 from . import donor as D
 from . import emit_card as EC
 from . import emit_prop as EP
+from . import emit_slots as ES
 from . import measure as ME
 from . import md3 as MD3
 from . import motion as MO
@@ -116,11 +117,25 @@ def stage_emit(sf: SF.SetFile, out_dir: str) -> Tuple[Optional[str], List[str]]:
     models_dir = os.path.join(out_dir, sf.model_path.replace("/", os.sep))
     os.makedirs(models_dir, exist_ok=True)
     cards, props, cvars, skipped = [], [], [], []
+    builts = []
     for gid, gun in sf.guns.items():
         try:
-            built = CM.build_gun(sf, gun, models_dir)
+            builts.append((gid, gun, CM.build_gun(sf, gun, models_dir)))
         except (D.DonorError, SF.SetError, ValueError) as e:
             return f"{gid}: {e}", []
+    # THE FIRING LINE (emit_prop.firing_line): every bore on the reference gun's, when set.py names one
+    if sf.firing_line:
+        try:
+            report = EP.firing_line(sf.firing_line, [
+                (gid, b.prop, b.muzzle,
+                 next(iter(b.parts.carves.values())).magcenter if b.parts.carves else None)
+                for gid, _, b in builts])
+        except ValueError as e:
+            return str(e), []
+        with open(os.path.join(out_dir, "FIRING_LINE.txt"), "w", encoding="utf-8") as f:
+            f.write("\n".join(report) + "\n")
+        print("  3 " + report[0])
+    for gid, gun, built in builts:
         skipped.extend(f"{gid}: {s}" for s in built.skipped)
         cards.append(EC.write_card(gun, built.prop, built.muzzle, built.barrel, built.parts,
                                    sf.model_path, f"{gid}_wm.md3", sf.model_path,
@@ -271,6 +286,12 @@ def stage_copy(sf: SF.SetFile, out_dir: str, do_copy: bool) -> Optional[str]:
             shutil.copy2(os.path.join(root, f), os.path.join(target, f))
             n += 1
     print(f"  5 copy         {n} file(s) into {dest}")
+    # THE NUMBER KEYS, FROM THE SHEET. BD22's slots pk3 was hand-made and every slot
+    # disagreed with the cards; the bridge's SetupWeaponSlots rebuilds from the class's
+    # own slot anyway, so the file was decoration that looked authoritative.
+    slots = ES.write_slots_pack(dest, sf.set_id, sf.prefix.rstrip("_") or sf.set_id)
+    if slots:
+        print(f"  5 slots        {slots}")
     return None
 
 

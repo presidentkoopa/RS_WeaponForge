@@ -124,7 +124,8 @@ def stage_emit(sf: SF.SetFile, out_dir: str) -> Tuple[Optional[str], List[str]]:
         skipped.extend(f"{gid}: {s}" for s in built.skipped)
         cards.append(EC.write_card(gun, built.prop, built.muzzle, built.barrel, built.parts,
                                    sf.model_path, f"{gid}_wm.md3", sf.model_path,
-                                   f"{gid}.png", built.surface_names))
+                                   f"{gid}.png", built.surface_names,
+                                   ejection=built.ejection, support=built.support))
         props.append(built.prop.modeldef())
         cvars.append(built.prop.cvarinfo())
 

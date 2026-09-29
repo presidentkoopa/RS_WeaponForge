@@ -184,6 +184,8 @@ class BuiltGun:
     parts: EC.CardParts
     surface_names: Dict[int, str]
     skipped: List[str] = field(default_factory=list)
+    ejection: object = None
+    support: object = None
 
 
 def _part_surfaces(model, gun, part, rest_frame, t, where: str):
@@ -216,6 +218,11 @@ def build_gun(sf: SF.SetFile, gun, out_dir: str) -> BuiltGun:
                         f"{gun.id}_wm.md3", f"{gun.id}.png", sf.model_path,
                         f"{sf.cvar_prefix}_{gun.id}")
     muzzle, barrel = ME.measure_muzzle(model, gun.body, d.rest_frame, mesh.t)
+    action = [i for p in gun.parts.values() if p.role == "action" for i in p.surfaces]
+    feed = [i for p in gun.parts.values() if p.role == "feed" for i in p.surfaces]
+    ejection = ME.measure_ejection(model, gun.body, d.rest_frame, mesh.t,
+                                   action or None, feed or None)
+    support = ME.measure_support(model, gun.body, d.rest_frame, mesh.t, feed or None)
 
     parts = EC.CardParts()
     skipped: List[str] = []
@@ -275,8 +282,11 @@ def build_gun(sf: SF.SetFile, gun, out_dir: str) -> BuiltGun:
             if part.role != "trigger":
                 parts.grabs[pid] = ME.measure_grab(model, surfaces, d.rest_frame, mesh.t, pid,
                                                    axis=dof.axis, hinge=(dof.kind == "hinge"))
-    return BuiltGun(gun=gun, donor=d, mesh=mesh, prop=prop, muzzle=muzzle, barrel=barrel,
-                    parts=parts, surface_names=mesh.names, skipped=skipped)
+    out = BuiltGun(gun=gun, donor=d, mesh=mesh, prop=prop, muzzle=muzzle, barrel=barrel,
+                   parts=parts, surface_names=mesh.names, skipped=skipped)
+    out.ejection = ejection
+    out.support = support
+    return out
 
 
 # ----------------------------------------------------------------- comparing

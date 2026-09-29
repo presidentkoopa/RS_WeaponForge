@@ -21,10 +21,9 @@ dof because set.py gave it role feed, not because of what it is called.
 
 WHAT THIS DELIBERATELY DOES NOT WRITE
 
-  ejectport / ejectdir     The shipped cards carry them and say in their own
-                           comments that the point is an estimate. The guide
-                           gives no rule for it, so writing one would be
-                           inventing a measurement and dressing it as one.
+  (ejectport and ejectdir are written now: the SIDE is measured from the
+  action's own side, and the point and direction are written as the estimates
+  they are, in the shipped cards' own words.)
   role-specific grab       The guide's rule is that a forend or handle's grab is
                            the surface centroid. The shipped cards use something
                            else per role -- the floorplate for a magazine, the
@@ -67,7 +66,8 @@ class CardParts:
 
 def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
                parts: CardParts, model_path: str, mesh: str, skin_path: str, skin: str,
-               surface_names: Dict[int, str], notes: Optional[Sequence[str]] = None) -> str:
+               surface_names: Dict[int, str], notes: Optional[Sequence[str]] = None,
+               ejection=None, support=None) -> str:
     """The card text for one gun."""
     L: List[str] = []
     if notes:
@@ -90,6 +90,10 @@ def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
     L.append("")
     L.append(f"  muzzle    = {_triple(muzzle)}")
     L.append(f"  barrel    = {_triple(barrel, 0)}")
+    if ejection is not None:
+        L.append(f"  # {ejection.note}")
+        L.append(f"  ejectport = {_triple(ejection.port)}")
+        L.append(f"  ejectdir  = {_triple(ejection.direction, 4)}")
 
     # The loose magazine, when a part was carved.
     for pid, carve in parts.carves.items():
@@ -110,6 +114,19 @@ def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
             L.append(f'  {key:14s} = "{sounds[key]}"')
     L.append("end")
 
+    if support is not None:
+        L.append("")
+        L.append("# WHERE THE OFF HAND GOES. The height is measured -- the underside of the")
+        L.append("# body there. The length along the gun is an ESTIMATE: the middle of the")
+        L.append("# body's thick run forward of the magazine, since a handguard is thick and")
+        L.append("# a barrel is thin. Check it in the headset.")
+        L.append("part support")
+        L.append("  role    = support")
+        L.append("  subject = support")
+        L.append(f"  grab       = {_triple(support.grab)}")
+        L.append(f"  grabradius = {_trim(support.radius, 2)}")
+        L.append("end")
+
     for pid, part in gun.parts.items():
         L.append("")
         L.append(f"part {pid}")
@@ -117,6 +134,8 @@ def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
             L.append(f"  role    = {part.role}")
         if part.subject:
             L.append(f"  subject = {part.subject}")
+        if part.take:
+            L.append(f"  take    = {part.take}")
         for idx in part.surfaces:
             L.append(f"  surface = {surface_names.get(idx, idx)}")
         grab = parts.grabs.get(pid)
@@ -133,11 +152,14 @@ def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
                     L.append(f"    pivot    = {_triple(dof.pivot)}")
             else:
                 L.append(f"    distance = {_trim(dof.distance, 3)}")
-            # How far through the travel the part comes free. A behaviour default
-            # per role, not a measurement: a magazine is loose near the end of its
-            # run, an action stays on the gun.
+            # How far through the travel the hand lets go. A behaviour default per
+            # role, not a measurement, and the shipped cards' own values: a magazine
+            # is loose near the end of its run (0.9), an action a little later
+            # (0.95) since it stays on the gun.
             if dof.kind == "feed":
                 L.append("    detach   = 0.9")
+            elif part.role == "action":
+                L.append("    detach   = 0.95")
             L.append("  end")
         L.append("end")
 

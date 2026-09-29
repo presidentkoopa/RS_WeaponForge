@@ -9,6 +9,9 @@ weapon "WM_AssaultShotgun"
 
   muzzle    = 36.164, 0.023, -0.114
   barrel    = 1, 0, 0
+  # side measured (90 vertices on -y against 61 on +y), the side away from the action; the point and the direction are estimates
+  ejectport = -10.322, -2.078, 1.923
+  ejectdir  = -0.2914, -0.8742, 0.3885
 
   magmodel  = "models/vanilla_check" "assaultshotgun_magazine.md3"
   magskin   = "models/vanilla_check" "assaultshotgun.png"
@@ -16,14 +19,28 @@ weapon "WM_AssaultShotgun"
   magcenter = -10.056, 0.065, -9.462
 end
 
+# WHERE THE OFF HAND GOES. The height is measured -- the underside of the
+# body there. The length along the gun is an ESTIMATE: the middle of the
+# body's thick run forward of the magazine, since a handguard is thick and
+# a barrel is thin. Check it in the headset.
+part support
+  role    = support
+  subject = support
+  grab       = 12.834, 0.000, -4.031
+  grabradius = 3.0
+end
+
 part charginghandle
   role    = action
   subject = slide
   surface = charginghandle
+  grab       = -13.754, -0.654, 0.098
+  grabradius = 3.0
   dof
     kind     = slide
     axis     = -1.000, -0.000, -0.001
     distance = 10.003
+    detach   = 0.95
   end
 end
 
@@ -42,10 +59,13 @@ part magazine
   role    = feed
   subject = magazine
   surface = magazine
+  grab       = -10.109, 0.047, -14.029
+  grabradius = 3.0
   dof
     kind     = slide
     axis     = 0.000, 0.000, -1.000
     distance = 12.156
+    detach   = 0.9
   end
 end
 
@@ -58,6 +78,9 @@ weapon "WM_SMG"
 
   muzzle    = 25.359, -0.156, 1.347
   barrel    = 1, 0, 0
+  # side measured (592 vertices on -y against 1179 on +y), the side away from the action; the point and the direction are estimates
+  ejectport = 1.783, -3.031, 4.566
+  ejectdir  = -0.2914, -0.8742, 0.3885
 
   magmodel  = "models/vanilla_check" "smg_magazine.md3"
   magskin   = "models/vanilla_check" "smg.png"
@@ -65,15 +88,29 @@ weapon "WM_SMG"
   magcenter = 4.006, -0.182, -8.224
 end
 
+# WHERE THE OFF HAND GOES. The height is measured -- the underside of the
+# body there. The length along the gun is an ESTIMATE: the middle of the
+# body's thick run forward of the magazine, since a handguard is thick and
+# a barrel is thin. Check it in the headset.
+part support
+  role    = support
+  subject = support
+  grab       = 11.614, 0.000, -4.469
+  grabradius = 3.0
+end
+
 part charginghandle
   role    = action
   subject = slide
   surface = charginghandle
+  grab       = 20.156, 2.812, 3.652
+  grabradius = 2.5
   dof
     kind     = hinge
     axis     = 0.000, 0.000, 1.000
     degrees  = 89.99
     pivot    = 9.910, -1.181, 0.000
+    detach   = 0.95
   end
 end
 
@@ -91,10 +128,13 @@ part magazine
   role    = feed
   subject = magazine
   surface = magazine
+  grab       = 0.942, -0.156, -22.235
+  grabradius = 3.0
   dof
     kind     = slide
     axis     = -0.299, 0.000, -0.954
     distance = 26.162
+    detach   = 0.9
   end
 end
 
@@ -107,6 +147,9 @@ weapon "WM_Rifle"
 
   muzzle    = 54.241, 0.134, 0.203
   barrel    = 1, 0, 0
+  # side measured (435 vertices on -y against 504 on +y), the side away from the action; the point and the direction are estimates
+  ejectport = 2.662, -2.234, 2.261
+  ejectdir  = -0.2914, -0.8742, 0.3885
 
   magmodel  = "models/vanilla_check" "rifle_magazine.md3"
   magskin   = "models/vanilla_check" "rifle.png"
@@ -114,15 +157,29 @@ weapon "WM_Rifle"
   magcenter = 1.343, 0.069, -8.068
 end
 
+# WHERE THE OFF HAND GOES. The height is measured -- the underside of the
+# body there. The length along the gun is an ESTIMATE: the middle of the
+# body's thick run forward of the magazine, since a handguard is thick and
+# a barrel is thin. Check it in the headset.
+part support
+  role    = support
+  subject = support
+  grab       = 8.793, 0.000, -3.594
+  grabradius = 3.0
+end
+
 part charginghandle
   role    = action
   subject = slide
   surface = charginghandle
   surface = charginghandle2
+  grab       = -16.481, 0.969, 2.587
+  grabradius = 3.0
   dof
     kind     = slide
     axis     = -1.000, -0.001, -0.000
     distance = 7.117
+    detach   = 0.95
   end
 end
 
@@ -141,10 +198,13 @@ part magazine
   role    = feed
   subject = magazine
   surface = magazine
+  grab       = 1.541, 0.080, -21.664
+  grabradius = 3.0
   dof
     kind     = slide
     axis     = -0.025, 0.000, -1.000
     distance = 22.467
+    detach   = 0.9
   end
 end
 
@@ -157,6 +217,20 @@ weapon "WM_RPG"
 
   muzzle    = 65.789, 3.235, -1.433
   barrel    = 1, 0, 0
+  # side measured (62 vertices on -y against 685 on +y), the emptier wall of the receiver; the point and the direction are estimates
+  ejectport = -5.203, -2.156, -2.027
+  ejectdir  = -0.2914, -0.8742, 0.3885
+end
+
+# WHERE THE OFF HAND GOES. The height is measured -- the underside of the
+# body there. The length along the gun is an ESTIMATE: the middle of the
+# body's thick run forward of the magazine, since a handguard is thick and
+# a barrel is thin. Check it in the headset.
+part support
+  role    = support
+  subject = support
+  grab       = 22.255, 0.000, -23.172
+  grabradius = 3.0
 end
 
 part trigger
@@ -184,6 +258,9 @@ weapon "WM_PlasmaRifle"
 
   muzzle    = 39.278, 0.537, 0.134
   barrel    = 1, 0, 0
+  # side measured (949 vertices on -y against 1004 on +y), the emptier wall of the receiver; the point and the direction are estimates
+  ejectport = -6.831, -9.672, -2.056
+  ejectdir  = -0.2914, -0.8742, 0.3885
 
   magmodel  = "models/vanilla_check" "plasmarifle_cell.md3"
   magskin   = "models/vanilla_check" "plasmarifle.png"
@@ -191,14 +268,28 @@ weapon "WM_PlasmaRifle"
   magcenter = -12.701, 0.469, -13.239
 end
 
+# WHERE THE OFF HAND GOES. The height is measured -- the underside of the
+# body there. The length along the gun is an ESTIMATE: the middle of the
+# body's thick run forward of the magazine, since a handguard is thick and
+# a barrel is thin. Check it in the headset.
+part support
+  role    = support
+  subject = support
+  grab       = 16.500, 0.000, -10.438
+  grabradius = 3.0
+end
+
 part cell
   role    = feed
   subject = magazine
   surface = cell
+  grab       = -13.130, 0.270, -18.972
+  grabradius = 3.0
   dof
     kind     = slide
     axis     = 0.194, 0.000, -0.981
     distance = 12.326
+    detach   = 0.9
   end
 end
 
@@ -222,6 +313,20 @@ weapon "WM_BFGHeavy"
 
   muzzle    = 57.877, 0.078, 8.301
   barrel    = 1, 0, 0
+  # side measured (1095 vertices on -y against 1035 on +y), the emptier wall of the receiver; the point and the direction are estimates
+  ejectport = 1.296, 13.203, -1.508
+  ejectdir  = -0.2914, 0.8742, 0.3885
+end
+
+# WHERE THE OFF HAND GOES. The height is measured -- the underside of the
+# body there. The length along the gun is an ESTIMATE: the middle of the
+# body's thick run forward of the magazine, since a handguard is thick and
+# a barrel is thin. Check it in the headset.
+part support
+  role    = support
+  subject = support
+  grab       = 0.945, 0.000, -12.594
+  grabradius = 3.0
 end
 
 part trigger
@@ -244,6 +349,20 @@ weapon "WM_MachineGun"
 
   muzzle    = 43.953, -0.241, 3.983
   barrel    = 1, 0, 0
+  # side measured (1668 vertices on -y against 2315 on +y), the emptier wall of the receiver; the point and the direction are estimates
+  ejectport = -5.044, -5.828, 2.058
+  ejectdir  = -0.2914, -0.8742, 0.3885
+end
+
+# WHERE THE OFF HAND GOES. The height is measured -- the underside of the
+# body there. The length along the gun is an ESTIMATE: the middle of the
+# body's thick run forward of the magazine, since a handguard is thick and
+# a barrel is thin. Check it in the headset.
+part support
+  role    = support
+  subject = support
+  grab       = 43.953, 0.000, 2.656
+  grabradius = 3.0
 end
 
 part trigger
@@ -259,6 +378,8 @@ end
 part launchertube
   subject = foregrip
   surface = launchertube
+  grab       = 39.143, -0.310, -6.596
+  grabradius = 3.0
   dof
     kind     = slide
     axis     = 1.000, -0.000, 0.002
@@ -268,6 +389,8 @@ end
 
 part launchertrigger
   surface = launchertrigger
+  grab       = -1.931, -0.317, -9.429
+  grabradius = 2.0
   dof
     kind     = hinge
     axis     = 0.000, 1.000, -0.000
@@ -278,6 +401,8 @@ end
 
 part launcherlatch
   surface = launcherlatch
+  grab       = 0.878, -0.322, -9.267
+  grabradius = 2.0
   dof
     kind     = hinge
     axis     = 0.000, -1.000, 0.000
@@ -301,6 +426,20 @@ weapon "WM_Chaingun"
 
   muzzle    = -2.203, -0.290, -0.106
   barrel    = 1, 0, 0
+  # side measured (258 vertices on -y against 274 on +y), the emptier wall of the receiver; the point and the direction are estimates
+  ejectport = -15.380, -9.578, -5.873
+  ejectdir  = -0.2914, -0.8742, 0.3885
+end
+
+# WHERE THE OFF HAND GOES. The height is measured -- the underside of the
+# body there. The length along the gun is an ESTIMATE: the middle of the
+# body's thick run forward of the magazine, since a handguard is thick and
+# a barrel is thin. Check it in the headset.
+part support
+  role    = support
+  subject = support
+  grab       = -17.666, 0.000, -10.766
+  grabradius = 3.0
 end
 
 part trigger
@@ -316,6 +455,8 @@ end
 
 part barrels
   surface = barrels
+  grab       = 53.882, -0.206, 0.644
+  grabradius = 3.0
   dof
     kind     = hinge
     axis     = 1.000, 0.000, -0.000
@@ -333,11 +474,25 @@ weapon "WM_Railgun"
 
   muzzle    = 86.219, -0.113, -2.164
   barrel    = 1, 0, 0
+  # side measured (463 vertices on -y against 420 on +y), the emptier wall of the receiver; the point and the direction are estimates
+  ejectport = 11.621, 4.516, -4.413
+  ejectdir  = -0.2914, 0.8742, 0.3885
 
   magmodel  = "models/vanilla_check" "railgun_magazine.md3"
   magskin   = "models/vanilla_check" "railgun.png"
   magscale  = 0.34
   magcenter = -2.481, -0.098, -10.079
+end
+
+# WHERE THE OFF HAND GOES. The height is measured -- the underside of the
+# body there. The length along the gun is an ESTIMATE: the middle of the
+# body's thick run forward of the magazine, since a handguard is thick and
+# a barrel is thin. Check it in the headset.
+part support
+  role    = support
+  subject = support
+  grab       = 7.336, 0.000, -11.797
+  grabradius = 3.0
 end
 
 part trigger
@@ -355,10 +510,13 @@ part magazine
   role    = feed
   subject = magazine
   surface = magazine
+  grab       = 0.582, -0.099, -15.969
+  grabradius = 3.0
   dof
     kind     = slide
     axis     = -0.000, 0.000, -1.000
     distance = 10.031
+    detach   = 0.9
   end
 end
 
@@ -371,6 +529,20 @@ weapon "WM_Unmaker"
 
   muzzle    = 38.054, 0.012, 3.813
   barrel    = 1, 0, 0
+  # side measured (599 vertices on -y against 655 on +y), the emptier wall of the receiver; the point and the direction are estimates
+  ejectport = 0.070, -17.656, -6.202
+  ejectdir  = -0.2914, -0.8742, 0.3885
+end
+
+# WHERE THE OFF HAND GOES. The height is measured -- the underside of the
+# body there. The length along the gun is an ESTIMATE: the middle of the
+# body's thick run forward of the magazine, since a handguard is thick and
+# a barrel is thin. Check it in the headset.
+part support
+  role    = support
+  subject = support
+  grab       = 13.664, 0.000, -10.016
+  grabradius = 3.0
 end
 
 part skull
@@ -389,6 +561,20 @@ weapon "WM_Flamethrower"
 
   muzzle    = 55.701, 3.494, -1.070
   barrel    = 1, 0, 0
+  # side measured (1458 vertices on -y against 1231 on +y), the emptier wall of the receiver; the point and the direction are estimates
+  ejectport = 3.781, 6.234, -1.630
+  ejectdir  = -0.2914, 0.8742, 0.3885
+end
+
+# WHERE THE OFF HAND GOES. The height is measured -- the underside of the
+# body there. The length along the gun is an ESTIMATE: the middle of the
+# body's thick run forward of the magazine, since a handguard is thick and
+# a barrel is thin. Check it in the headset.
+part support
+  role    = support
+  subject = support
+  grab       = -10.504, 0.000, -13.766
+  grabradius = 3.0
 end
 
 part trigger
@@ -411,11 +597,27 @@ weapon "RS_VRGrenade"
 
   muzzle    = 4.602, -0.300, -4.616
   barrel    = 1, 0, 0
+  # side measured (22 vertices on -y against 22 on +y), the emptier wall of the receiver; the point and the direction are estimates
+  ejectport = 0.862, 3.641, -1.661
+  ejectdir  = -0.2914, 0.8742, 0.3885
+end
+
+# WHERE THE OFF HAND GOES. The height is measured -- the underside of the
+# body there. The length along the gun is an ESTIMATE: the middle of the
+# body's thick run forward of the magazine, since a handguard is thick and
+# a barrel is thin. Check it in the headset.
+part support
+  role    = support
+  subject = support
+  grab       = 0.464, 0.000, -11.781
+  grabradius = 3.0
 end
 
 part pin
   subject = pin
   surface = pin
+  grab       = -0.685, 4.149, 1.078
+  grabradius = 2.5
   dof
     kind     = slide
     axis     = -0.000, 1.000, 0.011
@@ -426,6 +628,8 @@ end
 part lever
   subject = lever
   surface = lever
+  grab       = 3.727, -0.301, 3.564
+  grabradius = 3.0
   dof
     kind     = hinge
     axis     = -0.000, 1.000, 0.000

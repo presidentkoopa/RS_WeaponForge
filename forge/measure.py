@@ -544,6 +544,136 @@ def measure_grab(model, part_surfaces: Sequence[int], rest: int, t: Sequence[flo
                 handseat=(float(c[0]), float(c[1]), float(cloud[:, 2].min())))
 
 
+@dataclass
+class Ejection:
+    port: Tuple[float, float, float]
+    direction: Tuple[float, float, float]
+    side: int                      # -1 or +1: which side of the gun the brass leaves
+    counts: Tuple[int, int] = (0, 0)
+    note: str = ""
+
+
+# The shape of an ejection: mostly out the side, a little up, a little back. These
+# are the proportions the shipped cards use, and they are an ESTIMATE in those
+# cards' own words -- brass leaving a port has a direction nothing in a static
+# mesh records.
+EJECT_SHAPE = (-0.3, 0.9, 0.4)
+
+
+def measure_ejection(model, body_index: int, rest: int, t: Sequence[float],
+                     action_surfaces: Optional[Sequence[int]] = None,
+                     feed_surfaces: Optional[Sequence[int]] = None) -> Ejection:
+    """Where the brass leaves, and which way.
+
+    THE SIDE IS MEASURED. A charging handle sits on one side of the receiver and
+    the port on the other -- the shipped SMG card says so and counts the vertices
+    to prove it: "299 on -y against 461 on +y, where the charging handle is: the
+    port is on -y, the side away from the handle". With an action part named, its
+    own side answers the question directly; without one, the emptier wall of the
+    receiver does, since a port is a hole and a hole has fewer vertices around it.
+
+    THE POINT AND THE DIRECTION ARE ESTIMATES, as they are in every shipped card
+    that carries them. The point is put on the receiver wall on the port side, at
+    the height and along the length of the action; the direction is out of that
+    side with a little up and back. Nothing in a mesh at rest records where brass
+    actually leaves, so this is a considered placement and is written down as one.
+    """
+    body = _part_cloud(model, [body_index], rest) + np.asarray(t, dtype=float)
+    if action_surfaces:
+        act = _part_cloud(model, action_surfaces, rest) + np.asarray(t, dtype=float)
+        # THE PORT IS AT THE BREECH, not at the handle. A charging handle can sit a
+        # long way forward of the chamber -- the SMG's reaches x 20 while its card
+        # puts the port at 0 -- so the length along the gun comes from the FEED: a
+        # round comes up out of the magazine into the chamber and the empty leaves
+        # beside it. The handle only answers which SIDE.
+        z0, z1 = float(act[:, 2].min()) - 2.0, float(act[:, 2].max()) + 2.0
+        side = -1 if float(act[:, 1].mean()) > 0 else 1
+        why = "the side away from the action"
+        if feed_surfaces:
+            fed = _part_cloud(model, feed_surfaces, rest) + np.asarray(t, dtype=float)
+            mid = float(fed[:, 0].mean())
+            half = max(2.0, float(fed[:, 0].max() - fed[:, 0].min()) / 2.0)
+            x0, x1 = mid - half, mid + half
+        else:
+            x0, x1 = float(act[:, 0].min()), float(act[:, 0].max())
+    else:
+        lo, hi = float(body[:, 0].min()), float(body[:, 0].max())
+        x0, x1 = lo + (hi - lo) / 3.0, hi - (hi - lo) / 3.0
+        zl, zh = float(body[:, 2].min()), float(body[:, 2].max())
+        z0, z1 = zl + (zh - zl) / 4.0, zh - (zh - zl) / 4.0
+        side = 0
+        why = "the emptier wall of the receiver"
+    band = body[(body[:, 0] >= x0) & (body[:, 0] <= x1)
+                & (body[:, 2] >= z0) & (body[:, 2] <= z1)]
+    if not len(band):
+        band = body
+    neg = int((band[:, 1] < 0).sum())
+    pos = int((band[:, 1] > 0).sum())
+    if side == 0:
+        side = -1 if neg < pos else 1
+    wall = band[band[:, 1] < 0] if side < 0 else band[band[:, 1] > 0]
+    if not len(wall):
+        wall = band
+    y = float(wall[:, 1].min()) if side < 0 else float(wall[:, 1].max())
+    port = (float(wall[:, 0].mean()), y, float(wall[:, 2].mean()))
+    d = np.array([EJECT_SHAPE[0], side * EJECT_SHAPE[1], EJECT_SHAPE[2]], dtype=float)
+    d = d / np.linalg.norm(d)
+    return Ejection(port=port, direction=tuple(d), side=side, counts=(neg, pos),
+                    note=f"side measured ({neg} vertices on -y against {pos} on +y), "
+                         f"{why}; the point and the direction are estimates")
+
+
+def measure_support(model, body_index: int, rest: int, t: Sequence[float],
+                    feed_surfaces: Optional[Sequence[int]] = None) -> Grab:
+    """Where the off hand goes: under the handguard.
+
+    THE HEIGHT IS MEASURED -- the underside of the body at that point, which is
+    what a palm rests against, and it lands within half a unit of the shipped
+    cards on three of the four that carry one.
+
+    THE LENGTH ALONG THE GUN IS AN ESTIMATE, and the shipped cards say the same of
+    theirs: "ESTIMATE: where the other hand goes", "ESTIMATE for the placement
+    page". Three derivations were tried against those cards -- the middle of the
+    flat underside, the midpoint from the magazine to the muzzle, and the middle
+    of the thick part of the body -- and each fits some guns and misses others by
+    ten units, because the shipped numbers were placed per gun by eye. The one
+    below is the middle of the body's THICK run forward of the magazine: a
+    handguard is thick and a barrel is thin, so that is the stretch a hand can
+    actually hold. On the assault shotgun it lands 0.5 off the shipped value.
+
+    This is the number to check in the headset. It is written as an estimate
+    rather than left out, because an off hand with nowhere to go is worse than one
+    with a considered place to start.
+    """
+    body = _part_cloud(model, [body_index], rest) + np.asarray(t, dtype=float)
+    x = body[:, 0]
+    lo, hi = float(x.min()), float(x.max())
+    bins = 40
+    edges = np.linspace(lo, hi, bins + 1)
+    area = np.zeros(bins)
+    for i in range(bins):
+        sel = body[(x >= edges[i]) & (x < edges[i + 1])]
+        if len(sel) >= 4:
+            area[i] = float((sel[:, 1].max() - sel[:, 1].min())
+                            * (sel[:, 2].max() - sel[:, 2].min()))
+    thick = area.max() or 1.0
+    front = lo
+    if feed_surfaces:
+        fed = _part_cloud(model, feed_surfaces, rest) + np.asarray(t, dtype=float)
+        front = float(fed[:, 0].max())
+    start = int(np.searchsorted(edges, front))
+    end = start
+    for i in range(start, bins):
+        if area[i] >= 0.5 * thick:
+            end = i
+    x1 = float(edges[min(end + 1, bins)])
+    xs = (front + x1) / 2.0
+    near = body[(body[:, 0] >= xs - 2.0) & (body[:, 0] <= xs + 2.0)]
+    z = float(near[:, 2].min()) if len(near) else float(body[:, 2].min())
+    return Grab(part="support", grab=(xs, 0.0, z), radius=3.0,
+                handseat=(xs, 0.0, z))
+
+
 def carve_part(model, part_surfaces: Sequence[int], rest: int, t: Sequence[float],
                feed_axis: Sequence[float], out: str, mag_scale: float,
                part_id: str = "", skin: Optional[str] = None) -> Carve:

@@ -51,7 +51,7 @@ GUN_KEYS = {
     "capacity", "magfamily", "sounds", "body", "parts", "hidden", "fixed",
     "rest_frame", "notes", "firesfrom",
 }
-PART_KEYS = {"surfaces", "role", "subject", "carve", "notes", "island"}
+PART_KEYS = {"surfaces", "role", "subject", "carve", "notes", "island", "take"}
 SET_KEYS = {
     "SET_ID", "PREFIX", "DONOR_ROOT", "PARENT_MOD", "PACK", "MODEL_PATH",
     "CVAR_PREFIX", "PARENT_RULINGS", "GUNS", "NOTES",
@@ -82,6 +82,10 @@ class Part:
     role: str = ""
     subject: str = ""
     carve: bool = False
+    # Whether a hand may pull this part off the gun. A DECISION, not a
+    # measurement: the RPG's drum comes out by its button and goes back in by the
+    # hand carrying one, so its shipped card says take = no.
+    take: str = ""
     notes: str = ""
     # An island inside one donor surface, when a part shares a surface with the
     # body: {"of": "#5", "verts": 415}. The vertex count is checked against the
@@ -240,6 +244,7 @@ def load_set(path: str) -> SetFile:
                 surfaces=[_surface_index(s, f"{pwhere}") for s in surfaces],
                 role=praw.get("role", ""), subject=praw.get("subject", ""),
                 carve=bool(praw.get("carve", False)), notes=praw.get("notes", ""),
+                take=str(praw.get("take", "")),
                 island=island)
 
         body = raw.get("body")

@@ -54,7 +54,7 @@ GUNS = {
         "body":      "#4",
         "parts": {
             "bolt2": {"surfaces": ["#1"], "role": "action", "subject": "slide"},
-            "magazine": {"surfaces": ["#3"], "role": "feed", "subject": "magazine", "carve": True},
+            "magazine": {"surfaces": ["#3"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
         },
         "fixed":     ["#0", "#2", "#5"],
     },
@@ -130,7 +130,7 @@ GUNS = {
         "body":      "#7",
         "parts": {
             "bolt": {"surfaces": ["#0"], "role": "action", "subject": "slide"},
-            "magazine": {"surfaces": ["#10"], "role": "feed", "subject": "magazine", "carve": True},
+            "magazine": {"surfaces": ["#10"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
         },
         "fixed":     ["#1", "#2", "#3", "#4", "#5", "#6", "#8", "#9"],
     },
@@ -146,7 +146,7 @@ GUNS = {
         "magfamily": "bd_40mm",
         "body":      "#0",
         "parts": {
-            "magazine": {"surfaces": ["#4"], "role": "feed", "subject": "magazine", "carve": True},
+            "magazine": {"surfaces": ["#4"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
         },
         "fixed":     ["#1", "#2"],
         "hidden":    ["#3"],
@@ -260,7 +260,7 @@ GUNS = {
         "body":      "#3",
         "parts": {
             "bolt": {"surfaces": ["#2"], "role": "action", "subject": "slide"},
-            "magazine": {"surfaces": ["#6"], "role": "feed", "subject": "magazine", "carve": True},
+            "magazine": {"surfaces": ["#6"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
         },
         "fixed":     ["#1", "#4"],
         "hidden":    ["#0", "#5"],
@@ -310,7 +310,7 @@ GUNS = {
         "sounds":    {"magoutsound": "bd22/smg/magout", "maginsound": "bd22/smg/magin"},
         "body":      "#1",
         "parts": {
-            "magazine": {"surfaces": ["#3"], "role": "feed", "subject": "magazine", "carve": True},
+            "magazine": {"surfaces": ["#3"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
             "trigger": {"surfaces": ["#2"], "role": "trigger"},
         },
         "fixed":     ["#0"],
@@ -388,7 +388,7 @@ GUNS = {
         "magfamily": "bd_762",
         "body":      "#1",
         "parts": {
-            "magazine": {"surfaces": ["#2"], "role": "feed", "subject": "magazine", "carve": True},
+            "magazine": {"surfaces": ["#2"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
             "forend": {"surfaces": ["#0"], "subject": "forend"},
         },
         "fixed":     ["#3", "#4", "#5"],
@@ -405,7 +405,7 @@ GUNS = {
         "magfamily": "bd_cell",
         "body":      "#3",
         "parts": {
-            "cell": {"surfaces": ["#1"], "role": "feed", "subject": "magazine", "carve": True},
+            "cell": {"surfaces": ["#1"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
         },
         "fixed":     ["#2"],
         "hidden":    ["#0"],
@@ -423,7 +423,7 @@ GUNS = {
         "body":      "#0",
         "parts": {
             "bolt": {"surfaces": ["#1"], "role": "action", "subject": "slide"},
-            "drum": {"surfaces": ["#5"], "role": "feed", "subject": "magazine", "carve": True},
+            "drum": {"surfaces": ["#5"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
         },
         "fixed":     ["#2", "#3", "#4", "#6", "#7", "#8", "#9", "#10", "#11", "#12"],
     },
@@ -440,7 +440,7 @@ GUNS = {
         "body":      "#2",
         "parts": {
             "bolt": {"surfaces": ["#0"], "role": "action", "subject": "slide"},
-            "magazine": {"surfaces": ["#4"], "role": "feed", "subject": "magazine", "carve": True},
+            "magazine": {"surfaces": ["#4"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
         },
         "fixed":     ["#3"],
         "hidden":    ["#1"],
@@ -457,11 +457,18 @@ GUNS = {
         "magfamily": "bd_762",
         "sounds":    {"magoutsound": "bd22/rifle/magout", "maginsound": "bd22/rifle/magin", "rackapexsound": "bd22/rifle/rackback", "rackresetsound": "bd22/rifle/rackfwd"},
         "body":      "#4",
+        # ITS ACTION IS BOTH SURFACES, and the shipped card had this wrong. It
+        # drove #1 alone -- 79 vertices the artist named `ejectport`, the dust
+        # cover -- because that surface travels further (10.44) than the handle
+        # does (7.12), and the old pipeline picked the action by travel. So racking
+        # the rifle took hold of the cover. #0 `liikkuvat` is the handle; both are
+        # named here and the measurement follows the larger, as Vanilla's own
+        # rifle card does.
         "parts": {
-            "bolt2": {"surfaces": ["#1"], "role": "action", "subject": "slide"},
-            "magazine": {"surfaces": ["#3"], "role": "feed", "subject": "magazine", "carve": True},
+            "charginghandle": {"surfaces": ["#0", "#1"], "role": "action", "subject": "slide"},
+            "magazine": {"surfaces": ["#3"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
         },
-        "fixed":     ["#0", "#5"],
+        "fixed":     ["#5"],
         "hidden":    ["#2"],
     },
     "unmaker": {
@@ -476,7 +483,7 @@ GUNS = {
         "magfamily": "bd_rune",
         "body":      "#0",
         "parts": {
-            "skull": {"surfaces": ["#1", "#2"], "role": "feed", "subject": "magazine", "carve": True},
+            "skull": {"surfaces": ["#1", "#2"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
         },
     },
 }

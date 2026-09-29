@@ -230,6 +230,87 @@ def _active_span(per_frame: Dict[int, Tuple[float, float, float]], frame: int):
     return (lo, hi)
 
 
+INSERT_FRACTION = 0.25     # how far out a frame must be to be part of the insert leg
+
+
+def measure_insert(model, body_index: int, rest: int, part_id: str,
+                   part_surfaces: Sequence[int], t: Sequence[float],
+                   fraction: float = INSERT_FRACTION) -> DOF:
+    """The axis a magazine goes IN along, taken from the insert frames.
+
+    A donor's reload animation runs inward: the magazine starts out of shot and
+    travels to its seat, so the frames furthest from rest are it flying in from
+    off-screen and the frames nearest rest are it seating. Neither end is the
+    insert. The far end is the author's entrance -- the rifle's magazine swings
+    through (-0.041, +0.559, -0.828) out there, which is an arc, not a feed --
+    and the last fraction of a unit before the seat is dominated by rounding, so
+    its direction wanders.
+
+    So the axis is read from the frame NEAREST the seat that is still at least a
+    quarter of the way out. That is the straight leg into the well, and it is
+    what the shipped cards carry: the rifle's (-0.025, 0, -1) is its frame 13,
+    the grenade pin's (0, 1, 0) its frame 6.
+
+    Measuring at greatest travel instead is how the grenade pin came out as 37.25
+    units: the animation throws the pin away, and the throw is not the pull.
+    """
+    frames = usable_frames(model)
+    fits = _body_fits(model, body_index, rest, frames)
+    rest_cloud = _part_cloud(model, part_surfaces, rest)
+    rest_c = rest_cloud.mean(axis=0)
+
+    samples = []          # (travel, frame, direction)
+    for f in range(frames):
+        if f == rest:
+            continue
+        cloud = _part_cloud(model, part_surfaces, f)
+        if len(cloud) != len(rest_cloud):
+            continue
+        if np.max(cloud.max(axis=0) - cloud.min(axis=0)) < 0.001:
+            continue
+        Rb, tb = fits[f]
+        corrected = cloud @ Rb.T + tb
+        Rs, _ts, _rms, _worst = rigid_fit(corrected, rest_cloud)
+        deg, _axis = rotation_angle_axis(Rs)
+        if deg >= PURE_TRANSLATION_DEG:
+            continue
+        disp = corrected.mean(axis=0) - rest_c
+        travel = float(np.linalg.norm(disp))
+        if travel > 0.05:
+            samples.append((travel, f, disp / travel))
+
+    dof = DOF(part=part_id, kind="feed")
+    if not samples:
+        dof.notes.append("no frame moves this part in a straight line")
+        return dof
+    furthest = max(s[0] for s in samples)
+    leg = [s for s in samples if s[0] >= fraction * furthest]
+    travel, frame, direction = min(leg or samples, key=lambda s: s[0])
+    dof.axis = tuple(direction)
+    dof.frame = frame
+    dof.distance = travel
+    dof.span = (min(f for _tr, f, _d in leg or samples),
+                max(f for _tr, f, _d in leg or samples))
+    dof.notes.append(f"axis from frame {frame}, {travel:.2f} out of {furthest:.2f}")
+    return dof
+
+
+def extent_along(model, part_surfaces: Sequence[int], rest: int,
+                 axis: Sequence[float]) -> float:
+    """How long the part is along an axis, at rest.
+
+    Measured on the part itself rather than on the written carve: the carve is
+    quantised to 1/64 on the way out and turned, which adds a hundredth that the
+    part does not have.
+    """
+    a = np.asarray(axis, dtype=float)
+    n = np.linalg.norm(a)
+    if n < 1e-9:
+        return 0.0
+    p = _part_cloud(model, part_surfaces, rest) @ (a / n)
+    return float(p.max() - p.min())
+
+
 def measure_feed(model, body_index: int, rest: int, part_id: str,
                  part_surfaces: Sequence[int], t: Sequence[float], carve: "Carve") -> DOF:
     """A magazine's feed: the axis it travels on, and its OWN length along that
@@ -241,11 +322,13 @@ def measure_feed(model, body_index: int, rest: int, part_id: str,
     measured on the carve, so the number and the object it drives can never
     disagree.
     """
-    dof = measure_dof(model, body_index, rest, part_id, part_surfaces, t, kind="slide")
-    dof.kind = "feed"
-    dof.notes.append(f"travel in the animation was {dof.distance:.2f}; "
-                     f"the distance is the carve's own extent")
-    dof.distance = carve.extent
+    dof = measure_insert(model, body_index, rest, part_id, part_surfaces, t)
+    if max(abs(c) for c in dof.axis) < 1e-9:
+        return dof
+    travel = dof.distance
+    dof.distance = extent_along(model, part_surfaces, rest, dof.axis)
+    dof.notes.append(f"travelled {travel:.2f} on that frame; the distance is the part's own "
+                     f"length along the axis, which is how far it must move to clear the well")
     return dof
 
 

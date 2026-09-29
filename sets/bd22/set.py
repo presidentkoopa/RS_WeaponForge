@@ -369,9 +369,17 @@ GUNS = {
         "capacity":  100,
         "magfamily": "bd_762",
         "parts": {
-            "bolt4": {"surfaces": ["#3"], "role": "action", "subject": "slide"},
+            # ITS TRIGGER MOVES and the shipped card never drove it: a slide of 0.59 along -X.
+            "trigger": {"surfaces": ["#4"], "role": "trigger"},
+            # WHAT RACKS HERE IS THE LAUNCHER, not the gun. #3 is the underslung
+            # launcher's tube, sliding 9.50 forward; the M249's own bolt is not a
+            # separate surface. Named for what it is, as Vanilla's machinegun card
+            # names it, with the launcher's own trigger and latch beside it.
+            "launchertube":    {"surfaces": ["#3"], "role": "action", "subject": "foregrip"},
+            "launchertrigger": {"surfaces": ["#2"]},
+            "launcherlatch":   {"surfaces": ["#0"]},
         },
-        "fixed":     ["#0", "#1", "#2", "#4"],
+        "fixed":     ["#1"],
         # ITS MAGAZINE IS NOT DECLARED: in the shipped mesh that part is an island
         # cut by hand inside this gun's body surface, and no box reproduces
         # the cut. The gun builds whole without it.
@@ -422,10 +430,14 @@ GUNS = {
         "magfamily": "bd_rocket",
         "body":      "#0",
         "parts": {
-            "bolt": {"surfaces": ["#1"], "role": "action", "subject": "slide"},
+            # ITS TRIGGER MOVES and the shipped card never drove it: a slide of 1.39 along -X.
+            "trigger": {"surfaces": ["#4"], "role": "trigger"},
+            # NO ACTION. The shipped card drove #1 as one, and #1 travels 0.01
+            # units -- it does not move. Nothing on this launcher is racked; it is
+            # loaded through its drum.
             "drum": {"surfaces": ["#5"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
         },
-        "fixed":     ["#2", "#3", "#4", "#6", "#7", "#8", "#9", "#10", "#11", "#12"],
+        "fixed":     ["#1", "#10", "#11", "#12", "#2", "#3", "#6", "#7", "#8", "#9"],
     },
     "railgun": {
         "class":     "BD_Railgun",
@@ -439,10 +451,16 @@ GUNS = {
         "magfamily": "bd_rail",
         "body":      "#2",
         "parts": {
-            "bolt": {"surfaces": ["#0"], "role": "action", "subject": "slide"},
+            # ITS TRIGGER MOVES and the shipped card never drove it: a hinge of 22.85 degrees about +Y.
+            "trigger": {"surfaces": ["#3"], "role": "trigger"},
+            # NO ACTION EITHER. The shipped card drove #0, which is the Scope --
+            # it and its glass drop 5.75 and 6.25 when the gun zooms. That is a
+            # sight moving, not a handle being pulled, and #0 also fails to fit as
+            # one rigid body (0.633 RMS), so it would need splitting before it
+            # could be driven at all.
             "magazine": {"surfaces": ["#4"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
         },
-        "fixed":     ["#3"],
+        "fixed":     ["#0"],
         "hidden":    ["#1"],
     },
     "rifle": {

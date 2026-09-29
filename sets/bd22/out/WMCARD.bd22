@@ -742,10 +742,20 @@ part support
   grabradius = 3.0
 end
 
-part bolt4
+part trigger
+  role    = trigger
+  surface = trigger
+  dof
+    kind     = slide
+    axis     = -1.000, 0.000, 0.000
+    distance = 0.594
+  end
+end
+
+part launchertube
   role    = action
-  subject = slide
-  surface = bolt4
+  subject = foregrip
+  surface = launchertube
   grab       = 39.128, -0.310, -6.667
   grabradius = 3.0
   dof
@@ -753,6 +763,30 @@ part bolt4
     axis     = 1.000, -0.000, -0.000
     distance = 9.504
     detach   = 0.95
+  end
+end
+
+part launchertrigger
+  surface = launchertrigger
+  grab       = -1.952, -0.317, -9.429
+  grabradius = 2.0
+  dof
+    kind     = hinge
+    axis     = 0.000, 1.000, 0.000
+    degrees  = 20.02
+    pivot    = -2.193, 0.000, -7.863
+  end
+end
+
+part launcherlatch
+  surface = launcherlatch
+  grab       = 0.860, -0.322, -9.276
+  grabradius = 2.0
+  dof
+    kind     = hinge
+    axis     = 0.000, -1.000, -0.000
+    degrees  = 19.09
+    pivot    = 0.777, 0.000, -8.250
   end
 end
 
@@ -873,9 +907,9 @@ weapon "BD_RPG"
 
   muzzle    = 65.789, 3.235, -1.433
   barrel    = 1, 0, 0
-  # side measured (14 vertices on -y against 41 on +y), the side away from the action; the point and the direction are estimates
-  ejectport = 11.257, 8.359, -0.515
-  ejectdir  = -0.2914, 0.8742, 0.3885
+  # side measured (62 vertices on -y against 685 on +y), the emptier wall of the receiver; the point and the direction are estimates
+  ejectport = -5.203, -2.156, -2.027
+  ejectdir  = -0.2914, -0.8742, 0.3885
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -889,17 +923,13 @@ part support
   grabradius = 3.0
 end
 
-part bolt
-  role    = action
-  subject = slide
-  surface = bolt
-  grab       = -6.034, -2.821, 0.696
-  grabradius = 3.0
+part trigger
+  role    = trigger
+  surface = trigger
   dof
     kind     = slide
-    axis     = 0.868, 0.004, -0.497
-    distance = 0.014
-    detach   = 0.95
+    axis     = -1.000, -0.000, 0.000
+    distance = 1.386
   end
 end
 
@@ -921,9 +951,9 @@ weapon "BD_Railgun"
 
   muzzle    = 86.219, -0.113, -2.164
   barrel    = 1, 0, 0
-  # side measured (92 vertices on -y against 74 on +y), the side away from the action; the point and the direction are estimates
-  ejectport = -1.078, -2.891, 0.741
-  ejectdir  = -0.2914, -0.8742, 0.3885
+  # side measured (463 vertices on -y against 420 on +y), the emptier wall of the receiver; the point and the direction are estimates
+  ejectport = 11.621, 4.516, -4.413
+  ejectdir  = -0.2914, 0.8742, 0.3885
 
   magmodel  = "models/bd22" "railgun_magazine.md3"
   magskin   = "models/bd22" "railgun.png"
@@ -942,17 +972,14 @@ part support
   grabradius = 3.0
 end
 
-part bolt
-  role    = action
-  subject = slide
-  surface = bolt
-  grab       = -16.960, -0.196, -0.342
-  grabradius = 3.0
+part trigger
+  role    = trigger
+  surface = trigger
   dof
-    kind     = slide
-    axis     = 0.000, 0.000, -1.000
-    distance = 5.746
-    detach   = 0.95
+    kind     = hinge
+    axis     = -0.000, 1.000, -0.000
+    degrees  = 22.85
+    pivot    = -18.554, 0.000, -5.441
   end
 end
 

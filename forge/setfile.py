@@ -130,6 +130,11 @@ class Load:
     id: str = "gate"
     where: str = "under"           # under | left | right | breech
     size: Optional[tuple] = None
+    # WHICH STORE A ROUND GOES INTO. NOT optional: the reload system refuses a load
+    # verb that names no store and skips the whole card, so a gun that omits this does
+    # not load at all. It is a DECISION -- a shotgun shell goes into the tube, a
+    # revolver round into the cylinder -- and it must name one of the gun's own stores.
+    into: str = ""
 
 
 @dataclass
@@ -321,6 +326,7 @@ def load_set(path: str) -> SetFile:
                     for k, v in (raw.get("stores") or {}).items()],
             load=(Load(id=str((raw.get("load") or {}).get("id", "gate")),
                        where=str((raw.get("load") or {}).get("where", "under")),
+                       into=str((raw.get("load") or {}).get("into", "")),
                        size=tuple((raw.get("load") or {}).get("size", ()))
                        or None)
                   if raw.get("load") else None))

@@ -79,7 +79,7 @@ GUNS = {
         # its cylinder swings out, as its own card named a cylinder part
         "mechanism": "swingout_revolver",
         "stores":    {"cylinder": {"kind": "slotted", "slots": 6}},   # the archetype names it
-        "load":      {"id": "breech", "where": "breech"},
+        "load":      {"into": "cylinder", "id": "cylinder", "where": "breech"},   # id MUST match the archetype's load
         "body":      "#0",
         "parts": {
             # THE CRANE: #1 is the cylinder assembly, which swings 90 degrees out of
@@ -107,7 +107,7 @@ GUNS = {
         "mechanism": "pump",
         "stores":    {"tube": {"kind": "counted", "capacity": 8, "detach": "no"},
                       "chamber": {"kind": "slotted", "slots": 1}},
-        "load":      {"id": "gate", "where": "under", "size": [2.5, 1.5, 2.0]},
+        "load":      {"into": "tube", "id": "gate", "where": "under", "size": [2.5, 1.5, 2.0]},
         "body":      "#6",
         "parts": {
             "forend": {"surfaces": ["#4"], "subject": "forend"},
@@ -129,7 +129,7 @@ GUNS = {
         # it breaks open and takes two
         "mechanism": "breakaction",
         "stores":    {"chambers": {"kind": "slotted", "slots": 2}},
-        "load":      {"id": "breech", "where": "breech"},
+        "load":      {"into": "chambers", "id": "breech", "where": "breech"},
         "sounds":    {"opensound": "bd22/ssg/open", "closesound": "bd22/ssg/close", "loadsound": "bd22/ssg/load"},
         "body":      "#1",
         "parts": {
@@ -170,7 +170,7 @@ GUNS = {
         # single shot, breaks open at the breech
         "mechanism": "breakaction",
         "stores":    {"chambers": {"kind": "slotted", "slots": 1}},   # the archetype names it
-        "load":      {"id": "breech", "where": "breech"},
+        "load":      {"into": "chambers", "id": "breech", "where": "breech"},
         "sounds":    {"opensound": "bd22/m79/open", "closesound": "bd22/m79/close", "loadsound": "bd22/m79/load"},
         "body":      "#0",
         "parts": {

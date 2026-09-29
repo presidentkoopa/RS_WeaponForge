@@ -148,7 +148,29 @@ def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
         L.append(f"# WHERE A ROUND GOES IN. The face is the set file's choice ({gun.load.where});")
         L.append("# the point is the body's own surface on that face at the breech, and the")
         L.append("# direction is into the gun.")
+        # A LOAD WITH NO STORE IS REFUSED AT LOAD TIME and takes the card with it.
+        if not getattr(gun.load, "into", ""):
+            raise ValueError(
+                f"{gun.id}: load '{gun.load.id}' names no store. The reload system "
+                f"refuses a load verb with no `into` and skips the whole card, so this "
+                f"gun would not load at all. Give the set file's load block "
+                f"into = <one of this gun's stores>.")
         L.append(f"load {gun.load.id}")
+        L.append(f"  into = {gun.load.into}")
+        # A SLOTTED STORE IS FILLED ONE POSITION AT A TIME, and the reload system refuses
+        # a load into one that does not say which -- another refusal that skips the card.
+        # DERIVED, NOT RESTATED: the store already declares its kind, so a set file that
+        # says `slotted` cannot then forget the slot. `next` is the only sane answer for
+        # a hand feeding rounds in -- slot 0 first, then the next empty one.
+        _into = next((st for st in (getattr(gun, "stores", []) or [])
+                      if st.id == gun.load.into), None)
+        if _into is None:
+            raise ValueError(
+                f"{gun.id}: load '{gun.load.id}' goes into '{gun.load.into}', which is "
+                f"not one of this gun's stores "
+                f"({', '.join(st.id for st in (getattr(gun, 'stores', []) or [])) or 'none'}).")
+        if _into.kind == "slotted":
+            L.append("  slot = next")
         L.append(f"  at   = {_triple(at)}")
         if gun.load.size:
             L.append(f"  size = {_triple(gun.load.size, 2)}")

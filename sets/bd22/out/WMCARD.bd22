@@ -96,7 +96,9 @@ end
 # WHERE A ROUND GOES IN. The face is the set file's choice (breech);
 # the point is the body's own surface on that face at the breech, and the
 # direction is into the gun.
-load breech
+load cylinder
+  into = cylinder
+  slot = next
   at   = -9.335, 0.174, -5.238
   dir  = 1.0000, -0.0000, -0.0000
 end
@@ -162,6 +164,7 @@ end
 # the point is the body's own surface on that face at the breech, and the
 # direction is into the gun.
 load gate
+  into = tube
   at   = -10.265, -0.035, -2.578
   size = 2.50, 1.50, 2.00
   dir  = -0.0000, -0.0000, 1.0000
@@ -220,6 +223,8 @@ end
 # the point is the body's own surface on that face at the breech, and the
 # direction is into the gun.
 load breech
+  into = chambers
+  slot = next
   at   = -13.428, -0.021, -4.925
   dir  = 1.0000, -0.0000, -0.0000
 end
@@ -355,6 +360,8 @@ end
 # the point is the body's own surface on that face at the breech, and the
 # direction is into the gun.
 load breech
+  into = chambers
+  slot = next
   at   = -10.394, 0.037, 3.301
   dir  = 1.0000, -0.0000, -0.0000
 end

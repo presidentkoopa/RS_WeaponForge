@@ -257,7 +257,7 @@ part drum
   dof
     kind     = slide
     axis     = 0.000, -1.000, 0.000
-    distance = 10.094
+    distance = 24.672
     detach   = 0.9
   end
 end
@@ -365,6 +365,11 @@ weapon "WM_MachineGun"
   # side measured (1668 vertices on -y against 2315 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = -5.044, -5.828, 2.058
   ejectdir  = -0.2914, -0.8742, 0.3885
+
+  magmodel  = "models/vanilla_check" "machinegun_magazine.md3"
+  magskin   = "models/vanilla_check" "machinegun.png"
+  magscale  = 0.34
+  magcenter = -9.390, -0.351, -5.410
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -374,7 +379,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = 43.953, 0.000, 2.656
+  grab       = 2.965, 0.000, -3.516
   grabradius = 3.0
 end
 
@@ -427,7 +432,15 @@ end
 part magazine
   role    = feed
   subject = magazine
-  surface = magazine
+  surface = body
+  grab       = -9.599, -0.476, -12.730
+  grabradius = 3.0
+  dof
+    kind     = slide
+    axis     = 0.000, 0.000, -1.000
+    distance = 11.469
+    detach   = 0.9
+  end
 end
 
 weapon "WM_Chaingun"
@@ -573,7 +586,7 @@ part skull
   dof
     kind     = slide
     axis     = 0.000, 0.000, 1.000
-    distance = 6.312
+    distance = 5.906
     detach   = 0.9
   end
 end

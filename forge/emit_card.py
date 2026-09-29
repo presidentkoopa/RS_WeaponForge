@@ -86,6 +86,8 @@ def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
         L.append(f'  magfamily = "{gun.magfamily}"')
     if gun.firesfrom:
         L.append(f"  firesfrom = {gun.firesfrom}")
+    if gun.mechanism:
+        L.append(f"  mechanism = {gun.mechanism}")
 
     L.append("")
     L.append(f"  muzzle    = {_triple(muzzle)}")
@@ -168,6 +170,16 @@ def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
             L.append(f"  grab       = {_triple(grab.grab)}")
             L.append(f"  grabradius = {_trim(grab.radius, 2)}")
         for n, dof in enumerate(parts.dofs.get(pid, [])):
+            # A DOF WITH NO AXIS IS NOT A DOF. It reached the card as
+            # "axis = 0,0,0, distance = 0.0, detach = 0.9" on three guns: a part
+            # the reload system is told to pull, in no direction, no distance.
+            # Nothing downstream can tell that from a real one.
+            if max(abs(c) for c in dof.axis) < 1e-9:
+                raise ValueError(
+                    f"{gun.id} part '{pid}': measured no axis at all "
+                    f"({dof.kind}). Nothing moves it and nothing clears it, so "
+                    f"there is no motion to write. Give it a part map that is a "
+                    f"moving part, or leave it out of parts.")
             L.append("  dof" if n == 0 else f"  dof{n + 1}")
             L.append(f"    kind     = {'slide' if dof.kind == 'feed' else dof.kind}")
             L.append(f"    axis     = {_triple(dof.axis)}")

@@ -89,6 +89,11 @@ class DOF:
     span: Tuple[int, int] = (0, 0)
     fit: float = 0.0
     sign_ok: bool = True
+    # True when this came from the clearance rule rather than from the animation.
+    # A FLAG, not a phrase in the notes: the caller used to detect this by looking
+    # for words in the note text, so rewording the note silently sent the Unmaker's
+    # skull back through the motion path and it came out with a zero axis.
+    from_clearance: bool = False
     plus_miss: float = 0.0
     minus_miss: float = 0.0
     notes: List[str] = field(default_factory=list)
@@ -562,7 +567,8 @@ EJECT_SHAPE = (-0.3, 0.9, 0.4)
 
 def measure_ejection(model, body_index: int, rest: int, t: Sequence[float],
                      action_surfaces: Optional[Sequence[int]] = None,
-                     feed_surfaces: Optional[Sequence[int]] = None) -> Ejection:
+                     feed_surfaces: Optional[Sequence[int]] = None,
+                     action_points=None, feed_points=None) -> Ejection:
     """Where the brass leaves, and which way.
 
     THE SIDE IS MEASURED. A charging handle sits on one side of the receiver and
@@ -579,8 +585,17 @@ def measure_ejection(model, body_index: int, rest: int, t: Sequence[float],
     actually leaves, so this is a considered placement and is written down as one.
     """
     body = _part_cloud(model, [body_index], rest) + np.asarray(t, dtype=float)
-    if action_surfaces:
+    act = None
+    if action_points is not None and len(action_points):
+        act = np.asarray(action_points, dtype=float)
+    elif action_surfaces:
         act = _part_cloud(model, action_surfaces, rest) + np.asarray(t, dtype=float)
+    fed = None
+    if feed_points is not None and len(feed_points):
+        fed = np.asarray(feed_points, dtype=float)
+    elif feed_surfaces:
+        fed = _part_cloud(model, feed_surfaces, rest) + np.asarray(t, dtype=float)
+    if act is not None:
         # THE PORT IS AT THE BREECH, not at the handle. A charging handle can sit a
         # long way forward of the chamber -- the SMG's reaches x 20 while its card
         # puts the port at 0 -- so the length along the gun comes from the FEED: a
@@ -589,8 +604,7 @@ def measure_ejection(model, body_index: int, rest: int, t: Sequence[float],
         z0, z1 = float(act[:, 2].min()) - 2.0, float(act[:, 2].max()) + 2.0
         side = -1 if float(act[:, 1].mean()) > 0 else 1
         why = "the side away from the action"
-        if feed_surfaces:
-            fed = _part_cloud(model, feed_surfaces, rest) + np.asarray(t, dtype=float)
+        if fed is not None:
             mid = float(fed[:, 0].mean())
             half = max(2.0, float(fed[:, 0].max() - fed[:, 0].min()) / 2.0)
             x0, x1 = mid - half, mid + half
@@ -624,7 +638,8 @@ def measure_ejection(model, body_index: int, rest: int, t: Sequence[float],
 
 
 def measure_support(model, body_index: int, rest: int, t: Sequence[float],
-                    feed_surfaces: Optional[Sequence[int]] = None) -> Grab:
+                    feed_surfaces: Optional[Sequence[int]] = None,
+                    feed_points=None) -> Grab:
     """Where the off hand goes: under the handguard.
 
     THE HEIGHT IS MEASURED -- the underside of the body at that point, which is
@@ -658,8 +673,12 @@ def measure_support(model, body_index: int, rest: int, t: Sequence[float],
                             * (sel[:, 2].max() - sel[:, 2].min()))
     thick = area.max() or 1.0
     front = lo
-    if feed_surfaces:
+    fed = None
+    if feed_points is not None and len(feed_points):
+        fed = np.asarray(feed_points, dtype=float)
+    elif feed_surfaces:
         fed = _part_cloud(model, feed_surfaces, rest) + np.asarray(t, dtype=float)
+    if fed is not None:
         front = float(fed[:, 0].max())
     start = int(np.searchsorted(edges, front))
     end = start
@@ -682,7 +701,7 @@ LOAD_GATE_SIZE = (2.5, 1.5, 2.0)
 
 
 def measure_load(model, body_index: int, rest: int, t: Sequence[float], where: str,
-                 feed_surfaces: Optional[Sequence[int]] = None):
+                 feed_surfaces: Optional[Sequence[int]] = None, feed_points=None):
     """Where a round goes in, on the face the set file names.
 
     THE FACE IS THE DECISION -- a pump shotgun loads underneath, a break-action at
@@ -693,8 +712,12 @@ def measure_load(model, body_index: int, rest: int, t: Sequence[float], where: s
     body = _part_cloud(model, [body_index], rest) + np.asarray(t, dtype=float)
     n = np.asarray(LOAD_FACES.get(where, LOAD_FACES["under"]), dtype=float)
     x = body[:, 0]
-    if feed_surfaces:
+    fed = None
+    if feed_points is not None and len(feed_points):
+        fed = np.asarray(feed_points, dtype=float)
+    elif feed_surfaces:
         fed = _part_cloud(model, feed_surfaces, rest) + np.asarray(t, dtype=float)
+    if fed is not None:
         mid = float(fed[:, 0].mean())
     else:
         mid = float((x.min() + x.max()) / 2.0)
@@ -735,7 +758,34 @@ def measure_clearance(model, body_index: int, rest: int, part_surfaces: Sequence
     part = _part_cloud(model, part_surfaces, rest) + np.asarray(t, dtype=float)
     body = _part_cloud(model, [body_index], rest) + np.asarray(t, dtype=float)
     lo, hi = part.min(axis=0), part.max(axis=0)
+
+    # IT COMES OFF THE WAY IT STANDS PROUD OF THE GUN. The shortest escape is not
+    # the right one -- the buzzsaw's saddle drum clears fastest straight up the
+    # barrel, and a drum does not come off forwards through the muzzle -- and
+    # neither is the part's offset from the gun's centre, which sends the Unmaker's
+    # skull backwards along the barrel.
+    #
+    # What is right is LOCAL protrusion: within the part's own footprint on the
+    # other two axes, how far does it reach past everything else? The drum stands
+    # 11.45 proud on +y, the machinegun's magazine 10.66 on -z, and the Unmaker's
+    # skull is flush on +z (-0.09) with everything else deeply buried -- which is a
+    # flap that lifts. A part that protrudes nowhere is enclosed, and then the
+    # shortest clearance decides.
+    want_axis, want_sign, best_pro = None, None, 1.0
+    for a in range(3):
+        others = [x for x in range(3) if x != a]
+        near = body
+        for x in others:
+            near = near[(near[:, x] >= lo[x] - 0.5) & (near[:, x] <= hi[x] + 0.5)]
+        if not len(near):
+            continue
+        for sign, pro in ((+1, hi[a] - float(near[:, a].max())),
+                          (-1, float(near[:, a].min()) - lo[a])):
+            if pro > best_pro:
+                want_axis, want_sign, best_pro = a, sign, pro
+
     best = None
+    _clearances = []
     for axis in range(3):
         for sign in (+1, -1):
             other = [a for a in range(3) if a != axis]
@@ -749,21 +799,51 @@ def measure_clearance(model, body_index: int, rest: int, part_surfaces: Sequence
             else:
                 need = float(hi[axis] - inside[:, axis].min())
             if need <= 0:
-                continue
-            if best is None or need < best[0]:
-                best = (need, axis, sign)
+                need = 0.0
+            # The way it sticks out wins; anything else is only a fallback for a
+            # part that sits inside the gun's envelope.
+            _clearances.append((need, axis, sign))
+            rank = (0 if (axis == want_axis and sign == want_sign) else 1, need)
+            if best is None or rank < best[0]:
+                best = (rank, need, axis, sign)
+    # ENCLOSED ON EVERY SIDE: the shortest way out decides, but DOWN gets the
+    # benefit of the doubt when it is nearly as short, because that is where a
+    # magazine goes. The two enclosed parts in this set settle it. The Unmaker's
+    # skull clears upward in 0.98 of its own height and downward in 5.9 times it,
+    # so it lifts -- which is what its card says. The flamethrower's canister
+    # clears sideways in 13.19 and downward in 22.58, within twice, and its card
+    # takes it straight down.
+    if want_axis is None and best is not None:
+        shortest = best[1]
+        for axis in range(3):
+            for sign in (+1, -1):
+                pass
+        down = [r for r in _clearances if r[1] == 2 and r[2] == -1]
+        if down and down[0][0] <= 2.0 * shortest:
+            best = ((0, down[0][0]), down[0][0], 2, -1)
+
     dof = DOF(part=part_id, kind="feed")
     if best is None:
         dof.notes.append("nothing in the body obstructs this part on any axis")
         return dof
-    need, axis, sign = best
+    _rank, need, axis, sign = best
     v = [0.0, 0.0, 0.0]
     v[axis] = float(sign)
     dof.axis = tuple(v)
-    dof.distance = need + CLEARANCE_SPARE
-    dof.notes.append(f"no frame moves this part; {dof.distance:.2f} along "
-                     f"{'+' if sign > 0 else '-'}{'xyz'[axis].upper()} is what clears the body "
-                     f"inside its own footprint, with {CLEARANCE_SPARE} to spare")
+    # HOW FAR: THE PART'S OWN LENGTH along that axis, which is the guide's rule for
+    # a feed and what the shipped cards carry. The flamethrower's canister is the
+    # case that settles it: its card says 13.620 and the canister is 13.4 across,
+    # while the distance needed to clear everything under it is 23 -- the grip is
+    # below it and a canister does not have to clear the grip to come out of its
+    # cradle.
+    own = extent_along(model, part_surfaces, rest, v)
+    dof.distance = own
+    dof.from_clearance = True
+    dof.notes.append(f"no frame moves this part; it leaves along "
+                     f"{'+' if sign > 0 else '-'}{'xyz'[axis].upper()}"
+                     + (f", the way it stands {best_pro:.2f} proud of the gun"
+                        if want_axis is not None else ", the shortest way clear")
+                     + f", travelling its own {own:.2f} along that axis")
     return dof
 
 
@@ -776,6 +856,118 @@ def index_step(chambers: int) -> float:
     either: the drum's own geometry does not land on itself at 51.43.
     """
     return 360.0 / max(1, int(chambers))
+
+
+def propose_islands(model, surface_index: int, frame: int, t: Sequence[float],
+                    limit: int = 6):
+    """Magazine-shaped lumps inside one surface, for the owner to rule on.
+
+    A magazine welded into the body cannot be found by the three signals that work
+    everywhere else: it is not its own surface, its islands touch the receiver's so
+    proximity merges everything into one lump, and the donor never animates it, so
+    there is no motion to measure (the whole surface fits its rest pose to 0.03).
+
+    What does work is the carve's own test, run backwards. A set of islands is a
+    candidate when it is STABLE: the islands lying wholly inside its bounding box
+    are exactly itself. Seeded from every pair of islands below the bore and
+    settled, that yields tens of thousands of stable sets, of which the ones shaped
+    like a magazine are kept: short along the gun, deeper than it is long, as wide
+    as the receiver rather than hand-wide, and with nothing hanging lower in its own
+    stretch of the gun.
+
+    THIS PROPOSES, it does not decide. On the machinegun it finds a 415-vertex lump
+    -- the same size as the cut Vanilla shipped from this mesh -- but sharing only
+    225 vertices with it, so two different cuts of the same magazine are the same
+    size and only a look can separate them. The guide is right that a part is the
+    owner's to name; this narrows 11,996 vertices to a handful of candidates with
+    their boxes written out, ready to paste into set.py.
+    """
+    from .emit_mesh import islands as _islands
+    surf = model.surfaces[surface_index]
+    pts = np.asarray(surf.verts[frame], dtype=float) + np.asarray(t, dtype=float)
+    isl = _islands(surf, frame)
+    n = len(isl)
+    if n < 4:
+        return []
+    ilo = np.array([pts[g].min(axis=0) for g in isl])
+    ihi = np.array([pts[g].max(axis=0) for g in isl])
+    isz = np.array([len(g) for g in isl])
+    tol = 1.0 / 64.0
+    glo, ghi = pts.min(axis=0), pts.max(axis=0)
+    glen, gwid = ghi[0] - glo[0], ghi[1] - glo[1]
+
+    def settle(a, b):
+        S = np.zeros(n, dtype=bool)
+        S[[a, b]] = True
+        for _ in range(20):
+            lo, hi = ilo[S].min(axis=0), ihi[S].max(axis=0)
+            T = (np.all(ilo >= lo - tol, axis=1) & np.all(ihi <= hi + tol, axis=1))
+            if np.array_equal(T, S):
+                return S
+            S = S | T
+        return S
+
+    # SEEDS: islands that stick out of the gun's core, in any direction. A
+    # magazine is not always a box under the receiver -- the buzzsaw's is a saddle
+    # drum on its side at bore height, and looking only downward finds nothing of
+    # it. So the seeds are islands below the gun OR out past its flanks, and which
+    # it is falls out of the search rather than being assumed.
+    floor = float(np.percentile(pts[:, 2], 25))
+    ycore = float(np.percentile(np.abs(pts[:, 1]), 70))
+    zfloor = float(np.percentile(pts[:, 2], 25))
+    ymid = (ilo[:, 1] + ihi[:, 1]) / 2.0
+    zmid = (ilo[:, 2] + ihi[:, 2]) / 2.0
+    flank = max(abs(float(np.percentile(pts[:, 1], 5))),
+                abs(float(np.percentile(pts[:, 1], 95))))
+    seeds = [k for k in range(n)
+             if zmid[k] < floor or abs(ymid[k]) > 0.7 * flank]
+    # The biggest first, and capped: a drum is made of hundreds of small islands and
+    # every pair of them settles to the same lump, so the large ones reach it too.
+    seeds = sorted(seeds, key=lambda k: -isz[k])[:60]
+    seen, out = set(), []
+    for i in range(len(seeds)):
+        for j in range(i + 1, len(seeds)):
+            S = settle(seeds[i], seeds[j])
+            key = S.tobytes()
+            if key in seen:
+                continue
+            seen.add(key)
+            lo, hi = ilo[S].min(axis=0), ihi[S].max(axis=0)
+            span = hi - lo
+            # WHAT A MAGAZINE MEASURES LIKE, from the two this tool has ground truth
+            # for -- the machinegun's box magazine and the buzzsaw's saddle drum:
+            #
+            #   short along the gun     7.6% and 8.9% of its length
+            #   outside the gun's core  100% and 98% of its vertices
+            #
+            # A lump that spans more of the gun than that, or that mostly lies
+            # inside the core, is the gun. Those two numbers are what separate the
+            # drum from the 8,713-vertex lump of receiver the search also settles
+            # on, and they are the only shape rules here: a magazine may hang below
+            # the receiver or stand out past its flank, and which it is comes out of
+            # the search rather than being assumed.
+            if span[0] > 0.12 * glen:
+                continue
+            sel = np.concatenate([isl[k] for k in np.flatnonzero(S)])
+            P = pts[sel]
+            outside = float(np.mean((np.abs(P[:, 1]) > ycore) | (P[:, 2] < zfloor)))
+            if outside < 0.70:
+                continue
+            hangs = lo[2] < zfloor
+            # WHAT THIS CANNOT DO YET. On the buzzsaw the biggest surviving lump IS
+            # the saddle drum, verified against the cut the old set shipped and by
+            # looking at it. On the machinegun the biggest is 999 vertices of
+            # receiver and the magazine's 415 is further down the list. Every extra
+            # shape rule tried -- the top stopping at the well mouth, standing out
+            # past the neighbouring geometry -- fixed one gun and broke the other.
+            # So this RANKS candidates and renders them; it does not choose.
+            out.append({"verts": int(isz[S].sum()), "islands": int(S.sum()),
+                        "outside": round(outside, 3),
+                        "where": "below the receiver" if hangs else "out past the flank",
+                        "box": [[round(float(c), 3) for c in lo],
+                                [round(float(c), 3) for c in hi]]})
+    out.sort(key=lambda r: -r["verts"])
+    return out[:limit]
 
 
 def carve_part(model, part_surfaces: Sequence[int], rest: int, t: Sequence[float],

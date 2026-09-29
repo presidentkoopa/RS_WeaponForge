@@ -189,12 +189,13 @@ class BuiltGun:
     load: object = None
 
 
-def _part_surfaces(model, gun, part, rest_frame, t, where: str):
+def _part_surfaces(model, gun, part, rest_frame, t, where: str, gun_set_path: str = ""):
     """A part's vertices: either whole surfaces, or an island inside one."""
     if part.island is None:
         return list(part.surfaces), None
     surf = model.surfaces[part.island["of"]]
-    ids = EM.resolve_island(surf, rest_frame, part.island, t, where)
+    ids = EM.resolve_island(surf, rest_frame, part.island, t, where,
+                            cut_dir=os.path.join(os.path.dirname(gun_set_path), "cuts"))
     return [part.island["of"]], ids
 
 
@@ -205,7 +206,8 @@ def build_gun(sf: SF.SetFile, gun, out_dir: str) -> BuiltGun:
     model = MD3.MD3Model.load(d.md3)
     SF.check_against_mesh(gun, model.surfaces, sf.set_id)
 
-    mesh = EM.emit_mesh(model, gun, d.rest_frame, os.path.join(out_dir, f"{gun.id}_wm.md3"))
+    mesh = EM.emit_mesh(model, gun, d.rest_frame, os.path.join(out_dir, f"{gun.id}_wm.md3"),
+                        cut_dir=os.path.join(os.path.dirname(sf.path), "cuts"))
     # THE SKIN COMES WITH THE MESH. The donor's MODELDEF names it, and a card that
     # points at a skin nobody copied is a gun that draws untextured -- which reads
     # as a broken model rather than as a missing file.
@@ -219,30 +221,84 @@ def build_gun(sf: SF.SetFile, gun, out_dir: str) -> BuiltGun:
                         f"{gun.id}_wm.md3", f"{gun.id}.png", sf.model_path,
                         f"{sf.cvar_prefix}_{gun.id}")
     muzzle, barrel = ME.measure_muzzle(model, gun.body, d.rest_frame, mesh.t)
-    action = [i for p in gun.parts.values() if p.role == "action" for i in p.surfaces]
-    feed = [i for p in gun.parts.values() if p.role == "feed" for i in p.surfaces]
+    # THE POINTS, NOT THE SURFACE INDICES. An island part's `surfaces` is the
+    # surface it lives inside -- the whole gun -- so handing these its indices
+    # measured the eject port and the off-hand seat against the entire weapon, and
+    # put the support point exactly at the muzzle on all three island guns. What
+    # they need is where the part actually is.
+    def role_points(role: str):
+        pts = []
+        for p in gun.parts.values():
+            if p.role != role:
+                continue
+            if p.island:
+                host = model.surfaces[p.island["of"]]
+                ids = EM.resolve_island(host, d.rest_frame, p.island, mesh.t, gun.id,
+                                        cut_dir=os.path.join(os.path.dirname(sf.path), "cuts"))
+                pts.extend([tuple(a + b for a, b in zip(host.verts[d.rest_frame][i], mesh.t))
+                            for i in ids])
+            else:
+                for i in p.surfaces:
+                    pts.extend([tuple(a + b for a, b in zip(v, mesh.t))
+                                for v in model.surfaces[i].verts[d.rest_frame]])
+        return pts
+
+    action_pts = role_points("action")
+    feed_pts = role_points("feed")
     ejection = ME.measure_ejection(model, gun.body, d.rest_frame, mesh.t,
-                                   action or None, feed or None)
-    support = ME.measure_support(model, gun.body, d.rest_frame, mesh.t, feed or None)
-    load = (ME.measure_load(model, gun.body, d.rest_frame, mesh.t, gun.load.where, feed or None)
-            if gun.load else None)
+                                   action_points=action_pts, feed_points=feed_pts)
+    support = ME.measure_support(model, gun.body, d.rest_frame, mesh.t, feed_points=feed_pts)
+    load = (ME.measure_load(model, gun.body, d.rest_frame, mesh.t, gun.load.where,
+                            feed_points=feed_pts) if gun.load else None)
 
     parts = EC.CardParts()
     skipped: List[str] = []
     for pid, part in gun.parts.items():
         where = f"{sf.set_id}: {gun.id} part '{pid}'"
         try:
-            surfaces, island_ids = _part_surfaces(model, gun, part, d.rest_frame, mesh.t, where)
+            surfaces, island_ids = _part_surfaces(model, gun, part, d.rest_frame, mesh.t,
+                                                  where, sf.path)
         except ValueError as e:
             skipped.append(f"{pid}: {e}")
             continue
         if island_ids is not None:
-            # An island is measured on a surface of its own, so the rest of the
-            # donor surface it lives in does not drag the fit around.
-            lifted = EM.split_surface(model.surfaces[part.island["of"]], island_ids, pid,
-                                      frame=d.rest_frame)
-            skipped.append(f"{pid}: island parts are lifted but not yet measured over frames "
-                           f"({len(island_ids)} vertices)")
+            # AN ISLAND IS MEASURED ON A SURFACE OF ITS OWN. Lifted out with the
+            # remainder of its host beside it, the pair reads exactly like any other
+            # part-and-body: the fit is not dragged around by the geometry the part
+            # is embedded in, and everything downstream -- clearance, carve, grab --
+            # is the same code every other magazine goes through.
+            host = model.surfaces[part.island["of"]]
+            rest_of_it = [i for i in range(len(host.st)) if i not in set(island_ids)]
+            lifted = EM.split_surface(host, island_ids, pid, frame=d.rest_frame)
+            remainder = EM.split_surface(host, rest_of_it, "body", frame=d.rest_frame)
+            pair = MD3.MD3Model(source=d.md3, name=pid, num_frames=1,
+                                frames=[MD3.MD3Frame(mins=(0, 0, 0), maxs=(0, 0, 0),
+                                                     origin=(0, 0, 0), radius=0.0,
+                                                     name="rest")],
+                                tags=[], surfaces=[lifted, remainder])
+            dof = ME.measure_clearance(pair, 1, 0, [0], mesh.t, pid)
+            if max(abs(c) for c in dof.axis) < 1e-9:
+                skipped.append(f"{pid}: its island clears the body on no axis")
+                continue
+            # THE CARVE MUST READ THE ISLAND, not the surface it came out of.
+            # carve_part lifts by re-reading its model's own file, so the island is
+            # written to a file of its own first and carved from THAT. Reading the
+            # donor instead silently carves surface #0 of the original -- which came
+            # out as the whole 18,912-vertex body for the buzzsaw and 104 vertices
+            # of trigger for the machinegun. Both looked like working magazines in
+            # every number on the card; only rendering them showed it.
+            src_path = os.path.join(out_dir, f"{gun.id}_{pid}_island.md3")
+            MD3.write(MD3.MD3Model(source=src_path, name=pid, num_frames=1,
+                                   frames=list(pair.frames), tags=[], surfaces=[lifted]),
+                      src_path)
+            island_model = MD3.MD3Model.load(src_path)
+            lifted_path = os.path.join(out_dir, f"{gun.id}_{pid}.md3")
+            carve = ME.carve_part(island_model, [0], 0, mesh.t, dof.axis, lifted_path,
+                                  abs(prop.scale[0]), pid)
+            os.remove(src_path)
+            parts.carves[pid] = carve
+            parts.dofs[pid] = [dof]
+            parts.grabs[pid] = ME.measure_grab(pair, [0], 0, mesh.t, pid, axis=dof.axis)
             continue
         if part.chambers:
             # A REVOLVING FEED indexes by its chamber count, not by how far the
@@ -292,7 +348,7 @@ def build_gun(sf: SF.SetFile, gun, out_dir: str) -> BuiltGun:
                                   os.path.join(out_dir, f"{gun.id}_{pid}.md3"),
                                   abs(prop.scale[0]), pid)
             parts.carves[pid] = carve
-            if slide.notes and "clears the body" in slide.notes[-1]:
+            if slide.from_clearance:
                 feed = slide            # a clearance IS the answer; do not re-measure
             else:
                 feed = ME.measure_feed(model, gun.body, d.rest_frame, pid, surfaces,

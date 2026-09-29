@@ -76,13 +76,18 @@ GUNS = {
         "sounds":    {"magoutsound": "bd22/revolver/magout", "maginsound": "bd22/revolver/magin"},
         # SIX CHAMBERS, loaded at the breech: the shipped card had no store at all,
         # so the gun could not be reloaded by hand.
-        "stores":    {"chambers": {"kind": "slotted", "slots": 6}},
+        # its cylinder swings out, as its own card named a cylinder part
+        "mechanism": "swingout_revolver",
+        "stores":    {"cylinder": {"kind": "slotted", "slots": 6}},   # the archetype names it
         "load":      {"id": "breech", "where": "breech"},
         "body":      "#0",
-        # NO MOVING PARTS, and its shipped card carried none either: nothing
-        # on this gun is driven by hand.
-        "parts":     {},
-        "fixed":     ["#1", "#2", "#3", "#4"],
+        "parts": {
+            # THE CRANE: #1 is the cylinder assembly, which swings 90 degrees out of
+            # the frame, and #2 rides with it. The swingout archetype drives a part
+            # by this name. The five `shells` are the rounds sitting in it.
+            "crane": {"surfaces": ["#1", "#2"], "subject": "cylinder"},
+        },
+        "fixed":     ["#3", "#4"],
         "hidden":    ["#5", "#6", "#7", "#8", "#9"],
     },
     "shotgun": {
@@ -98,6 +103,8 @@ GUNS = {
         "sounds":    {"rackapexsound": "bd22/shotgun/rackback", "rackresetsound": "bd22/shotgun/rackfwd"},
         # IT LOADS THROUGH A GATE UNDERNEATH, eight in the tube and one in the
         # chamber, as its shipped card declared before this rebuild.
+        # a tube under the barrel, worked by its forend
+        "mechanism": "pump",
         "stores":    {"tube": {"kind": "counted", "capacity": 8, "detach": "no"},
                       "chamber": {"kind": "slotted", "slots": 1}},
         "load":      {"id": "gate", "where": "under", "size": [2.5, 1.5, 2.0]},
@@ -119,6 +126,8 @@ GUNS = {
         "capacity":  2,
         "magfamily": "12ga",
         # IT BREAKS OPEN AND TAKES TWO, loaded at the breech.
+        # it breaks open and takes two
+        "mechanism": "breakaction",
         "stores":    {"chambers": {"kind": "slotted", "slots": 2}},
         "load":      {"id": "breech", "where": "breech"},
         "body":      "#1",
@@ -157,13 +166,19 @@ GUNS = {
         "capacity":  1,
         "magfamily": "bd_40mm",
         # ONE IN THE BREECH: a single-shot break-action.
-        "stores":    {"chamber": {"kind": "slotted", "slots": 1}},
+        # single shot, breaks open at the breech
+        "mechanism": "breakaction",
+        "stores":    {"chambers": {"kind": "slotted", "slots": 1}},   # the archetype names it
         "load":      {"id": "breech", "where": "breech"},
         "body":      "#0",
         "parts": {
-            "magazine": {"surfaces": ["#4"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
+            # ITS "MAGAZINE" WAS THE BARREL. The shipped card drove #4 as a feed;
+            # it hinges 53.7 degrees, which is the barrel tipping open -- the M79
+            # is a break-action single-shot and loads at the breech, which its
+            # store and load blocks above now say. #1 tips with it.
+            "barrels": {"surfaces": ["#1", "#4"], "subject": "barrels"},
         },
-        "fixed":     ["#1", "#2"],
+        "fixed":     ["#2"],
         "hidden":    ["#3"],
     },
     "flamecannon": {
@@ -211,6 +226,16 @@ GUNS = {
         "capacity":  200,
         "magfamily": "bd_762",
         "parts": {
+            # ITS SADDLE DRUM. Welded into the body surface and beyond any shape
+            # rule: the drum's own two halves sit 0.404 apart while the receiver
+            # comes within 0.256 of it, so no gap separates them, and the cut
+            # slices through sixteen of the welded objects it touches. The vertex
+            # set is recovered exactly from the mesh this set shipped before the
+            # rebuild -- fit rms 0.0000 -- and checked on every build.
+            "magazine": {"surfaces": ["#0"], "role": "feed", "subject": "magazine",
+                         "carve": True, "take": "no",
+                         "island": {"of": "#0", "verts": 3059,
+                                    "cut": "buzzsaw_mag.cut"}},
             "trigger": {"surfaces": ["#1"], "role": "trigger"},
         },
         # ITS MAGAZINE IS NOT DECLARED: in the shipped mesh that part is an island
@@ -345,6 +370,12 @@ GUNS = {
         "capacity":  200,
         "magfamily": "bd_fuel",
         "parts": {
+            # ITS FUEL CANISTER, recovered the same way: 1,306 vertices of the body
+            # surface, fit rms 0.0000 against the mesh this set shipped before.
+            "canister": {"surfaces": ["#0"], "role": "feed", "subject": "magazine",
+                         "carve": True, "take": "no",
+                         "island": {"of": "#0", "verts": 1306,
+                                    "cut": "flamethrower_canister.cut"}},
             "trigger": {"surfaces": ["#1"], "role": "trigger"},
         },
         "fixed":     ["#2"],
@@ -390,6 +421,19 @@ GUNS = {
             # launcher's tube, sliding 9.50 forward; the M249's own bolt is not a
             # separate surface. Named for what it is, as Vanilla's machinegun card
             # names it, with the launcher's own trigger and latch beside it.
+            # ITS MAGAZINE IS RECOVERED. It is welded into the receiver -- 415 of
+            # #5's 11,996 vertices, in 31 separate islands -- and every island lying
+            # wholly inside this box is exactly those 415, with none missing and
+            # none extra. The box is the same one vanilla_check carries, because it
+            # is the same donor mesh at the same rest frame.
+            "magazine":        {"surfaces": ["#5"], "role": "feed", "subject": "magazine",
+                                "carve": True, "take": "no",
+                                "island": {"of": "#5", "verts": 415,
+                                           # in this set's own space: frame 4, the
+                                           # Ready frame, not the frame 10 the
+                                           # Vanilla mesh was built at.
+                                           "box": [[-13.300, -5.878, -13.269],
+                                                   [-5.559, 4.987, -1.684]]}},
             "launchertube":    {"surfaces": ["#3"], "role": "action", "subject": "foregrip"},
             "launchertrigger": {"surfaces": ["#2"]},
             "launcherlatch":   {"surfaces": ["#0"]},
@@ -411,10 +455,15 @@ GUNS = {
         "magfamily": "bd_762",
         "body":      "#1",
         "parts": {
-            "magazine": {"surfaces": ["#2"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
+            # ITS "MAGAZINE" WAS THE ROTOR. The shipped card drove #2 `Pipe` as a
+            # feed; it hinges 106 degrees -- it is the spinning barrel cluster. A
+            # minigun is belt fed and has no magazine at all, which RULINGS.txt now
+            # says. Driven as barrels, like the chaingun's.
+            "barrels": {"surfaces": ["#2"]},
+            "trigger": {"surfaces": ["#4"], "role": "trigger"},
             "forend": {"surfaces": ["#0"], "subject": "forend"},
         },
-        "fixed":     ["#3", "#4", "#5"],
+        "fixed":     ["#3", "#5"],
     },
     "plasma": {
         "class":     "BD_Plasma",

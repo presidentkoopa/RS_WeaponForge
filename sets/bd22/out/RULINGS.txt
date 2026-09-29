@@ -22,3 +22,8 @@ BD_FlameCannon   one surface, no magazine in the mesh
 BD_Hellish       one surface, no magazine in the mesh
 BD_BFG           two surfaces, a body and a casing: no cell in the mesh to carve
 BD_BFG10k        the same mesh as the BFG, and the same absence
+
+# ---- BELT FED: NO MAGAZINE EXISTS ----------------------------------------
+# Its "magazine" in the shipped card was the spinning barrel cluster. There is
+# no magazine on this gun to carve.
+BD_Minigun       belt fed; the mesh has no magazine

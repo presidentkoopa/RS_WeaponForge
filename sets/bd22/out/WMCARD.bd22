@@ -72,6 +72,7 @@ weapon "BD_Revolver"
   skin      = "models/bd22" "revolver.png"
   capacity  = 6
   magfamily = "bd_357"
+  mechanism = swingout_revolver
 
   muzzle    = 13.226, -0.031, 2.960
   barrel    = 1, 0, 0
@@ -83,7 +84,7 @@ weapon "BD_Revolver"
   maginsound     = "bd22/revolver/magin"
 end
 
-store chambers
+store cylinder
   kind     = slotted
   slots    = 6
 end
@@ -107,6 +108,20 @@ part support
   grabradius = 3.0
 end
 
+part crane
+  subject = cylinder
+  surface = crane
+  surface = crane2
+  grab       = 10.847, -0.046, 1.012
+  grabradius = 3.0
+  dof
+    kind     = hinge
+    axis     = -1.000, -0.000, 0.000
+    degrees  = 90.01
+    pivot    = 0.000, -0.014, -2.522
+  end
+end
+
 weapon "BD_Shotgun"
   hand      = main
   type      = pump
@@ -115,6 +130,7 @@ weapon "BD_Shotgun"
   skin      = "models/bd22" "shotgun.png"
   capacity  = 8
   magfamily = "12ga"
+  mechanism = pump
 
   muzzle    = 36.125, 0.104, 2.000
   barrel    = 1, 0, 0
@@ -177,6 +193,7 @@ weapon "BD_SSG"
   skin      = "models/bd22" "ssg.png"
   capacity  = 2
   magfamily = "12ga"
+  mechanism = breakaction
 
   muzzle    = 10.066, -0.386, 0.138
   barrel    = 1, 0, 0
@@ -307,20 +324,16 @@ weapon "BD_M79"
   skin      = "models/bd22" "m79.png"
   capacity  = 1
   magfamily = "bd_40mm"
+  mechanism = breakaction
 
   muzzle    = -6.603, 0.047, 3.653
   barrel    = 1, 0, 0
   # side measured (9 vertices on -y against 13 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = -8.693, -0.188, 3.375
   ejectdir  = -0.2914, -0.8742, 0.3885
-
-  magmodel  = "models/bd22" "m79_magazine.md3"
-  magskin   = "models/bd22" "m79.png"
-  magscale  = 0.34
-  magcenter = 17.720, -0.072, 1.774
 end
 
-store chamber
+store chambers
   kind     = slotted
   slots    = 1
 end
@@ -340,22 +353,21 @@ end
 part support
   role    = support
   subject = support
-  grab       = 13.578, 0.000, 2.828
+  grab       = -8.608, 0.000, 2.828
   grabradius = 3.0
 end
 
-part magazine
-  role    = feed
-  subject = magazine
-  take    = no
-  surface = magazine
-  grab       = 17.720, -0.072, 1.774
+part barrels
+  subject = barrels
+  surface = barrels
+  surface = barrels2
+  grab       = 33.271, 0.045, 2.455
   grabradius = 3.0
   dof
-    kind     = slide
-    axis     = 0.000, 0.000, 0.000
-    distance = 0.0
-    detach   = 0.9
+    kind     = hinge
+    axis     = 0.000, 0.000, -1.000
+    degrees  = 45.04
+    pivot    = -7.505, 0.047, 0.000
   end
 end
 
@@ -427,6 +439,11 @@ weapon "BD_Buzzsaw"
   # side measured (2589 vertices on -y against 1850 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = -1.812, 14.953, -0.389
   ejectdir  = -0.2914, 0.8742, 0.3885
+
+  magmodel  = "models/bd22" "buzzsaw_magazine.md3"
+  magskin   = "models/bd22" "buzzsaw.png"
+  magscale  = 0.34
+  magcenter = -4.267, 6.396, 1.931
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -436,8 +453,23 @@ end
 part support
   role    = support
   subject = support
-  grab       = -28.758, 0.000, -7.016
+  grab       = 6.988, 0.000, -5.594
   grabradius = 3.0
+end
+
+part magazine
+  role    = feed
+  subject = magazine
+  take    = no
+  surface = body
+  grab       = -4.803, 13.788, 1.016
+  grabradius = 3.0
+  dof
+    kind     = slide
+    axis     = 0.000, 1.000, 0.000
+    distance = 11.438
+    detach   = 0.9
+  end
 end
 
 part trigger
@@ -723,6 +755,11 @@ weapon "BD_Flamethrower"
   # side measured (1458 vertices on -y against 1231 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = 3.781, 6.234, -1.630
   ejectdir  = -0.2914, 0.8742, 0.3885
+
+  magmodel  = "models/bd22" "flamethrower_canister.md3"
+  magskin   = "models/bd22" "flamethrower.png"
+  magscale  = 0.34
+  magcenter = -0.460, -0.456, -1.811
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -732,8 +769,23 @@ end
 part support
   role    = support
   subject = support
-  grab       = -10.504, 0.000, -13.766
+  grab       = 19.325, 0.000, -6.203
   grabradius = 3.0
+end
+
+part canister
+  role    = feed
+  subject = magazine
+  take    = no
+  surface = body
+  grab       = 0.326, -0.458, -7.697
+  grabradius = 3.0
+  dof
+    kind     = slide
+    axis     = 0.000, 0.000, -1.000
+    distance = 13.406
+    detach   = 0.9
+  end
 end
 
 part trigger
@@ -785,9 +837,14 @@ weapon "BD_Machinegun"
 
   muzzle    = 43.953, -0.241, 3.902
   barrel    = 1, 0, 0
-  # side measured (660 vertices on -y against 631 on +y), the side away from the action; the point and the direction are estimates
-  ejectport = 18.079, 2.672, -2.567
+  # side measured (157 vertices on -y against 180 on +y), the side away from the action; the point and the direction are estimates
+  ejectport = -9.049, 4.938, -4.206
   ejectdir  = -0.2914, 0.8742, 0.3885
+
+  magmodel  = "models/bd22" "machinegun_magazine.md3"
+  magskin   = "models/bd22" "machinegun.png"
+  magscale  = 0.34
+  magcenter = -9.404, -0.351, -5.401
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -797,7 +854,7 @@ end
 part support
   role    = support
   subject = support
-  grab       = -22.152, 0.000, -16.422
+  grab       = 2.957, 0.000, -3.531
   grabradius = 3.0
 end
 
@@ -808,6 +865,21 @@ part trigger
     kind     = slide
     axis     = -1.000, 0.000, 0.000
     distance = 0.594
+  end
+end
+
+part magazine
+  role    = feed
+  subject = magazine
+  take    = no
+  surface = body
+  grab       = -9.626, -0.476, -12.724
+  grabradius = 3.0
+  dof
+    kind     = slide
+    axis     = 0.000, 0.000, -1.000
+    distance = 11.484
+    detach   = 0.9
   end
 end
 
@@ -863,11 +935,6 @@ weapon "BD_Minigun"
   # side measured (258 vertices on -y against 274 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = -15.380, -9.578, -5.873
   ejectdir  = -0.2914, -0.8742, 0.3885
-
-  magmodel  = "models/bd22" "minigun_magazine.md3"
-  magskin   = "models/bd22" "minigun.png"
-  magscale  = 0.34
-  magcenter = 23.611, -0.213, 0.657
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -877,22 +944,30 @@ end
 part support
   role    = support
   subject = support
-  grab       = 25.961, 0.000, -15.141
+  grab       = -17.666, 0.000, -10.766
   grabradius = 3.0
 end
 
-part magazine
-  role    = feed
-  subject = magazine
-  take    = no
-  surface = magazine
-  grab       = 23.611, -0.213, 0.657
+part barrels
+  surface = barrels
+  grab       = 53.882, -0.206, 0.644
   grabradius = 3.0
   dof
-    kind     = slide
-    axis     = 0.000, 0.000, 0.000
-    distance = 0.0
-    detach   = 0.9
+    kind     = hinge
+    axis     = 1.000, 0.000, -0.000
+    degrees  = 120.0
+    pivot    = 0.000, -0.151, 0.678
+  end
+end
+
+part trigger
+  role    = trigger
+  surface = trigger
+  dof
+    kind     = hinge
+    axis     = 0.001, 1.000, 0.001
+    degrees  = 20.01
+    pivot    = -35.631, 0.000, 6.617
   end
 end
 
@@ -1175,7 +1250,7 @@ part skull
   dof
     kind     = slide
     axis     = 0.000, 0.000, 1.000
-    distance = 6.312
+    distance = 5.906
     detach   = 0.9
   end
 end

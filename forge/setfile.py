@@ -49,7 +49,7 @@ _HASH = re.compile(r"^#(\d+)$")
 GUN_KEYS = {
     "class", "donor", "modeldef", "decorate", "actor", "hand", "type",
     "capacity", "magfamily", "sounds", "body", "parts", "hidden", "fixed",
-    "rest_frame", "notes", "firesfrom", "stores", "load",
+    "rest_frame", "notes", "firesfrom", "stores", "load", "mechanism",
 }
 PART_KEYS = {"surfaces", "role", "subject", "carve", "notes", "island", "take",
              "chambers"}
@@ -133,6 +133,10 @@ class Gun:
     # not the same as one whose magazine nobody has carved yet: an axe fires from
     # nothing, and set_gate treats the two differently for good reason.
     firesfrom: str = ""
+    # Which reload archetype drives it: pump, breakaction, breaktop_revolver,
+    # swingout_revolver. A DECISION about the gun -- nothing in a mesh says how a
+    # breech opens -- and it is what gives the gun its loading verbs.
+    mechanism: str = ""
     sounds: Dict[str, str] = field(default_factory=dict)
     actor: Optional[str] = None
     body: Optional[int] = None
@@ -248,19 +252,24 @@ def load_set(path: str) -> SetFile:
                      f"a part the reload code then tries to move.")
             island = praw.get("island")
             if island is not None:
-                _require(isinstance(island, dict) and {"of", "box", "verts"} <= set(island),
+                _require(isinstance(island, dict) and "of" in island and "verts" in island
+                         and ("box" in island or "cut" in island),
                          f'{pwhere}: island must be {{"of": "#N", "box": [[lo],[hi]], '
                          f'"verts": <count>}} -- the surface it lives in, the box in _wm space '
                          f'that holds it, and how many vertices it has. Every island wholly '
                          f'inside the box is taken, and the count is checked against what is '
                          f'found so a box written for another mesh is refused.')
-                box = island["box"]
-                _require(isinstance(box, (list, tuple)) and len(box) == 2
-                         and all(isinstance(c, (list, tuple)) and len(c) == 3 for c in box),
-                         f"{pwhere}: island box must be [[x,y,z],[x,y,z]]")
-                island = {"of": _surface_index(island["of"], f"{pwhere}, island of"),
-                          "box": [[float(c) for c in box[0]], [float(c) for c in box[1]]],
-                          "verts": int(island["verts"])}
+                spec = {"of": _surface_index(island["of"], f"{pwhere}, island of"),
+                        "verts": int(island["verts"])}
+                if "box" in island:
+                    box = island["box"]
+                    _require(isinstance(box, (list, tuple)) and len(box) == 2
+                             and all(isinstance(c, (list, tuple)) and len(c) == 3 for c in box),
+                             f"{pwhere}: island box must be [[x,y,z],[x,y,z]]")
+                    spec["box"] = [[float(c) for c in box[0]], [float(c) for c in box[1]]]
+                if "cut" in island:
+                    spec["cut"] = str(island["cut"])
+                island = spec
                 _require(island["of"] in [_surface_index(s, pwhere) for s in surfaces],
                          f"{pwhere}: island of #{island['of']} but that surface is not in this "
                          f"part's own surfaces")
@@ -280,6 +289,7 @@ def load_set(path: str) -> SetFile:
             decorate=raw["decorate"], hand=raw.get("hand", "main"), type=raw.get("type", ""),
             capacity=raw.get("capacity"), magfamily=raw.get("magfamily", ""),
             firesfrom=raw.get("firesfrom", ""),
+            mechanism=raw.get("mechanism", ""),
             sounds=dict(raw.get("sounds") or {}), actor=raw.get("actor"),
             body=None if body is None else _surface_index(body, f"{where}, body"),
             parts=parts,

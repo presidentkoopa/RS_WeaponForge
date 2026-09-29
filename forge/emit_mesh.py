@@ -35,7 +35,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field
-from typing import Dict, List, Sequence, Tuple
+from typing import Dict, List, Optional, Sequence, Tuple
 
 from . import md3 as MD3
 
@@ -148,8 +148,40 @@ def islands_in_box(surf, frame: int, lo: Sequence[float], hi: Sequence[float],
     return sorted(out)
 
 
+def read_cut(path: str, surf, where: str = "") -> List[int]:
+    """A cut file: one vertex index per line, the exact set to lift.
+
+    FOR A PART NO RULE CAN FIND. A magazine welded into a body can be beyond any
+    description a set file can carry -- the buzzsaw's drum touches the receiver
+    more closely (0.256) than its own two halves touch each other (0.404), so no
+    gap separates it, and the machinegun's 415 vertices are three whole objects
+    while the buzzsaw's cut slices through sixteen. Where the shape cannot be
+    described, the set names the vertices, and the tool checks them: every index
+    inside the surface, the count as declared.
+
+    These are not typed by hand either. They are recovered from a mesh that
+    already carries the part as its own surface -- an earlier build of the same
+    gun -- by fitting a surface the two meshes share and mapping the positions
+    back. On the buzzsaw and the flamethrower that fit is exact to 0.0000.
+    """
+    if not os.path.exists(path):
+        raise ValueError(f"{where}: no cut file at {path}")
+    ids = []
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.split("#")[0].strip()
+            if line:
+                ids.append(int(line))
+    n = len(surf.st)
+    bad = [i for i in ids if not (0 <= i < n)]
+    if bad:
+        raise ValueError(f"{where}: {os.path.basename(path)} names vertex {bad[:3]} but the "
+                         f"surface has {n}; it was written for another mesh")
+    return sorted(set(ids))
+
+
 def resolve_island(surf, frame: int, spec: dict, shift: Sequence[float],
-                   where: str = "") -> List[int]:
+                   where: str = "", cut_dir: str = "") -> List[int]:
     """The vertices an island spec names, refusing the spec if the count is not
     what it claims.
 
@@ -158,10 +190,13 @@ def resolve_island(surf, frame: int, spec: dict, shift: Sequence[float],
     corner of the magazine, and nothing downstream would ever say so -- the part
     would simply be the wrong shape for the rest of the set's life.
     """
-    if "box" not in spec:
-        raise ValueError(f"{where}: an island needs a box; only a count was given")
-    lo, hi = spec["box"]
-    got = islands_in_box(surf, frame, lo, hi, shift)
+    if spec.get("cut"):
+        got = read_cut(os.path.join(cut_dir, spec["cut"]), surf, where)
+    elif "box" in spec:
+        lo, hi = spec["box"]
+        got = islands_in_box(surf, frame, lo, hi, shift)
+    else:
+        raise ValueError(f"{where}: an island needs a box or a cut file")
     want = int(spec.get("verts", -1))
     if want >= 0 and len(got) != want:
         raise ValueError(f"{where}: the box holds {len(got)} vertices, the set file says {want}. "
@@ -188,7 +223,7 @@ def split_surface(surf, vertex_ids: Sequence[int], name: str, frame: int = 0):
     return out
 
 
-def surface_names(gun, n_surfaces: int) -> Dict[int, str]:
+def surface_names(gun, n_surfaces: int, island_hosts: Optional[set] = None) -> Dict[int, str]:
     """What each donor surface is called in the written mesh.
 
     The body is 'body'; a part's surfaces take the part's id; everything that
@@ -205,10 +240,19 @@ def surface_names(gun, n_surfaces: int) -> Dict[int, str]:
         used[stem] = used.get(stem, 0) + 1
         return stem if used[stem] == 1 else f"{stem}{used[stem]}"
 
+    island_hosts = island_hosts or set()
     if gun.body is not None:
         names[gun.body] = take("body")
     for pid, part in gun.parts.items():
         for idx in part.surfaces:
+            # AN ISLAND PART DOES NOT TAKE ITS HOST'S NAME. Its surfaces list holds
+            # the surface it lives inside -- which is normally the body -- so naming
+            # the host after the part renames the whole gun "magazine", leaves the
+            # mesh with no body at all, and hands the reload system the entire
+            # weapon to pull out of itself. The island is written as a surface of
+            # its own below and takes the part's name there; the host keeps its own.
+            if part.island and idx in island_hosts:
+                continue
             names[idx] = take(pid)
     for idx in gun.fixed:
         names[idx] = take("fixed")
@@ -219,31 +263,75 @@ def surface_names(gun, n_surfaces: int) -> Dict[int, str]:
     return names
 
 
-def emit_mesh(model, gun, rest_frame: int, out: str) -> MeshResult:
-    """Write `out` as the gun's world mesh and report the shift R4 needs."""
+def emit_mesh(model, gun, rest_frame: int, out: str, cut_dir: str = "") -> MeshResult:
+    """Write `out` as the gun's world mesh and report the shift R4 needs.
+
+    An island part is SPLIT OUT here: its host surface is written twice, once as
+    the island under the part's own name and once as what is left under the host's
+    name. Both halves have to exist in the mesh, or the card names a part the
+    engine cannot find -- or worse, finds the whole gun under.
+    """
     frames = min(model.num_frames, min(s.num_frames for s in model.surfaces))
     if not (0 <= rest_frame < frames):
         raise ValueError(f"{gun.id}: rest frame {rest_frame} is outside the {frames} frames "
                          f"every surface of {os.path.basename(model.source)} has")
 
     centroid, t = recentre_shift(model, rest_frame)
-    names = surface_names(gun, len(model.surfaces))
+
+    # Resolve every island first: which host surface it lives in and which of its
+    # vertices it is.
+    islands: Dict[int, Dict[str, List[int]]] = {}
+    for pid, part in gun.parts.items():
+        if not part.island:
+            continue
+        host = model.surfaces[part.island["of"]]
+        ids = resolve_island(host, rest_frame, part.island, t,
+                             f"{gun.id} part '{pid}'", cut_dir)
+        islands.setdefault(part.island["of"], {})[pid] = ids
+
+    names = surface_names(gun, len(model.surfaces), island_hosts=set(islands))
+
+    def shifted(surf, ids: Optional[Sequence[int]], name: str) -> MD3.MD3Surface:
+        """One written surface: all of a donor surface, or just the island's
+        vertices, translated by t."""
+        src = split_surface(surf, ids, name, frame=rest_frame) if ids is not None else None
+        verts = (src.verts[0] if src is not None else surf.verts[rest_frame])
+        moved = [(v[0] + t[0], v[1] + t[1], v[2] + t[2]) for v in verts]
+        # The mesh is translated and not rotated, so every normal is unchanged:
+        # the raw packed shorts carry across untouched rather than being decoded
+        # and re-encoded onto the pi/128 grid.
+        if src is not None:
+            packed = [list(src.normals_packed[0])] if src.normals_packed else []
+            normals = list(src.normals[0])
+            tris, st = list(src.triangles), list(src.st)
+            shaders = list(src.shaders)
+        else:
+            packed = [list(surf.normals_packed[rest_frame])] if surf.normals_packed else []
+            normals = list(surf.normals[rest_frame])
+            tris, st = list(surf.triangles), list(surf.st)
+            shaders = [MD3.MD3Shader(name=sh.name, shader_index=0) for sh in surf.shaders]
+        return MD3.MD3Surface(
+            index=0, name=name, num_frames=1,
+            shaders=shaders or [MD3.MD3Shader(name="", shader_index=0)],
+            triangles=tris, st=st, verts=[moved], normals=[normals], normals_packed=packed)
 
     out_surfaces: List[MD3.MD3Surface] = []
     total_verts = 0
     for i, s in enumerate(model.surfaces):
-        moved = [(v[0] + t[0], v[1] + t[1], v[2] + t[2]) for v in s.verts[rest_frame]]
-        # The mesh is translated and not rotated, so every normal is unchanged:
-        # the raw packed shorts carry across untouched rather than being decoded
-        # and re-encoded onto the pi/128 grid.
-        packed = [list(s.normals_packed[rest_frame])] if s.normals_packed else []
-        out_surfaces.append(MD3.MD3Surface(
-            index=len(out_surfaces), name=names[i], num_frames=1,
-            shaders=[MD3.MD3Shader(name=sh.name, shader_index=0) for sh in s.shaders]
-                    or [MD3.MD3Shader(name="", shader_index=0)],
-            triangles=list(s.triangles), st=list(s.st),
-            verts=[moved], normals=[list(s.normals[rest_frame])], normals_packed=packed))
-        total_verts += len(moved)
+        if i in islands:
+            taken: set = set()
+            for pid, ids in islands[i].items():
+                out_surfaces.append(shifted(s, ids, names.get(f"island:{pid}", pid)))
+                total_verts += len(ids)
+                taken |= set(ids)
+            rest_ids = [v for v in range(len(s.st)) if v not in taken]
+            out_surfaces.append(shifted(s, rest_ids, names[i]))
+            total_verts += len(rest_ids)
+        else:
+            out_surfaces.append(shifted(s, None, names[i]))
+            total_verts += s.num_verts
+    for n, surf in enumerate(out_surfaces):
+        surf.index = n
 
     written = MD3.MD3Model(
         source=out, name=os.path.basename(out), num_frames=1,

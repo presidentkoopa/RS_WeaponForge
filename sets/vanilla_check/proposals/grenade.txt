@@ -1,0 +1,20 @@
+grenade: what each surface does, measured against #0 at the rest frame
+  mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\Grenade\nade.md3
+  rest frame  2 of 27
+  body        #0 'low_lowbodymesh'
+
+  These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
+  until it is written into set.py by hand.
+
+    # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
+  ----------------------------------------------------------------------------------------------------------
+    0 low_lowbodymesh          1427     0.00   15    (+0.00,+0.00,+0.00)    0.0d   0.015   0.031  body
+    1 low_lowbodymesh             3     0.02   19    (-0.60,-0.66,-0.45)  180.0d   0.009   0.012  turns 180.0 deg -- needs a ruling
+    2 low_ring02mesh            535    37.25    9 (-0.00,+1.00,+0.01) +Y    0.0d   1.554   3.981  not rigid: needs an island split
+                                                                       RMS 1.554, worst vertex 3.981, on frame 9
+    3 low_button01mesh          542    16.89   15    (+0.83,+0.00,+0.55)   86.9d   0.010   0.029  turns 86.9 deg -- needs a ruling
+                                                                       collapsed on some frame: may be hidden mid-animation
+    4 low_button01mesh          143     0.01    1 (+0.09,+0.02,+1.00) +Z    0.2d   0.014   0.024  trigger or hammer
+
+  WARNINGS
+    - every surface moves relative to 'low_lowbodymesh' -- the body is probably wrong (the minigun's largest surface is its spinning barrels, not its frame)

@@ -46,7 +46,10 @@ import struct
 import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
-PKG = "E:/DOOMWork/RS_VR_Weapons/"
+# [WEAPONFORGE] the package a card's model paths are resolved against. The only
+# change made to this file on the way in: RUN_SET points it at the set's own out# folder, so a card is checked against the meshes just written for it rather than
+# against another package's.
+PKG = os.environ.get("WEAPONFORGE_PKG", "E:/DOOMWork/RS_VR_Weapons/")
 RELOAD = "E:/DOOMWork/RS_VR_Reload/"
 IWAD_SND = "E:/DOOMWork/UZDXREMA/wadsrc/static/filter/game-doomchex/sndinfo.txt"
 

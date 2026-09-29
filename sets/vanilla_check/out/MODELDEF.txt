@@ -1,0 +1,169 @@
+// Written by WeaponForge for set vanilla_check. Do not edit by hand.
+
+Model WM_PropAssaultShotgun
+{
+	Path "models/vanilla_check"
+	Model 0 "assaultshotgun_wm.md3"
+	Skin 0 "assaultshotgun.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset 0.0159 -18.5831 -2.0081
+	PlacementCVars vc_assaultshotgun
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model WM_PropSMG
+{
+	Path "models/vanilla_check"
+	Model 0 "smg_wm.md3"
+	Skin 0 "smg.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.0531 -13.0688 -3.7347
+	PlacementCVars vc_smg
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model WM_PropRifle
+{
+	Path "models/vanilla_check"
+	Model 0 "rifle_wm.md3"
+	Skin 0 "rifle.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.1169 -13.4353 -0.9297
+	PlacementCVars vc_rifle
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model WM_PropRPG
+{
+	Path "models/vanilla_check"
+	Model 0 "rpg_wm.md3"
+	Skin 0 "rpg.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset 1.1050 -4.8184 1.3016
+	PlacementCVars vc_rpg
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model WM_PropPlasmaRifle
+{
+	Path "models/vanilla_check"
+	Model 0 "plasmarifle_wm.md3"
+	Skin 0 "plasmarifle.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset 0.1594 -20.6338 -2.1303
+	PlacementCVars vc_plasmarifle
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model WM_PropBFGHeavy
+{
+	Path "models/vanilla_check"
+	Model 0 "bfgheavy_wm.md3"
+	Skin 0 "bfgheavy.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset 0.0266 -18.5300 -1.3547
+	PlacementCVars vc_bfgheavy
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model WM_PropMachineGun
+{
+	Path "models/vanilla_check"
+	Model 0 "machinegun_wm.md3"
+	Skin 0 "machinegun.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.0691 -17.8819 -1.4238
+	PlacementCVars vc_machinegun
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model WM_PropChaingun
+{
+	Path "models/vanilla_check"
+	Model 0 "chaingun_wm.md3"
+	Skin 0 "chaingun.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.1647 -23.5716 -4.5794
+	PlacementCVars vc_chaingun
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model WM_PropRailgun
+{
+	Path "models/vanilla_check"
+	Model 0 "railgun_wm.md3"
+	Skin 0 "railgun.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.0478 -17.8553 -0.7650
+	PlacementCVars vc_railgun
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model WM_PropUnmaker
+{
+	Path "models/vanilla_check"
+	Model 0 "unmaker_wm.md3"
+	Skin 0 "unmaker.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset 0.0053 -19.2153 -0.8341
+	PlacementCVars vc_unmaker
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model WM_PropFlamethrower
+{
+	Path "models/vanilla_check"
+	Model 0 "flamethrower_wm.md3"
+	Skin 0 "flamethrower.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.1594 -19.3906 -4.5422
+	PlacementCVars vc_flamethrower
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}
+
+Model RS_VRGrenadeProp
+{
+	Path "models/vanilla_check"
+	Model 0 "grenade_wm.md3"
+	Skin 0 "grenade.png"
+	Scale -0.3400 0.3400 0.3400
+	Offset -0.1009 -9.3659 -2.7041
+	PlacementCVars vc_grenade
+	NOAUTOREVERSE
+	NoInterpolation
+	FollowMainHand
+	FrameIndex WMPR A 0 0
+}

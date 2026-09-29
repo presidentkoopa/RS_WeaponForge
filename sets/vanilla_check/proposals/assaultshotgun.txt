@@ -1,0 +1,17 @@
+assaultshotgun: what each surface does, measured against #3 at the rest frame
+  mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\AssaultShotgun\AssaultShotgun.md3
+  rest frame  4 of 32
+  body        #3 'Frame'
+
+  These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
+  until it is written into set.py by hand.
+
+    # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
+  ----------------------------------------------------------------------------------------------------------
+    0 Sights                    665     0.01   25 (-0.27,-0.16,+0.95) +Z    0.1d   0.013   0.026  trigger or hammer
+    1 Trigger                   847    31.22   16 (-0.03,+0.01,-1.00) -Z   10.0d   0.015   0.030  trigger or hammer
+    2 Receiver                   38    10.00   27 (-1.00,-0.00,-0.00) -X    0.1d   0.012   0.017  slide / bolt / pump / handle
+    3 Frame                    2776     0.00   10    (+0.00,+0.00,+0.00)    0.0d   0.014   0.029  body
+    4 Sights                    436     0.01    2 (+0.07,-0.00,+1.00) +Z    0.0d   0.013   0.024  fixed
+    5 Trigger                    44     0.56    5 (-1.00,-0.00,+0.00) -X   19.9d   0.013   0.024  trigger or hammer
+    6 Mag                       196    28.00   16 (+0.00,-0.00,-1.00) -Z    0.0d   0.012   0.025  magazine

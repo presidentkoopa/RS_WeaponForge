@@ -203,7 +203,16 @@ def build_gun(sf: SF.SetFile, gun, out_dir: str) -> BuiltGun:
     SF.check_against_mesh(gun, model.surfaces, sf.set_id)
 
     mesh = EM.emit_mesh(model, gun, d.rest_frame, os.path.join(out_dir, f"{gun.id}_wm.md3"))
-    prop = EP.emit_prop(gun, d, mesh.t, f"{sf.prefix}Prop{gun.id.title()}",
+    # THE SKIN COMES WITH THE MESH. The donor's MODELDEF names it, and a card that
+    # points at a skin nobody copied is a gun that draws untextured -- which reads
+    # as a broken model rather than as a missing file.
+    skin_name = os.path.basename(d.block.skins.get(0, "") or "")
+    if skin_name:
+        src = os.path.join(sf.donor_root, d.block.path.replace("/", os.sep), skin_name)
+        if os.path.exists(src):
+            import shutil as _sh
+            _sh.copy2(src, os.path.join(out_dir, f"{gun.id}.png"))
+    prop = EP.emit_prop(gun, d, mesh.t, EP.prop_class(gun.cls, sf.prefix),
                         f"{gun.id}_wm.md3", f"{gun.id}.png", sf.model_path,
                         f"{sf.cvar_prefix}_{gun.id}")
     muzzle, barrel = ME.measure_muzzle(model, gun.body, d.rest_frame, mesh.t)

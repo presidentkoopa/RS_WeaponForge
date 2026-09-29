@@ -1,0 +1,17 @@
+smg: what each surface does, measured against #1 at the rest frame
+  mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\BrutalSMG\BrutalSMG.md3
+  rest frame  3 of 27
+  body        #1 'Sights'
+
+  These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
+  until it is written into set.py by hand.
+
+    # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
+  ----------------------------------------------------------------------------------------------------------
+    0 Sights                    239    10.59   23 (-0.96,+0.28,+0.00) -X   90.0d   0.012   0.021  turns 90.0 deg -- needs a ruling
+    1 Sights                  17897     0.00    6    (+0.00,+0.00,+0.00)    0.0d   0.014   0.035  body
+    2 Trigger                   222     0.98    4 (-1.00,+0.00,+0.00) -X    0.1d   0.013   0.020  slide / bolt / pump / handle
+    3 Lipas                    2714    16.76    8 (-0.30,+0.00,-0.95) -Z    0.0d   0.014   0.027  magazine
+
+  WARNINGS
+    - every surface moves relative to 'Sights' -- the body is probably wrong (the minigun's largest surface is its spinning barrels, not its frame)

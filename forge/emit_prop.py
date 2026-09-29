@@ -116,6 +116,18 @@ def prop_offset(t: Sequence[float], donor_z_offset: float,
             abs_scale * (float(donor_z_offset) - t[2]))
 
 
+def prop_class(weapon_class: str, prefix: str = "") -> str:
+    """The prop's class name, from the weapon's own.
+
+    WM_SMG becomes WM_PropSMG, which is how every shipped prop is named: the
+    prefix, then Prop, then the rest. Built from the weapon class rather than
+    from the set's gun id, because the id is a filename and the class is a name.
+    """
+    if prefix and weapon_class.startswith(prefix):
+        return prefix + "Prop" + weapon_class[len(prefix):]
+    return weapon_class + "Prop"
+
+
 def emit_prop(gun, donor, t: Sequence[float], cls: str, mesh: str, skin: str,
               model_path: str, cvar_stem: str) -> Prop:
     """The prop block and cvars for one gun.

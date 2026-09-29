@@ -1,0 +1,135 @@
+// Written by WeaponForge for set vanilla_check. Do not edit by hand.
+// The owner tunes ofs_* in the headset; the angles are what the offset
+// arithmetic is valid at.
+
+user float vc_assaultshotgun_yaw = -90;
+user float vc_assaultshotgun_pitch = 0;
+user float vc_assaultshotgun_roll = 0;
+user float vc_assaultshotgun_scale = 1;
+user float vc_assaultshotgun_scale_x = 1;
+user float vc_assaultshotgun_scale_y = 1;
+user float vc_assaultshotgun_scale_z = 1;
+user float vc_assaultshotgun_ofs_x = 0;
+user float vc_assaultshotgun_ofs_y = 9.69;
+user float vc_assaultshotgun_ofs_z = 2.295;
+
+user float vc_smg_yaw = -90;
+user float vc_smg_pitch = 0;
+user float vc_smg_roll = 0;
+user float vc_smg_scale = 1;
+user float vc_smg_scale_x = 1;
+user float vc_smg_scale_y = 1;
+user float vc_smg_scale_z = 1;
+user float vc_smg_ofs_x = 0;
+user float vc_smg_ofs_y = 9.69;
+user float vc_smg_ofs_z = 2.295;
+
+user float vc_rifle_yaw = -90;
+user float vc_rifle_pitch = 0;
+user float vc_rifle_roll = 0;
+user float vc_rifle_scale = 1;
+user float vc_rifle_scale_x = 1;
+user float vc_rifle_scale_y = 1;
+user float vc_rifle_scale_z = 1;
+user float vc_rifle_ofs_x = 0;
+user float vc_rifle_ofs_y = 9.69;
+user float vc_rifle_ofs_z = 2.295;
+
+user float vc_rpg_yaw = -90;
+user float vc_rpg_pitch = 0;
+user float vc_rpg_roll = 0;
+user float vc_rpg_scale = 1;
+user float vc_rpg_scale_x = 1;
+user float vc_rpg_scale_y = 1;
+user float vc_rpg_scale_z = 1;
+user float vc_rpg_ofs_x = 0;
+user float vc_rpg_ofs_y = 9.69;
+user float vc_rpg_ofs_z = 2.295;
+
+user float vc_plasmarifle_yaw = -90;
+user float vc_plasmarifle_pitch = 0;
+user float vc_plasmarifle_roll = 0;
+user float vc_plasmarifle_scale = 1;
+user float vc_plasmarifle_scale_x = 1;
+user float vc_plasmarifle_scale_y = 1;
+user float vc_plasmarifle_scale_z = 1;
+user float vc_plasmarifle_ofs_x = 0;
+user float vc_plasmarifle_ofs_y = 9.69;
+user float vc_plasmarifle_ofs_z = 2.295;
+
+user float vc_bfgheavy_yaw = -90;
+user float vc_bfgheavy_pitch = 0;
+user float vc_bfgheavy_roll = 0;
+user float vc_bfgheavy_scale = 1;
+user float vc_bfgheavy_scale_x = 1;
+user float vc_bfgheavy_scale_y = 1;
+user float vc_bfgheavy_scale_z = 1;
+user float vc_bfgheavy_ofs_x = 0;
+user float vc_bfgheavy_ofs_y = 9.69;
+user float vc_bfgheavy_ofs_z = 2.295;
+
+user float vc_machinegun_yaw = -90;
+user float vc_machinegun_pitch = 0;
+user float vc_machinegun_roll = 0;
+user float vc_machinegun_scale = 1;
+user float vc_machinegun_scale_x = 1;
+user float vc_machinegun_scale_y = 1;
+user float vc_machinegun_scale_z = 1;
+user float vc_machinegun_ofs_x = 0;
+user float vc_machinegun_ofs_y = 9.69;
+user float vc_machinegun_ofs_z = 2.295;
+
+user float vc_chaingun_yaw = -90;
+user float vc_chaingun_pitch = 0;
+user float vc_chaingun_roll = 0;
+user float vc_chaingun_scale = 1;
+user float vc_chaingun_scale_x = 1;
+user float vc_chaingun_scale_y = 1;
+user float vc_chaingun_scale_z = 1;
+user float vc_chaingun_ofs_x = 0;
+user float vc_chaingun_ofs_y = 9.69;
+user float vc_chaingun_ofs_z = 2.295;
+
+user float vc_railgun_yaw = -90;
+user float vc_railgun_pitch = 0;
+user float vc_railgun_roll = 0;
+user float vc_railgun_scale = 1;
+user float vc_railgun_scale_x = 1;
+user float vc_railgun_scale_y = 1;
+user float vc_railgun_scale_z = 1;
+user float vc_railgun_ofs_x = 0;
+user float vc_railgun_ofs_y = 9.69;
+user float vc_railgun_ofs_z = 2.295;
+
+user float vc_unmaker_yaw = -90;
+user float vc_unmaker_pitch = 0;
+user float vc_unmaker_roll = 0;
+user float vc_unmaker_scale = 1;
+user float vc_unmaker_scale_x = 1;
+user float vc_unmaker_scale_y = 1;
+user float vc_unmaker_scale_z = 1;
+user float vc_unmaker_ofs_x = 0;
+user float vc_unmaker_ofs_y = 9.69;
+user float vc_unmaker_ofs_z = 2.295;
+
+user float vc_flamethrower_yaw = -90;
+user float vc_flamethrower_pitch = 0;
+user float vc_flamethrower_roll = 0;
+user float vc_flamethrower_scale = 1;
+user float vc_flamethrower_scale_x = 1;
+user float vc_flamethrower_scale_y = 1;
+user float vc_flamethrower_scale_z = 1;
+user float vc_flamethrower_ofs_x = 0;
+user float vc_flamethrower_ofs_y = 9.69;
+user float vc_flamethrower_ofs_z = 2.295;
+
+user float vc_grenade_yaw = -90;
+user float vc_grenade_pitch = 0;
+user float vc_grenade_roll = 0;
+user float vc_grenade_scale = 1;
+user float vc_grenade_scale_x = 1;
+user float vc_grenade_scale_y = 1;
+user float vc_grenade_scale_z = 1;
+user float vc_grenade_ofs_x = 0;
+user float vc_grenade_ofs_y = 9.69;
+user float vc_grenade_ofs_z = 2.295;

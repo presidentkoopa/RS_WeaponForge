@@ -1,0 +1,16 @@
+unmaker: what each surface does, measured against #0 at the rest frame
+  mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\Unmaker\Unmaker.md3
+  rest frame  0 of 16
+  body        #0 'mp_salvocannon'
+
+  These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
+  until it is written into set.py by hand.
+
+    # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
+  ----------------------------------------------------------------------------------------------------------
+    0 mp_salvocannon          10931     0.00    5    (+0.00,+0.00,+0.00)    0.0d   0.012   0.026  body
+    1 mp_salvocannon            361     0.18    3 (+0.31,+0.94,-0.17) +Y    6.3d   0.013   0.026  trigger or hammer
+    2 mp_salvocannon            249     1.20    4    (-0.66,+0.12,-0.74)   20.3d   0.013   0.028  trigger or hammer
+
+  WARNINGS
+    - every surface moves relative to 'mp_salvocannon' -- the body is probably wrong (the minigun's largest surface is its spinning barrels, not its frame)

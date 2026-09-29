@@ -1,0 +1,435 @@
+# WMCARD.vanilla_check -- written by WeaponForge. Do not edit by hand:
+# fix the tool or sets/vanilla_check/set.py and run RUN_SET again.
+weapon "WM_AssaultShotgun"
+  hand      = main
+  type      = shotgun
+  prop      = "WM_PropAssaultShotgun"
+  model     = "models/vanilla_check" "assaultshotgun_wm.md3"
+  skin      = "models/vanilla_check" "assaultshotgun.png"
+
+  muzzle    = 36.164, 0.023, -0.114
+  barrel    = 1, 0, 0
+
+  magmodel  = "models/vanilla_check" "assaultshotgun_magazine.md3"
+  magskin   = "models/vanilla_check" "assaultshotgun.png"
+  magscale  = 0.34
+  magcenter = -10.056, 0.065, -9.462
+end
+
+part charginghandle
+  role    = action
+  subject = slide
+  surface = charginghandle
+  dof
+    kind     = slide
+    axis     = -1.000, -0.000, -0.001
+    distance = 10.003
+  end
+end
+
+part trigger
+  role    = trigger
+  surface = trigger
+  dof
+    kind     = hinge
+    axis     = -0.000, 1.000, -0.000
+    degrees  = 19.93
+    pivot    = -21.740, 0.000, -2.936
+  end
+end
+
+part magazine
+  role    = feed
+  subject = magazine
+  surface = magazine
+  dof
+    kind     = slide
+    axis     = 0.000, 0.000, -1.000
+    distance = 12.156
+  end
+end
+
+weapon "WM_SMG"
+  hand      = main
+  type      = smg
+  prop      = "WM_PropSMG"
+  model     = "models/vanilla_check" "smg_wm.md3"
+  skin      = "models/vanilla_check" "smg.png"
+
+  muzzle    = 25.359, -0.156, 1.347
+  barrel    = 1, 0, 0
+
+  magmodel  = "models/vanilla_check" "smg_magazine.md3"
+  magskin   = "models/vanilla_check" "smg.png"
+  magscale  = 0.34
+  magcenter = 4.006, -0.182, -8.224
+end
+
+part charginghandle
+  role    = action
+  subject = slide
+  surface = charginghandle
+  dof
+    kind     = hinge
+    axis     = 0.000, 0.000, 1.000
+    degrees  = 89.99
+    pivot    = 9.910, -1.181, 0.000
+  end
+end
+
+part trigger
+  role    = trigger
+  surface = trigger
+  dof
+    kind     = slide
+    axis     = -1.000, 0.000, 0.000
+    distance = 0.978
+  end
+end
+
+part magazine
+  role    = feed
+  subject = magazine
+  surface = magazine
+  dof
+    kind     = slide
+    axis     = -0.299, 0.000, -0.954
+    distance = 26.162
+  end
+end
+
+weapon "WM_Rifle"
+  hand      = main
+  type      = rifle
+  prop      = "WM_PropRifle"
+  model     = "models/vanilla_check" "rifle_wm.md3"
+  skin      = "models/vanilla_check" "rifle.png"
+
+  muzzle    = 54.241, 0.134, 0.203
+  barrel    = 1, 0, 0
+
+  magmodel  = "models/vanilla_check" "rifle_magazine.md3"
+  magskin   = "models/vanilla_check" "rifle.png"
+  magscale  = 0.34
+  magcenter = 1.343, 0.069, -8.068
+end
+
+part charginghandle
+  role    = action
+  subject = slide
+  surface = charginghandle
+  surface = charginghandle2
+  dof
+    kind     = slide
+    axis     = -1.000, -0.001, -0.000
+    distance = 7.117
+  end
+end
+
+part trigger
+  role    = trigger
+  surface = trigger
+  dof
+    kind     = hinge
+    axis     = -0.000, 1.000, -0.000
+    degrees  = 16.98
+    pivot    = -7.155, 0.000, -5.125
+  end
+end
+
+part magazine
+  role    = feed
+  subject = magazine
+  surface = magazine
+  dof
+    kind     = slide
+    axis     = -0.025, 0.000, -1.000
+    distance = 22.467
+  end
+end
+
+weapon "WM_RPG"
+  hand      = main
+  type      = launcher
+  prop      = "WM_PropRPG"
+  model     = "models/vanilla_check" "rpg_wm.md3"
+  skin      = "models/vanilla_check" "rpg.png"
+
+  muzzle    = 65.789, 3.235, -1.433
+  barrel    = 1, 0, 0
+end
+
+part trigger
+  role    = trigger
+  surface = trigger
+  dof
+    kind     = slide
+    axis     = -1.000, -0.000, 0.000
+    distance = 1.386
+  end
+end
+
+part drum
+  role    = feed
+  subject = magazine
+  surface = drum
+end
+
+weapon "WM_PlasmaRifle"
+  hand      = main
+  type      = plasma
+  prop      = "WM_PropPlasmaRifle"
+  model     = "models/vanilla_check" "plasmarifle_wm.md3"
+  skin      = "models/vanilla_check" "plasmarifle.png"
+
+  muzzle    = 39.278, 0.537, 0.134
+  barrel    = 1, 0, 0
+
+  magmodel  = "models/vanilla_check" "plasmarifle_cell.md3"
+  magskin   = "models/vanilla_check" "plasmarifle.png"
+  magscale  = 0.34
+  magcenter = -12.701, 0.469, -13.239
+end
+
+part cell
+  role    = feed
+  subject = magazine
+  surface = cell
+  dof
+    kind     = slide
+    axis     = 0.194, 0.000, -0.981
+    distance = 12.326
+  end
+end
+
+part trigger
+  role    = trigger
+  surface = trigger
+  dof
+    kind     = hinge
+    axis     = -0.000, 1.000, -0.000
+    degrees  = 19.96
+    pivot    = -27.838, 0.000, -2.315
+  end
+end
+
+weapon "WM_BFGHeavy"
+  hand      = main
+  type      = bfg
+  prop      = "WM_PropBFGHeavy"
+  model     = "models/vanilla_check" "bfgheavy_wm.md3"
+  skin      = "models/vanilla_check" "bfgheavy.png"
+
+  muzzle    = 57.877, 0.078, 8.301
+  barrel    = 1, 0, 0
+end
+
+part trigger
+  role    = trigger
+  surface = trigger
+  dof
+    kind     = hinge
+    axis     = -0.000, 1.000, -0.000
+    degrees  = 30.15
+    pivot    = -21.722, 0.000, -3.952
+  end
+end
+
+weapon "WM_MachineGun"
+  hand      = main
+  type      = chaingun
+  prop      = "WM_PropMachineGun"
+  model     = "models/vanilla_check" "machinegun_wm.md3"
+  skin      = "models/vanilla_check" "machinegun.png"
+
+  muzzle    = 43.953, -0.241, 3.983
+  barrel    = 1, 0, 0
+end
+
+part trigger
+  role    = trigger
+  surface = trigger
+  dof
+    kind     = slide
+    axis     = -1.000, -0.000, -0.007
+    distance = 0.594
+  end
+end
+
+part launchertube
+  subject = foregrip
+  surface = launchertube
+  dof
+    kind     = slide
+    axis     = 1.000, -0.000, 0.002
+    distance = 9.505
+  end
+end
+
+part launchertrigger
+  surface = launchertrigger
+  dof
+    kind     = hinge
+    axis     = 0.000, 1.000, -0.000
+    degrees  = 19.99
+    pivot    = -2.169, 0.000, -7.864
+  end
+end
+
+part launcherlatch
+  surface = launcherlatch
+  dof
+    kind     = hinge
+    axis     = 0.000, -1.000, 0.000
+    degrees  = 18.94
+    pivot    = 0.794, 0.000, -8.225
+  end
+end
+
+part magazine
+  role    = feed
+  subject = magazine
+  surface = magazine
+end
+
+weapon "WM_Chaingun"
+  hand      = main
+  type      = chaingun
+  prop      = "WM_PropChaingun"
+  model     = "models/vanilla_check" "chaingun_wm.md3"
+  skin      = "models/vanilla_check" "chaingun.png"
+
+  muzzle    = -2.203, -0.290, -0.106
+  barrel    = 1, 0, 0
+end
+
+part trigger
+  role    = trigger
+  surface = trigger
+  dof
+    kind     = hinge
+    axis     = 0.001, 1.000, 0.001
+    degrees  = 20.01
+    pivot    = -35.631, 0.000, 6.617
+  end
+end
+
+part barrels
+  surface = barrels
+  dof
+    kind     = hinge
+    axis     = 1.000, 0.000, -0.000
+    degrees  = 120.0
+    pivot    = 0.000, -0.151, 0.678
+  end
+end
+
+weapon "WM_Railgun"
+  hand      = main
+  type      = railgun
+  prop      = "WM_PropRailgun"
+  model     = "models/vanilla_check" "railgun_wm.md3"
+  skin      = "models/vanilla_check" "railgun.png"
+
+  muzzle    = 86.219, -0.113, -2.164
+  barrel    = 1, 0, 0
+
+  magmodel  = "models/vanilla_check" "railgun_magazine.md3"
+  magskin   = "models/vanilla_check" "railgun.png"
+  magscale  = 0.34
+  magcenter = -2.481, -0.098, -10.079
+end
+
+part trigger
+  role    = trigger
+  surface = trigger
+  dof
+    kind     = hinge
+    axis     = -0.000, 1.000, -0.000
+    degrees  = 22.85
+    pivot    = -18.554, 0.000, -5.441
+  end
+end
+
+part magazine
+  role    = feed
+  subject = magazine
+  surface = magazine
+  dof
+    kind     = slide
+    axis     = -0.000, 0.000, -1.000
+    distance = 10.031
+  end
+end
+
+weapon "WM_Unmaker"
+  hand      = main
+  type      = unmaker
+  prop      = "WM_PropUnmaker"
+  model     = "models/vanilla_check" "unmaker_wm.md3"
+  skin      = "models/vanilla_check" "unmaker.png"
+
+  muzzle    = 38.054, 0.012, 3.813
+  barrel    = 1, 0, 0
+end
+
+part skull
+  role    = feed
+  subject = magazine
+  surface = skull
+  surface = skull2
+end
+
+weapon "WM_Flamethrower"
+  hand      = main
+  type      = flamethrower
+  prop      = "WM_PropFlamethrower"
+  model     = "models/vanilla_check" "flamethrower_wm.md3"
+  skin      = "models/vanilla_check" "flamethrower.png"
+
+  muzzle    = 55.701, 3.494, -1.070
+  barrel    = 1, 0, 0
+end
+
+part trigger
+  role    = trigger
+  surface = trigger
+  dof
+    kind     = hinge
+    axis     = -0.000, 1.000, -0.000
+    degrees  = 14.98
+    pivot    = -21.910, 0.000, 1.344
+  end
+end
+
+weapon "RS_VRGrenade"
+  hand      = main
+  type      = grenade
+  prop      = "RS_VRGrenadeProp"
+  model     = "models/vanilla_check" "grenade_wm.md3"
+  skin      = "models/vanilla_check" "grenade.png"
+
+  muzzle    = 4.602, -0.300, -4.616
+  barrel    = 1, 0, 0
+end
+
+part pin
+  subject = pin
+  surface = pin
+  dof
+    kind     = slide
+    axis     = -0.000, 1.000, 0.011
+    distance = 37.252
+  end
+end
+
+part lever
+  subject = lever
+  surface = lever
+  dof
+    kind     = hinge
+    axis     = -0.000, 1.000, 0.000
+    degrees  = 86.94
+    pivot    = 10.578, 0.000, 0.980
+  end
+end

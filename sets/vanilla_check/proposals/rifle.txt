@@ -1,0 +1,16 @@
+rifle: what each surface does, measured against #4 at the rest frame
+  mesh        D:\SteamLibrary\steamapps\Common\DooM VR\__Games\BrutalDoom\_BD_1.01_WeaponModels\Models\Weapons\Hud\Rifle\Rifle.md3
+  rest frame  3 of 32
+  body        #4 'Runko'
+
+  These are MEASUREMENTS and a SUGGESTION. Nothing here reaches the card
+  until it is written into set.py by hand.
+
+    # surface                 verts   travel   @f              direction    turn     fit   worst  suggestion
+  ----------------------------------------------------------------------------------------------------------
+    0 liikkuvat                 268     7.12   22 (-1.00,-0.00,-0.00) -X    0.1d   0.014   0.024  slide / bolt / pump / handle
+    1 ejectport                  79    10.44   22 (-1.00,-0.00,-0.00) -X    0.2d   0.015   0.027  slide / bolt / pump / handle
+    2 trigger                    76     0.56    4 (-0.95,+0.00,+0.30) -X   17.0d   0.012   0.021  trigger or hammer
+    3 Lipas                    2046    36.21    9 (-0.01,+0.15,-0.99) -Z    0.0d   0.015   0.028  magazine
+    4 Runko                    4554     0.00    7    (+0.00,+0.00,+0.00)    0.0d   0.016   0.043  body
+    5 tÃ¤htÃ¤in                2781     0.01   30    (-0.02,-0.88,-0.47)    0.1d   0.014   0.026  fixed

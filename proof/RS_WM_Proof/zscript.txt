@@ -1,0 +1,4 @@
+version "5.0.0"
+
+// RS_WM_Proof -- in-game proof that every gun works. Load LAST, after RS_VR_Reload and the sets.
+#include "zscript/wm_proof.zs"

@@ -1,0 +1,5 @@
+// Added, never replacing: the proof sits beside whatever else is registered.
+gameinfo
+{
+    AddEventHandlers = "WM_Proof"
+}

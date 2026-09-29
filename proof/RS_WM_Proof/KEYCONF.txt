@@ -1,0 +1,3 @@
+// Console shortcuts. `wm_proof` tests every carded gun; `wm_proof BD_` only one set's.
+alias wm_proof "netevent wm_proof:%1"
+alias wm_why "netevent wm_why"

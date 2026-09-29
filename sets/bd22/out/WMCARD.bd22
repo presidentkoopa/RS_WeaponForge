@@ -22,6 +22,8 @@ weapon "BD_Pistol"
 
   magoutsound    = "bd22/pistol/magout"
   maginsound     = "bd22/pistol/magin"
+  rackapexsound  = "bd22/pistol/slideback"
+  rackresetsound = "bd22/pistol/slidefwd"
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -80,8 +82,10 @@ weapon "BD_Revolver"
   ejectport = -2.252, 2.328, -2.437
   ejectdir  = -0.2914, 0.8742, 0.3885
 
-  magoutsound    = "bd22/revolver/magout"
-  maginsound     = "bd22/revolver/magin"
+  opensound      = "bd22/revolver/open"
+  closesound     = "bd22/revolver/close"
+  ejectsound     = "bd22/revolver/unload"
+  loadsound      = "bd22/revolver/load"
 end
 
 store cylinder
@@ -138,8 +142,9 @@ weapon "BD_Shotgun"
   ejectport = -18.530, -2.000, -3.181
   ejectdir  = -0.2914, -0.8742, 0.3885
 
-  rackapexsound  = "bd22/shotgun/rackback"
-  rackresetsound = "bd22/shotgun/rackfwd"
+  cycleoutsound  = "bd22/shotgun/pumpout"
+  cyclehomesound = "bd22/shotgun/pumphome"
+  loadsound      = "bd22/shotgun/load"
 end
 
 store tube
@@ -200,6 +205,10 @@ weapon "BD_SSG"
   # side measured (2539 vertices on -y against 2276 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = -2.003, 1.938, -0.434
   ejectdir  = -0.2914, 0.8742, 0.3885
+
+  opensound      = "bd22/ssg/open"
+  closesound     = "bd22/ssg/close"
+  loadsound      = "bd22/ssg/load"
 end
 
 store chambers
@@ -331,6 +340,10 @@ weapon "BD_M79"
   # side measured (9 vertices on -y against 13 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = -8.693, -0.188, 3.375
   ejectdir  = -0.2914, -0.8742, 0.3885
+
+  opensound      = "bd22/m79/open"
+  closesound     = "bd22/m79/close"
+  loadsound      = "bd22/m79/load"
 end
 
 store chambers
@@ -444,6 +457,9 @@ weapon "BD_Buzzsaw"
   magskin   = "models/bd22" "buzzsaw.png"
   magscale  = 0.34
   magcenter = -4.267, 6.396, 1.931
+
+  magoutsound    = "bd22/generic/magout"
+  maginsound     = "bd22/generic/magin"
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -760,6 +776,9 @@ weapon "BD_Flamethrower"
   magskin   = "models/bd22" "flamethrower.png"
   magscale  = 0.34
   magcenter = -0.460, -0.456, -1.811
+
+  magoutsound    = "bd22/generic/magout"
+  maginsound     = "bd22/generic/magin"
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -845,6 +864,11 @@ weapon "BD_Machinegun"
   magskin   = "models/bd22" "machinegun.png"
   magscale  = 0.34
   magcenter = -9.404, -0.351, -5.401
+
+  magoutsound    = "bd22/generic/magout"
+  maginsound     = "bd22/generic/magin"
+  rackapexsound  = "bd22/machinegun/rackback"
+  rackresetsound = "bd22/machinegun/rackfwd"
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -935,6 +959,10 @@ weapon "BD_Minigun"
   # side measured (258 vertices on -y against 274 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = -15.380, -9.578, -5.873
   ejectdir  = -0.2914, -0.8742, 0.3885
+
+  spinupsound    = "bd22/minigun/spinup"
+  spinsound      = "bd22/minigun/spin"
+  spindownsound  = "bd22/minigun/spindown"
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -949,9 +977,11 @@ part support
 end
 
 part barrels
+  spin    = trigger
+  spinrate = 20.0
+  spinup   = 14
+  spindown = 25
   surface = barrels
-  grab       = 53.882, -0.206, 0.644
-  grabradius = 3.0
   dof
     kind     = hinge
     axis     = 1.000, 0.000, -0.000
@@ -1002,6 +1032,9 @@ weapon "BD_Plasma"
   magskin   = "models/bd22" "plasma.png"
   magscale  = 0.34
   magcenter = -12.701, 0.469, -13.239
+
+  magoutsound    = "bd22/plasma/magout"
+  maginsound     = "bd22/plasma/magin"
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -1044,6 +1077,9 @@ weapon "BD_RPG"
   # side measured (62 vertices on -y against 685 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = -5.203, -2.156, -2.027
   ejectdir  = -0.2914, -0.8742, 0.3885
+
+  magoutsound    = "bd22/rpg/magout"
+  maginsound     = "bd22/rpg/magin"
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -1101,6 +1137,9 @@ weapon "BD_Railgun"
   magskin   = "models/bd22" "railgun.png"
   magscale  = 0.34
   magcenter = -2.481, -0.098, -10.079
+
+  magoutsound    = "bd22/railgun/magout"
+  maginsound     = "bd22/railgun/magin"
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -1226,6 +1265,9 @@ weapon "BD_Unmaker"
   magskin   = "models/bd22" "unmaker.png"
   magscale  = 0.34
   magcenter = -16.828, -0.126, 6.614
+
+  magoutsound    = "bd22/generic/magout"
+  maginsound     = "bd22/generic/magin"
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the

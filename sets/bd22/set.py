@@ -50,7 +50,7 @@ GUNS = {
         "type":      "pistol",
         "capacity":  15,
         "magfamily": "bd_9mm",
-        "sounds":    {"magoutsound": "bd22/pistol/magout", "maginsound": "bd22/pistol/magin"},
+        "sounds":    {"magoutsound": "bd22/pistol/magout", "maginsound": "bd22/pistol/magin", "rackapexsound": "bd22/pistol/slideback", "rackresetsound": "bd22/pistol/slidefwd"},
         "body":      "#4",
         "parts": {
             "bolt2": {"surfaces": ["#1"], "role": "action", "subject": "slide"},
@@ -73,7 +73,7 @@ GUNS = {
         "type":      "revolver",
         "capacity":  6,
         "magfamily": "bd_357",
-        "sounds":    {"magoutsound": "bd22/revolver/magout", "maginsound": "bd22/revolver/magin"},
+        "sounds":    {"opensound": "bd22/revolver/open", "closesound": "bd22/revolver/close", "ejectsound": "bd22/revolver/unload", "loadsound": "bd22/revolver/load"},
         # SIX CHAMBERS, loaded at the breech: the shipped card had no store at all,
         # so the gun could not be reloaded by hand.
         # its cylinder swings out, as its own card named a cylinder part
@@ -100,7 +100,7 @@ GUNS = {
         "type":      "pump",
         "capacity":  8,
         "magfamily": "12ga",
-        "sounds":    {"rackapexsound": "bd22/shotgun/rackback", "rackresetsound": "bd22/shotgun/rackfwd"},
+        "sounds":    {"cycleoutsound": "bd22/shotgun/pumpout", "cyclehomesound": "bd22/shotgun/pumphome", "loadsound": "bd22/shotgun/load"},
         # IT LOADS THROUGH A GATE UNDERNEATH, eight in the tube and one in the
         # chamber, as its shipped card declared before this rebuild.
         # a tube under the barrel, worked by its forend
@@ -130,6 +130,7 @@ GUNS = {
         "mechanism": "breakaction",
         "stores":    {"chambers": {"kind": "slotted", "slots": 2}},
         "load":      {"id": "breech", "where": "breech"},
+        "sounds":    {"opensound": "bd22/ssg/open", "closesound": "bd22/ssg/close", "loadsound": "bd22/ssg/load"},
         "body":      "#1",
         "parts": {
             "barrels": {"surfaces": ["#0"], "subject": "forend"},
@@ -170,6 +171,7 @@ GUNS = {
         "mechanism": "breakaction",
         "stores":    {"chambers": {"kind": "slotted", "slots": 1}},   # the archetype names it
         "load":      {"id": "breech", "where": "breech"},
+        "sounds":    {"opensound": "bd22/m79/open", "closesound": "bd22/m79/close", "loadsound": "bd22/m79/load"},
         "body":      "#0",
         "parts": {
             # ITS "MAGAZINE" WAS THE BARREL. The shipped card drove #4 as a feed;
@@ -228,6 +230,7 @@ GUNS = {
         # ITS BODY IS THE WHOLE DONOR SURFACE. The shipped mesh has a body
         # surface that is this one minus the island cut out of it, so it matches
         # no donor surface by count; the donor surface itself is the body.
+        "sounds":    {"magoutsound": "bd22/generic/magout", "maginsound": "bd22/generic/magin"},
         "body":      "#0",
         "capacity":  200,
         "magfamily": "bd_762",
@@ -380,6 +383,7 @@ GUNS = {
         # ITS BODY IS THE WHOLE DONOR SURFACE. The shipped mesh has a body
         # surface that is this one minus the island cut out of it, so it matches
         # no donor surface by count; the donor surface itself is the body.
+        "sounds":    {"magoutsound": "bd22/generic/magout", "maginsound": "bd22/generic/magin"},
         "body":      "#0",
         "capacity":  200,
         "magfamily": "bd_fuel",
@@ -425,6 +429,7 @@ GUNS = {
         # ITS BODY IS THE WHOLE DONOR SURFACE. The shipped mesh has a body
         # surface that is this one minus the island cut out of it, so it matches
         # no donor surface by count; the donor surface itself is the body.
+        "sounds":    {"magoutsound": "bd22/generic/magout", "maginsound": "bd22/generic/magin", "rackapexsound": "bd22/machinegun/rackback", "rackresetsound": "bd22/machinegun/rackfwd"},
         "body":      "#5",
         "capacity":  100,
         "magfamily": "bd_762",
@@ -467,13 +472,14 @@ GUNS = {
         "type":      "chaingun",
         "capacity":  200,
         "magfamily": "bd_762",
+        "sounds":    {"spinupsound": "bd22/minigun/spinup", "spinsound": "bd22/minigun/spin", "spindownsound": "bd22/minigun/spindown"},
         "body":      "#1",
         "parts": {
             # ITS "MAGAZINE" WAS THE ROTOR. The shipped card drove #2 `Pipe` as a
             # feed; it hinges 106 degrees -- it is the spinning barrel cluster. A
             # minigun is belt fed and has no magazine at all, which RULINGS.txt now
             # says. Driven as barrels, like the chaingun's.
-            "barrels": {"surfaces": ["#2"]},
+            "barrels": {"surfaces": ["#2"], "spin": "trigger", "spinrate": 20.0, "spinup": 14, "spindown": 25},
             "trigger": {"surfaces": ["#4"], "role": "trigger"},
             "forend": {"surfaces": ["#0"], "subject": "forend"},
         },
@@ -489,6 +495,7 @@ GUNS = {
         "type":      "plasma",
         "capacity":  60,
         "magfamily": "bd_cell",
+        "sounds":    {"magoutsound": "bd22/plasma/magout", "maginsound": "bd22/plasma/magin"},
         "body":      "#3",
         "parts": {
             "cell": {"surfaces": ["#1"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},
@@ -506,6 +513,7 @@ GUNS = {
         "type":      "launcher",
         "capacity":  1,
         "magfamily": "bd_rocket",
+        "sounds":    {"magoutsound": "bd22/rpg/magout", "maginsound": "bd22/rpg/magin"},
         "body":      "#0",
         "parts": {
             # ITS TRIGGER MOVES and the shipped card never drove it: a slide of 1.39 along -X.
@@ -531,6 +539,7 @@ GUNS = {
         "type":      "plasma",
         "capacity":  1,
         "magfamily": "bd_rail",
+        "sounds":    {"magoutsound": "bd22/railgun/magout", "maginsound": "bd22/railgun/magin"},
         "body":      "#2",
         "parts": {
             # ITS TRIGGER MOVES and the shipped card never drove it: a hinge of 22.85 degrees about +Y.
@@ -581,6 +590,7 @@ GUNS = {
         "type":      "bfg",
         "capacity":  60,
         "magfamily": "bd_rune",
+        "sounds":    {"magoutsound": "bd22/generic/magout", "maginsound": "bd22/generic/magin"},
         "body":      "#0",
         "parts": {
             "skull": {"surfaces": ["#1", "#2"], "role": "feed", "subject": "magazine", "carve": True, "take": "no"},

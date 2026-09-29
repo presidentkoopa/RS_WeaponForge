@@ -40,9 +40,22 @@ import os
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Sequence
 
-# The sound keys a card understands, in the order the shipped cards write them.
-SOUND_ORDER = ["firesound", "drysound", "magoutsound", "maginsound", "rackapexsound",
-               "rackresetsound", "magdropsound", "boltsound", "pumpsound"]
+# THE SOUND KEYS A CARD UNDERSTANDS, in the order a reload runs them. Every one of
+# these is read by RS_VR_Reload/zscript/wm/parser.zs; the parser refuses an unknown
+# key and skips the whole card, so this list is not a style choice.
+#
+# `pumpsound` and `boltsound` used to sit here and are NOT card keys -- the parser has
+# never read either. Nothing caught it because the ordering list only orders keys that
+# are present, so the two names sat here inert, looking available. A pump's two strokes
+# are cycleoutsound / cyclehomesound, and a bolt's are rackapexsound / rackresetsound.
+SOUND_ORDER = ["firesound", "drysound",
+               "magoutsound", "maginsound", "magdropsound",
+               "rackapexsound", "rackresetsound",
+               "cycleoutsound", "cyclehomesound",
+               "opensound", "closesound", "ejectsound", "loadsound",
+               "spinupsound", "spinsound", "spindownsound",
+               "pullsound", "startsound", "idlesound", "stopsound",
+               "casingsound"]
 
 
 def _triple(v: Sequence[float], dp: int = 3) -> str:
@@ -164,6 +177,21 @@ def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
             L.append(f"  subject = {part.subject}")
         if part.take:
             L.append(f"  take    = {part.take}")
+        # WHAT SPINS IT (card.zs WM_Part.spinBy). A rotor is not a part a hand works,
+        # and without this the card's spinup/spin/spindown sounds have nowhere to play.
+        if getattr(part, "spin", ""):
+            L.append(f"  spin    = {part.spin}")
+            if getattr(part, "spinrate", None) is None:
+                raise ValueError(
+                    f"{gun.id} part '{pid}': spin = {part.spin} with no spinrate. The "
+                    f"parser refuses a spinning part that names no rate, which skips the "
+                    f"whole card -- a gun that loads silent is better than one that does "
+                    f"not load. Give it spinrate (degrees a tic, under half its period).")
+            L.append(f"  spinrate = {_trim(part.spinrate, 2)}")
+            if getattr(part, "spinup", None) is not None:
+                L.append(f"  spinup   = {int(part.spinup)}")
+            if getattr(part, "spindown", None) is not None:
+                L.append(f"  spindown = {int(part.spindown)}")
         # THE NAMES THE MESH WAS WRITTEN WITH. An island part's surfaces list
         # holds the host it was cut from, whose written name is still `body`; the
         # island itself went out under the part's own name. Naming the host here

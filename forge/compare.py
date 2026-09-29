@@ -385,7 +385,9 @@ def build_gun(sf: SF.SetFile, gun, out_dir: str) -> BuiltGun:
             # the gun; it is not a thing you reach out and take, and the shipped
             # cards give a trigger a dof and no grab. A grab on it would make it
             # grabbable, which is a different gun.
-            if part.role != "trigger":
+            # A SPINNING ROTOR IS NOT GRABBED EITHER. A grab would let a hand reach
+            # out and turn the barrels, which is a different gun; spin turns it.
+            if part.role != "trigger" and not getattr(part, "spin", ""):
                 parts.grabs[pid] = ME.measure_grab(model, surfaces, d.rest_frame, mesh.t, pid,
                                                    axis=dof.axis, hinge=(dof.kind == "hinge"))
     out = BuiltGun(gun=gun, donor=d, mesh=mesh, prop=prop, muzzle=muzzle, barrel=barrel,

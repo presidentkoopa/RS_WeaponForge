@@ -52,7 +52,7 @@ GUN_KEYS = {
     "rest_frame", "notes", "firesfrom", "stores", "load", "mechanism",
 }
 PART_KEYS = {"surfaces", "role", "subject", "carve", "notes", "island", "take",
-             "chambers"}
+             "chambers", "spin", "spinrate", "spinup", "spindown"}
 SET_KEYS = {
     "SET_ID", "PREFIX", "DONOR_ROOT", "PARENT_MOD", "PACK", "MODEL_PATH",
     "CVAR_PREFIX", "PARENT_RULINGS", "GUNS", "NOTES",
@@ -91,6 +91,20 @@ class Part:
     # index step is divided from: seven rockets, a seventh of a turn.
     chambers: Optional[int] = None
     notes: str = ""
+    # WHAT SPINS THIS PART, when it is a rotor rather than a part a hand works
+    # (card.zs WM_Part.spinBy): `trigger` while the trigger is held, `fire` a turn
+    # a shot. A DECISION about the gun -- a minigun's barrels spin off the trigger,
+    # a revolver's cylinder indexes off the shot -- and the card's spin sounds have
+    # no home without it, which is how the BD minigun shipped silent.
+    spin: str = ""
+    # HOW FAST, AND HOW LONG IT TAKES TO GET THERE: degrees a tic at full speed, and
+    # the tics winding up and running down. DECISIONS, not measurements -- the mesh
+    # says how far a period is, never how fast a motor drives it. The parser refuses a
+    # spinning part with no rate, and refuses a rate at or past half a period a tic
+    # (it would look still or run backwards at 35 tics a second).
+    spinrate: Optional[float] = None
+    spinup: Optional[int] = None
+    spindown: Optional[int] = None
     # An island inside one donor surface, when a part shares a surface with the
     # body: {"of": "#5", "verts": 415}. The vertex count is checked against the
     # island actually found, so a mapping written against a different export of
@@ -281,6 +295,9 @@ def load_set(path: str) -> SetFile:
                 carve=bool(praw.get("carve", False)), notes=praw.get("notes", ""),
                 take=str(praw.get("take", "")),
                 chambers=praw.get("chambers"),
+                spin=str(praw.get("spin", "")),
+                spinrate=praw.get("spinrate"), spinup=praw.get("spinup"),
+                spindown=praw.get("spindown"),
                 island=island)
 
         body = raw.get("body")

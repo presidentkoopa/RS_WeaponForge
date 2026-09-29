@@ -14,6 +14,50 @@
 #
 # The roles and subjects are the shipped cards' own, since the point is to
 # reproduce those cards.
+#
+# ---------------------------------------------------------------------------
+# WHERE THIS SET AND RS_VR_Weapons DISAGREE, and why each one stands
+#
+# Seven of the twelve reproduce the shipped cards value for value. Nine values
+# across five guns do not, and none of them is the tool being wrong. They are
+# recorded here rather than chased, because the shipped set is not to be
+# changed and the tool is not to be bent to a number that was reached another
+# way.
+#
+#   grenade, 4 values     Its card says so itself: "EVERY NUMBER BELOW IS
+#                         MEASURED off grenade_wm.md3 frame 0" -- a different
+#                         mesh, built from nade.md3 frame 2 and re-origined,
+#                         because "nade.md3's 27 frames animate the WHOLE
+#                         grenade through a throw rather than moving parts
+#                         against the body". Its 5.92 is a clearance plus half
+#                         a unit of spare, and its axis comes from a 26-vertex
+#                         island of the pin's shaft. We measure a different
+#                         object, so the numbers cannot agree.
+#
+#   rpg trigger, 2        Same mesh, and the same frame 8 its card names, yet
+#                         1.386 against 1.397 and z 0.000 against -0.011. Both
+#                         differ by 0.011, which is under one 1/64 quantum --
+#                         below the resolution the mesh itself is stored at.
+#
+#   rifle magazine, 1     Its card's 22.3 is not the magazine's length along
+#                         any axis on this mesh: 22.467 along the card's own
+#                         axis, 22.422 along straight -Z, 22.539 along the
+#                         other rifle's axis.
+#
+#   smg magazine, 1       Its 26.150 is the length along an axis rounded to
+#                         three decimals and used UN-normalised, which gives
+#                         26.148. Normalised, as a direction must be, 26.162.
+#
+#   flamethrower, 1       Its trigger pin is quoted from the point on the hinge
+#                         line nearest the part's centroid (-0.470 in y, which
+#                         that reproduces to 0.012). The SMG and chaingun cards
+#                         quote theirs in the plane the hinge turns in, and the
+#                         tool follows those two.
+#
+# The accepted output under tests/vanilla_check/ is this set's own reference
+# from here on, which is what CHECK_ALL re-runs. Against RS_VR_Weapons the nine
+# above stay reported.
+# ---------------------------------------------------------------------------
 
 SET_ID      = "vanilla_check"
 PREFIX      = "WM_"

@@ -53,6 +53,35 @@ FIRING_LINE = {
     # the muzzle, measured 09-29). The BFG and BFG10k are ONE mesh with two barrels, and the card picked
     # the top one for one and the bottom one for the other: both get the middle, so they sit alike.
     # The flame cannon's and the Revenant launcher's front-most vertices are a rim, not the axis.
+    # WHERE THE HAND GOES (owner, 10-01: "the exact same method" that seats the Star Wars guns). Each gun
+    # named here puts ITS OWN HANDLE -- mesh (x, z), the trigger hand's palm on the grip's centre line --
+    # on the M4A3's grip, along the gun AND in height; side stays on the bore line. This replaces the
+    # anchor shift and the bore height for these guns. Picks: owner's boxes and HAND_DECISIONS.md, read
+    # off renders 10-01 (proposals/grips). UNSURE: flamecannon, hellish, unmaker -- the owner's call.
+    "hand": {
+        "pistol":          (-5.80, -6.50),   # handle centreline
+        "revolver":        (-11.90, -7.50),   # handle centreline
+        "shotgun":         (-28.50, -2.50),   # stock wrist behind trigger guard
+        "ssg":             (-11.50, -3.50),   # sawn-off pistol grip
+        "mp40":            (-18.50, -8.50),   # owner, hand-placed
+        "m79":             (-15.00, -3.00),   # stock wrist behind trigger group
+        "flamecannon":     (-16.00, -6.00),   # lower tube handle (UNSURE)
+        "hellish":         (-14.00, -19.00),   # lower bar (UNSURE)
+        "buzzsaw":         (-23.00, -9.00),   # pistol grip
+        "chainsaw":        (-24.00, 8.00),   # rear top handle (owner box)
+        "assaultshotgun":  (-21.76, -4.28),   # owner box pick
+        "bfg":             (-25.50, -9.00),   # rear handle (owner box)
+        "bfg10k":          (-32.00, -9.00),   # rear handle
+        "smg":             (-12.50, -4.00),   # pistol grip (owner box)
+        "flamethrower":    (-28.00, 7.00),   # high rear handle (owner)
+        "machinegun":      (-26.30, -8.00),   # pistol grip (owner box)
+        "minigun":         (-43.50, 2.00),   # big rear handle (owner)
+        "plasma":          (-32.65, -10.86),   # owner, hand-placed
+        "rpg":             (19.00, -16.00),   # handle below ammo box (owner)
+        "railgun":         (-27.99, -12.57),   # owner, hand-placed
+        "rifle":           (-14.70, -9.00),   # pistol grip
+        "unmaker":         (-24.00, -14.00),   # low rear jaw (UNSURE)
+    },
     "bore": {
         "bfg":         (0.08, 3.69),
         "bfg10k":      (0.08, 3.69),

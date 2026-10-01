@@ -419,6 +419,13 @@ def lint(block):
             card["verbs"].append(cur)
             ctx = "verb"
             continue
+        # THE GRIP BLOCK (RS_VR_Reload parser.zs GripKey): `grip` alone, then class / seat / seatrot /
+        # support, then `end`. `seat` is the point of the mesh in the palm (GUN_IN_HAND_PLAN.md).
+        if s == "grip":
+            cur = {"id": "grip", "keys": {}}
+            card["grip"] = cur
+            ctx = "grip"
+            continue
         if words[0] == "barrel" and len(words) == 2 and "=" not in s:
             cur = {"id": words[1], "keys": {}}
             card["barrels"][words[1]] = cur
@@ -469,6 +476,16 @@ def lint(block):
         elif ctx == "barrel":
             if key not in BARREL_KEYS:
                 issues.append(f"barrel {cur['id']}: unknown key {key}")
+            cur["keys"][key] = val
+        elif ctx == "grip":
+            if key not in ("class", "seat", "seatrot", "support"):
+                issues.append(f"grip: unknown key {key} -- a grip block takes class, seat, seatrot and support")
+            elif key in ("seat", "seatrot"):
+                try:
+                    if len([float(x) for x in val.split(",")]) != 3:
+                        raise ValueError
+                except ValueError:
+                    issues.append(f"grip: {key} is x, y, z")
             cur["keys"][key] = val
 
     k = card["keys"]

@@ -55,7 +55,7 @@ PART_KEYS = {"surfaces", "role", "subject", "carve", "notes", "island", "take",
              "chambers", "spin", "spinrate", "spinup", "spindown"}
 SET_KEYS = {
     "SET_ID", "PREFIX", "DONOR_ROOT", "PARENT_MOD", "PACK", "MODEL_PATH",
-    "CVAR_PREFIX", "PARENT_RULINGS", "GUNS", "NOTES",
+    "CVAR_PREFIX", "PARENT_RULINGS", "GUNS", "NOTES", "FIRING_LINE",
 }
 
 
@@ -211,6 +211,8 @@ class SetFile:
     parent_rulings: Dict[str, str]
     guns: Dict[str, Gun]
     path: str
+    # set.py FIRING_LINE: the reference gun every bore is put on (emit_prop.firing_line). {} = none.
+    firing_line: Dict[str, Any] = field(default_factory=dict)
 
     @property
     def unmapped(self) -> List[str]:
@@ -364,7 +366,7 @@ def load_set(path: str) -> SetFile:
         pack=str(need("PACK")), model_path=str(need("MODEL_PATH")),
         cvar_prefix=str(need("CVAR_PREFIX")),
         parent_rulings=dict(getattr(mod, "PARENT_RULINGS", {}) or {}),
-        guns=guns, path=path)
+        guns=guns, path=path, firing_line=dict(getattr(mod, "FIRING_LINE", {}) or {}))
 
 
 def check_against_mesh(gun: Gun, surfaces: Sequence, set_id: str = "") -> None:

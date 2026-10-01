@@ -58,10 +58,15 @@ PLACEMENT_DEFAULTS = {
     "ofs_x": 0.0,
     "ofs_y": 9.69,
     "ofs_z": 2.295,
+    # THE GRIP'S TRIM (GUN_IN_HAND_PLAN.md): with a grip the engine reads these instead of ofs_*,
+    # in mesh units, added to the card's grip point. Zero: the grip is where the card says.
+    "grip_x": 0.0,
+    "grip_y": 0.0,
+    "grip_z": 0.0,
 }
 # The order they are written in, so a diff of two CVARINFOs is readable.
 PLACEMENT_ORDER = ["yaw", "pitch", "roll", "scale", "scale_x", "scale_y", "scale_z",
-                   "ofs_x", "ofs_y", "ofs_z"]
+                   "ofs_x", "ofs_y", "ofs_z", "grip_x", "grip_y", "grip_z"]
 
 
 @dataclass
@@ -143,3 +148,68 @@ def emit_prop(gun, donor, t: Sequence[float], cls: str, mesh: str, skin: str,
                 scale=scale,
                 offset=prop_offset(t, donor.z_offset, abs(scale[0])),
                 cvar_stem=cvar_stem, hand=getattr(gun, "hand", "main"))
+
+
+# ---- THE FIRING LINE: every gun's bore on the reference gun's ---------------------------------------
+#
+# The owner, 09-29: "recenter my BD set by fixing the BD pistol according to the M4A3, and then fix
+# the positions of the other BD22 guns from there."
+#
+# R4 carries each donor's HUD seat into the hand, and Brutal Doom seated every HUD gun differently on
+# the screen -- so in the hand their bores sat anywhere from 2.6 map units under the M4A3's to 3.1 over
+# it, and the aim ray left the controller along a line no barrel was on. A set that names a reference
+# (set.py FIRING_LINE) gets, after R4, per gun:
+#
+#   height and side   the bore (the card's muzzle, which lies on the barrel axis) exactly on the
+#                     reference gun's bore line;
+#   along the gun     the ANCHOR gun's grip (its carved magazine's centre -- a pistol's grip IS its
+#                     magazine well) exactly on the reference's grip, and every other gun moved the
+#                     same distance the anchor moved, so each keeps where its own donor put the hand.
+#
+# THE ARITHMETIC. On the follow-hand path a mesh point p lands at Offset + seat + S*R(p) (models.cpp
+# step 3 scales, step 4 translates by (Offset+seat)/scale): Offset is NOT scaled. At the R5 angles
+# (yaw -90) the mesh's x runs along -Offset.y, its y along Offset.x (times Scale x, whose sign is the
+# mirror), its z along Offset.z. The seat (ofs_*) is the same for the reference and for every set gun
+# (R5 = wm_main's defaults), so it cancels and only the MODELDEF numbers matter.
+# fl["bore"] -- {gid: (y, z)} -- names the barrel axis where the card's muzzle (the front-most
+# vertices) is not on it: two barrels, or a nozzle that bends up. Measured as the middle of the
+# mesh's cross-section just behind the muzzle.
+def firing_line(fl, guns):
+    """fl: set.py FIRING_LINE. guns: [(gid, prop, muzzle, grip_or_None)]. Moves prop.offset in place;
+    returns report lines."""
+    rs, ro = fl["scale"], fl["offset"]
+    rm, rg = fl["muzzle"], fl["grip"]
+    ref_z = ro[2] + abs(rs[2]) * rm[2]
+    ref_x = ro[0] + rs[0] * rm[1]
+    ref_y = ro[1] - abs(rs[1]) * rg[0]
+    skip = set(fl.get("skip", ()))
+    by = {g[0]: g for g in guns}
+    anchor = by.get(fl["anchor"])
+    if anchor is None or anchor[3] is None:
+        raise ValueError(f"FIRING_LINE anchor {fl['anchor']!r} is not a gun with a carved magazine")
+    _, ap, _, agrip = anchor
+    shift = ref_y + abs(ap.scale[1]) * agrip[0] - ap.offset[1]
+    out = [f"firing line: reference bore z {ref_z:.4f} side {ref_x:.4f}, grip {ref_y:.4f}; "
+           f"anchor {fl['anchor']} moves {shift:+.4f} along the gun, and every gun with it"]
+    bores = fl.get("bore", {})
+    # fl["hand"] -- {gid: (x, z)} -- the gun's own handle, put on the reference's grip along the gun AND in
+    # height (side stays on the bore line, or the donor's for a skipped gun). The method that seats the
+    # Star Wars set (RS_StarWars tools/export_set.py: the mesh origin IS the grip). Owner, 10-01.
+    hands = fl.get("hand", {})
+    ref_gz = ro[2] + abs(rs[2]) * rg[2]
+    for gid, prop, muzzle, _ in guns:
+        if gid in skip and gid not in hands:
+            continue
+        if gid in bores:            # set.py: this card's muzzle point is not on the barrel's axis
+            muzzle = (muzzle[0], bores[gid][0], bores[gid][1])
+        ox, oy, oz = prop.offset
+        nz = ref_z - abs(prop.scale[2]) * muzzle[2]
+        nx = ox if gid in skip else ref_x - prop.scale[0] * muzzle[1]
+        ny = oy + shift
+        if gid in hands:
+            hx, hz = hands[gid]
+            ny = ref_y + abs(prop.scale[1]) * hx
+            nz = ref_gz - abs(prop.scale[2]) * hz
+        out.append(f"  {gid:<16} Offset {ox:8.4f} {oy:8.4f} {oz:8.4f}  ->  {nx:8.4f} {ny:8.4f} {nz:8.4f}")
+        prop.offset = (nx, ny, nz)
+    return out

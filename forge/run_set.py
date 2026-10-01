@@ -35,6 +35,7 @@ from typing import List, Optional, Sequence, Tuple
 from . import compare as CM
 from . import donor as D
 from . import emit_card as EC
+from . import grip as GR
 from . import emit_prop as EP
 from . import emit_slots as ES
 from . import measure as ME
@@ -137,11 +138,20 @@ def stage_emit(sf: SF.SetFile, out_dir: str) -> Tuple[Optional[str], List[str]]:
         print("  3 " + report[0])
     for gid, gun, built in builts:
         skipped.extend(f"{gid}: {s}" for s in built.skipped)
-        cards.append(EC.write_card(gun, built.prop, built.muzzle, built.barrel, built.parts,
-                                   sf.model_path, f"{gid}_wm.md3", sf.model_path,
-                                   f"{gid}.png", built.surface_names,
-                                   ejection=built.ejection, support=built.support,
-                                   load=built.load, part_names=built.mesh.part_names))
+        card_text = EC.write_card(gun, built.prop, built.muzzle, built.barrel, built.parts,
+                                  sf.model_path, f"{gid}_wm.md3", sf.model_path,
+                                  f"{gid}.png", built.surface_names,
+                                  ejection=built.ejection, support=built.support,
+                                  load=built.load, part_names=built.mesh.part_names)
+        # THE GRIP (grip.py): the mesh point this gun's placement puts on the hand, written into its card,
+        # so the engine holds the gun by it and nothing moves on the day it switches over.
+        P = EP.PLACEMENT_DEFAULTS
+        g = GR.grip_from_placement(built.prop.scale, built.prop.offset,
+                                   ofs=(P["ofs_x"], P["ofs_y"], P["ofs_z"]),
+                                   turn=(P["yaw"], P["pitch"], P["roll"]),
+                                   off_hand=(built.prop.hand == "off"))
+        cards.append(GR.with_grip(card_text, g,
+                                  f"From this gun's MODELDEF Offset and seat as WeaponForge placed it ({sf.set_id})."))
         props.append(built.prop.modeldef())
         cvars.append(built.prop.cvarinfo())
 
@@ -152,8 +162,8 @@ def stage_emit(sf: SF.SetFile, out_dir: str) -> Tuple[Optional[str], List[str]]:
         f.write("\n".join(props))
     with open(os.path.join(out_dir, "CVARINFO.txt"), "w", encoding="utf-8") as f:
         f.write(f"// Written by WeaponForge for set {sf.set_id}. Do not edit by hand.\n")
-        f.write("// The owner tunes ofs_* in the headset; the angles are what the offset\n")
-        f.write("// arithmetic is valid at.\n\n")
+        f.write("// A gun with a grip (its card's `grip` block) is held by it: grip_* trims that point, in mesh\n")
+        f.write("// units, and ofs_* is not read. The angles are what the offset arithmetic is valid at.\n\n")
         f.write("\n".join(cvars))
     # The set's own human files travel with it: a ruling belongs to the set, not to
     # the pack it lands in, so it ships from beside set.py rather than being typed

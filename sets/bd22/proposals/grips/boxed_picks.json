@@ -1,0 +1,413 @@
+{
+ "BD_AssaultShotgun": {
+  "grip": {
+   "index": 34,
+   "centre": [
+    -21.762386658031087,
+    0.048089378238341966,
+    -4.2826262953367875
+   ],
+   "axis": [
+    0.8121439412938837,
+    -0.018360197519248667,
+    -0.5831681762293714
+   ],
+   "major": 1.772,
+   "minor": 1.946,
+   "width_mu": 1.21,
+   "palms": 1.22,
+   "drift": 1.004,
+   "ends": [
+    0,
+    0
+   ]
+  },
+  "support": {
+   "index": null,
+   "centre": [
+    13.612,
+    0.0,
+    -2.168
+   ],
+   "axis": null,
+   "note": "centroid of what the hand wraps -- inside the solid by design, not a void"
+  }
+ },
+ "BD_BFG": {
+  "grip": {
+   "index": 32,
+   "centre": [
+    -15.201364436619718,
+    -2.3294454225352115,
+    -6.198723591549296
+   ],
+   "axis": [
+    0.3778582976550129,
+    0.2199082946183667,
+    -0.8993683610464054
+   ],
+   "major": 2.889,
+   "minor": 1.094,
+   "width_mu": 1.96,
+   "palms": 2.16,
+   "drift": 1.036,
+   "ends": [
+    0,
+    36
+   ]
+  },
+  "support": {
+   "index": null,
+   "centre": [
+    30.663,
+    0.0,
+    -3.992
+   ],
+   "axis": null,
+   "note": "centroid of what the hand wraps -- inside the solid by design, not a void"
+  }
+ },
+ "BD_Chainsaw": {
+  "grip": {
+   "index": 36,
+   "centre": [
+    -28.248197115384617,
+    0.892578125,
+    8.012770432692308
+   ],
+   "axis": [
+    0.20499095558302594,
+    -0.9586922849771503,
+    -0.19719992610152737
+   ],
+   "major": 2.298,
+   "minor": 1.607,
+   "width_mu": 2.34,
+   "palms": 2.13,
+   "drift": 0.214,
+   "ends": [
+    0,
+    0
+   ]
+  },
+  "support": {
+   "index": null,
+   "centre": [
+    -15.461,
+    0.0,
+    12.524
+   ],
+   "axis": null,
+   "note": "centroid of what the hand wraps -- inside the solid by design, not a void"
+  }
+ },
+ "BD_FlameCannon": {
+  "grip": {
+   "index": 3,
+   "centre": [
+    -27.744984567901234,
+    -1.949266975308642,
+    -0.02546296296296296
+   ],
+   "axis": [
+    0.19583207629728594,
+    -0.0019746168054215474,
+    -0.9806354566206373
+   ],
+   "major": 2.266,
+   "minor": 2.54,
+   "width_mu": 1.54,
+   "palms": 2.02,
+   "drift": 0.393,
+   "ends": [
+    8,
+    0
+   ]
+  }
+ },
+ "BD_Flamethrower": {
+  "grip": {
+   "index": 69,
+   "centre": [
+    -37.64282463592233,
+    -0.045282160194174755,
+    2.8284283980582523
+   ],
+   "axis": [
+    0.9258718723405148,
+    0.18144707687730233,
+    -0.3314185183440295
+   ],
+   "major": 2.32,
+   "minor": 1.512,
+   "width_mu": 1.58,
+   "palms": 2.07,
+   "drift": 0.666,
+   "ends": [
+    0,
+    0
+   ]
+  },
+  "support": {
+   "index": null,
+   "centre": [
+    -12.162,
+    0.0,
+    -5.931
+   ],
+   "axis": null,
+   "note": "centroid of what the hand wraps -- inside the solid by design, not a void"
+  }
+ },
+ "BD_M79": {
+  "grip": {
+   "index": 2,
+   "centre": [
+    -8.5029296875,
+    0.044921875,
+    -1.9071614583333334
+   ],
+   "axis": [
+    0.013630496354029563,
+    -0.0002009014018783395,
+    -0.9999070802868483
+   ],
+   "major": 1.931,
+   "minor": 0.619,
+   "width_mu": 1.31,
+   "palms": 1.13,
+   "drift": 1.285,
+   "ends": [
+    0,
+    0
+   ]
+  },
+  "support": {
+   "index": null,
+   "centre": [
+    16.48,
+    0.0,
+    -0.204
+   ],
+   "axis": null,
+   "note": "centroid of what the hand wraps -- inside the solid by design, not a void"
+  }
+ },
+ "BD_MP40": {
+  "grip": {
+   "index": null,
+   "centre": [
+    -18.5,
+    0.0,
+    -8.5
+   ],
+   "axis": null,
+   "note": "placed and rendered by hand, inside his own red box"
+  },
+  "support": {
+   "index": null,
+   "centre": [
+    12.462,
+    0.0,
+    -7.118
+   ],
+   "axis": null,
+   "note": "centroid of what the hand wraps -- inside the solid by design, not a void"
+  }
+ },
+ "BD_Machinegun": {
+  "grip": {
+   "index": 65,
+   "centre": [
+    -32.289572864321606,
+    -0.7128611809045227,
+    -1.0310144472361809
+   ],
+   "axis": [
+    -0.3106677117497173,
+    -0.5422554933866355,
+    -0.7806692979541409
+   ],
+   "major": 2.263,
+   "minor": 2.098,
+   "width_mu": 1.54,
+   "palms": 1.31,
+   "drift": 0.97,
+   "ends": [
+    0,
+    0
+   ]
+  },
+  "support": {
+   "index": null,
+   "centre": [
+    18.595,
+    0.0,
+    -5.002
+   ],
+   "axis": null,
+   "note": "centroid of what the hand wraps -- inside the solid by design, not a void"
+  }
+ },
+ "BD_Minigun": {
+  "grip": {
+   "index": 49,
+   "centre": [
+    -47.9407169117647,
+    -1.05859375,
+    -5.051470588235294
+   ],
+   "axis": [
+    -0.4224143441286759,
+    -0.43160077851306256,
+    -0.797048862906948
+   ],
+   "major": 2.531,
+   "minor": 2.18,
+   "width_mu": 1.72,
+   "palms": 1.46,
+   "drift": 1.254,
+   "ends": [
+    0,
+    0
+   ]
+  }
+ },
+ "BD_Plasma": {
+  "grip": {
+   "index": null,
+   "centre": [
+    -32.65,
+    -0.12,
+    -10.86
+   ],
+   "axis": null,
+   "note": "placed and rendered by hand, inside his own red box"
+  },
+  "support": {
+   "index": null,
+   "centre": [
+    8.602,
+    0.0,
+    -5.45
+   ],
+   "axis": null,
+   "note": "centroid of what the hand wraps -- inside the solid by design, not a void"
+  }
+ },
+ "BD_RPG": {
+  "grip": {
+   "index": 37,
+   "centre": [
+    24.973117236024844,
+    2.9919448757763973,
+    -10.233695652173912
+   ],
+   "axis": [
+    -0.016120124544248327,
+    0.9934557762245286,
+    -0.11307414501466695
+   ],
+   "major": 1.716,
+   "minor": 1.593,
+   "width_mu": 1.17,
+   "palms": 0.54,
+   "drift": Infinity,
+   "ends": [
+    0,
+    0
+   ]
+  },
+  "support": null
+ },
+ "BD_Railgun": {
+  "grip": {
+   "index": null,
+   "centre": [
+    -27.99,
+    0.97,
+    -12.57
+   ],
+   "axis": null,
+   "note": "placed and rendered by hand, inside his own red box"
+  },
+  "support": {
+   "index": null,
+   "centre": [
+    24.637,
+    0.0,
+    -4.465
+   ],
+   "axis": null,
+   "note": "centroid of what the hand wraps -- inside the solid by design, not a void"
+  }
+ },
+ "BD_SMG": {
+  "grip": {
+   "index": 58,
+   "centre": [
+    -13.243020304568528,
+    -0.5053140862944162,
+    -6.847795050761421
+   ],
+   "axis": [
+    0.6252469318154933,
+    -0.7099693219539823,
+    -0.3240522120577395
+   ],
+   "major": 1.977,
+   "minor": 0.899,
+   "width_mu": 1.34,
+   "palms": 0.56,
+   "drift": 0.992,
+   "ends": [
+    0,
+    0
+   ]
+  },
+  "support": {
+   "index": null,
+   "centre": [
+    20.609,
+    0.0,
+    1.065
+   ],
+   "axis": null,
+   "note": "centroid of what the hand wraps -- inside the solid by design, not a void"
+  }
+ },
+ "BD_Unmaker": {
+  "grip": {
+   "index": 121,
+   "centre": [
+    -36.431515957446805,
+    0.015625,
+    -18.77061170212766
+   ],
+   "axis": [
+    0.7186288389572736,
+    -0.0,
+    -0.695393839359338
+   ],
+   "major": 2.567,
+   "minor": 1.886,
+   "width_mu": 1.75,
+   "palms": 1.22,
+   "drift": 1.025,
+   "ends": [
+    0,
+    0
+   ]
+  },
+  "support": {
+   "index": null,
+   "centre": [
+    1.448,
+    0.0,
+    -8.064
+   ],
+   "axis": null,
+   "note": "centroid of what the hand wraps -- inside the solid by design, not a void"
+  }
+ }
+}

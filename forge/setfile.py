@@ -73,6 +73,19 @@ GUN_TYPES = {
     "pistol", "shotgun", "breakaction", "revolver", "rifle", "smg", "chaingun",
     "plasma", "launcher", "bfg", "railgun", "flamethrower", "chainsaw",
     "melee", "grenade",
+    # CORRECTED 2026-10-02, SAME DAY. I refused "pump" on the strength of
+    # WM_HandProfile.TypeAt, which lists fourteen and omits it -- and TypeAt is the
+    # MENU's picker, not the lookup. TypeOf hands the card's word straight to
+    # wm_hs_<type>_*, and wm_hs_pump_main_support/slide/mag/forend/foregrip ARE ALL
+    # DECLARED. A pump has always had its own hand seats. Refusing the word would
+    # have blocked a legitimate type on a wrong premise.
+    #
+    # What was genuinely missing is the FEEL threshold, and that is now declared too
+    # (RS_VR_Reload CVARINFO wm_feel_pump_home/_shut), so the word is fully served
+    # wherever it is read. Reading TypeAt for a question about cvars is the mistake
+    # here, and it is worth naming: the list that LOOKS canonical was not the one in
+    # the path.
+    "pump",
 }
 PART_KEYS = {"surfaces", "role", "subject", "carve", "notes", "island", "take",
              "chambers", "spin", "spinrate", "spinup", "spindown"}

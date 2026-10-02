@@ -263,7 +263,9 @@ GUNS = {
         "modeldef":  "Modeldef.Unmaker.def",
         "decorate":  "Unmaker.txt",
         "hand":      "main",
-        "type":      "unmaker",
+        # NOT "unmaker" (2026-10-02): `type` is the hand-seat profile and the
+        # system has fourteen. BD22 cards this same gun as bfg.
+        "type":      "bfg",
         "body":      "#0",
         "parts": {
             "skull": {"surfaces": ["#1", "#2"], "role": "feed", "subject": "magazine",

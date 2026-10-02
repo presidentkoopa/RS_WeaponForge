@@ -50,6 +50,29 @@ GUN_KEYS = {
     "class", "donor", "modeldef", "decorate", "actor", "hand", "type",
     "capacity", "magfamily", "sounds", "body", "parts", "hidden", "fixed",
     "rest_frame", "notes", "firesfrom", "stores", "load", "mechanism",
+    "casing",
+}
+# WHAT `casing` MAY SAY, in the parser's own words (RS_VR_Reload parser.zs:1776-1781).
+# `no` is taken there as a synonym of `none` and so is accepted here, but a set file
+# should write `none`: `no` reads like "no, it does not throw one", which is what
+# `casing = yes` already means to someone skimming.
+CASING = {"yes", "none", "no"}
+
+# THE TYPES THE RELOAD SYSTEM ACTUALLY HAS. `type` is a card's HAND-SEAT PROFILE:
+# the first fourteen are WM_HandProfile.TypeAt's own list (handprofile.zs:103-123),
+# which is what wm_hs_<type>_* and wm_feel_<type>_* are named after; `melee` and
+# `grenade` are not in it but are shipped in Vanilla's cards and answered by
+# WM_Card.DefaultGripClass, so they are types the tree knows.
+#
+# WHY THIS IS REFUSED RATHER THAN WARNED. An unknown type is SILENT: the gun reads
+# wm_hs_default_* for every seat and wm_feel_default_* for its thresholds, and both
+# are plausible numbers, so nothing looks broken -- it just sits wrong in the hand
+# and will not fire with the pump a hair off home. Two sets had one. BD22's shotguns
+# said "pump", which is a MECHANISM, and vanilla_check's Unmaker said "unmaker".
+GUN_TYPES = {
+    "pistol", "shotgun", "breakaction", "revolver", "rifle", "smg", "chaingun",
+    "plasma", "launcher", "bfg", "railgun", "flamethrower", "chainsaw",
+    "melee", "grenade",
 }
 PART_KEYS = {"surfaces", "role", "subject", "carve", "notes", "island", "take",
              "chambers", "spin", "spinrate", "spinup", "spindown"}
@@ -152,6 +175,14 @@ class Gun:
     # not the same as one whose magazine nobody has carved yet: an axe fires from
     # nothing, and set_gate treats the two differently for good reason.
     firesfrom: str = ""
+    # WHETHER A CASE LEAVES THE GUN. yes (the card default, so unstated means yes) |
+    # none. A DECISION about the gun, and nothing in a mesh says it: a plasma rifle, a
+    # rail, a rocket and a flame all have an ejection port measured on them by the
+    # emitter -- the measurement is of the emptier wall of the receiver, which exists
+    # whether or not anything comes out of it -- and without this they all throw brass
+    # from it. The port stays measured even at `none`, because rig.zs:3122 throws LIVE
+    # rounds from it too when a breech is opened.
+    casing: str = ""
     # Which reload archetype drives it: pump, breakaction, breaktop_revolver,
     # swingout_revolver. A DECISION about the gun -- nothing in a mesh says how a
     # breech opens -- and it is what gives the gun its loading verbs.
@@ -260,6 +291,26 @@ def load_set(path: str) -> SetFile:
             _require(k in raw and isinstance(raw[k], str) and raw[k].strip(),
                      f"{where}: {k!r} is required")
 
+        # A MISSPELT VALUE IS WORSE THAN A MISSPELT KEY HERE. An unknown key is caught
+        # above, but `casing: "None"` or `casing: "false"` would reach the card, and the
+        # reload parser refuses the value and SKIPS THE WHOLE CARD -- the gun then has no
+        # world weapon at all, over a word.
+        if raw.get("type"):
+            _require(str(raw["type"]).strip().lower() in GUN_TYPES,
+                     f"{where}: type = {raw['type']!r} is not one the reload system has "
+                     f"({', '.join(sorted(GUN_TYPES))}). `type` is the gun's HAND-SEAT "
+                     f"PROFILE -- an unknown one is silent: every seat falls back to "
+                     f"wm_hs_default_* and every threshold to wm_feel_default_*, which are "
+                     f"plausible numbers, so the gun simply sits wrong in the hand. If you "
+                     f"meant how the gun works rather than how it is held, that is "
+                     f"`mechanism`.")
+
+        if "casing" in raw:
+            _require(str(raw["casing"]).strip().lower() in CASING,
+                     f"{where}: casing = {raw['casing']!r} is not one of {sorted(CASING)}. "
+                     f"The reload parser refuses an unknown value and skips the whole card, "
+                     f"so this gun would have no world weapon at all.")
+
         parts: Dict[str, Part] = {}
         for pname, praw in (raw.get("parts") or {}).items():
             pwhere = f"{where}, part '{pname}'"
@@ -313,6 +364,7 @@ def load_set(path: str) -> SetFile:
             decorate=raw["decorate"], hand=raw.get("hand", "main"), type=raw.get("type", ""),
             capacity=raw.get("capacity"), magfamily=raw.get("magfamily", ""),
             firesfrom=raw.get("firesfrom", ""),
+            casing=str(raw.get("casing", "")),
             mechanism=raw.get("mechanism", ""),
             sounds=dict(raw.get("sounds") or {}), actor=raw.get("actor"),
             body=None if body is None else _surface_index(body, f"{where}, body"),

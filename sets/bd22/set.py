@@ -95,6 +95,19 @@ PARENT_RULINGS = {
     "ammo:Clip->Clip2": "bridged in bridge_bd22.zs",
 }
 
+# NO CASE LEAVES NINE OF THESE GUNS (`casing: "none"`, 2026-10-02).
+#
+# A card that says nothing about casing MEANS YES (parser.zs:1776-1781, noCasing
+# defaults false), so every gun in this set threw brass -- including the plasma
+# rifle, the rail gun, the BFG, the rocket launcher and both flame guns. It came
+# out of the measured ejection port, which on a gun with no port at all is just
+# the emptier wall of the receiver, so the brass appeared beside the gun rather
+# than from it.
+#
+# THE PORT STAYS MEASURED. rig.zs:3122 throws LIVE rounds from the same point when
+# a breech is opened, so `casing: "none"` turns off the brass and leaves the point
+# where a round comes out alone.
+#
 GUNS = {
     "pistol": {
         "class":     "BD_Pistol",
@@ -153,7 +166,13 @@ GUNS = {
         "decorate":  "Shotgun.txt",
         "actor":     "Shot_Gun",
         "hand":      "main",
-        "type":      "pump",
+        # NOT "pump" (2026-10-02). `type` is the HAND-SEAT PROFILE, and
+        # WM_HandProfile.TypeAt has no "pump" -- so this gun read
+        # wm_hs_default_* for every seat, and wm_feel_default_home (0.0)
+        # instead of wm_feel_shotgun_home (0.25), which is the "a pump moved
+        # a hair would not fire" threshold. DefaultGripClass already treats
+        # pump and shotgun as one thing. The word belongs in `mechanism`.
+        "type":      "shotgun",
         "capacity":  8,
         "magfamily": "12ga",
         "sounds":    {"cycleoutsound": "bd22/shotgun/pumpout", "cyclehomesound": "bd22/shotgun/pumphome", "loadsound": "bd22/shotgun/load"},
@@ -247,6 +266,7 @@ GUNS = {
     },
     "flamecannon": {
         "class":     "BD_FlameCannon",
+        "casing":    "none",   # a flame gun: nothing is chambered and nothing comes out
         # FIRES FROM THE RESERVE, as Brutal Doom does (owner, 2026-10-02).
         #
         # Without this the gun fires ONCE and stops, and the usual explanation --
@@ -277,6 +297,7 @@ GUNS = {
     },
     "hellish": {
         "class":     "BD_Hellish",
+        "casing":    "none",   # a missile tube: nothing is chambered and nothing comes out
         # FIRES FROM THE RESERVE, as Brutal Doom does (owner, 2026-10-02).
         #
         # Without this the gun fires ONCE and stops, and the usual explanation --
@@ -407,7 +428,13 @@ GUNS = {
         "decorate":  "AssaultShotgun.txt",
         "actor":     "AssaultShotgun",
         "hand":      "main",
-        "type":      "pump",
+        # NOT "pump" (2026-10-02). `type` is the HAND-SEAT PROFILE, and
+        # WM_HandProfile.TypeAt has no "pump" -- so this gun read
+        # wm_hs_default_* for every seat, and wm_feel_default_home (0.0)
+        # instead of wm_feel_shotgun_home (0.25), which is the "a pump moved
+        # a hair would not fire" threshold. DefaultGripClass already treats
+        # pump and shotgun as one thing. The word belongs in `mechanism`.
+        "type":      "shotgun",
         "capacity":  8,
         "magfamily": "12ga",
         "sounds":    {"magoutsound": "bd22/asg/magout", "maginsound": "bd22/asg/magin", "rackapexsound": "bd22/asg/rackback", "rackresetsound": "bd22/asg/rackfwd"},
@@ -421,6 +448,7 @@ GUNS = {
     },
     "bfg": {
         "class":     "BD_BFG",
+        "casing":    "none",   # a cell gun: no case
         # FIRES FROM THE RESERVE, as Brutal Doom does (owner, 2026-10-02).
         #
         # Without this the gun fires ONCE and stops, and the usual explanation --
@@ -452,6 +480,7 @@ GUNS = {
     },
     "bfg10k": {
         "class":     "BD_BFG10k",
+        "casing":    "none",   # a cell gun: no case
         # FIRES FROM THE RESERVE, as Brutal Doom does (owner, 2026-10-02).
         #
         # Without this the gun fires ONCE and stops, and the usual explanation --
@@ -512,6 +541,7 @@ GUNS = {
     },
     "flamethrower": {
         "class":     "BD_Flamethrower",
+        "casing":    "none",   # a flame gun: nothing is chambered and nothing comes out
         # FIRES FROM THE MAGAZINE, not through a chamber (owner, 2026-10-02).
         #
         # This gun HAS a feed part, so SynthesiseVerbs gives it a SWAP and the magazine
@@ -569,6 +599,12 @@ GUNS = {
     },
     "machinegun": {
         "class":     "BD_Machinegun",
+        # FIRES FROM THE MAGAZINE, not through a chamber. The same ruling the owner
+        # gave on 2026-10-02 for the seven guns with a feed part and no action: this
+        # gun joins them the moment `role = action` comes off its launcher tube.
+        # Without it, SynthesiseVerbs gives it a SWAP and no CYCLE, and firing runs
+        # through a chamber nothing can refill -- one shot per magazine.
+        "firesfrom": "magazine",
         "donor":     r"Models\Weapons\Hud\Machinegun\Machinegun.md3",
         "modeldef":  "Modeldef.Machinegun.def",
         "decorate":  "Machinegun.txt",
@@ -602,11 +638,36 @@ GUNS = {
                                            # Vanilla mesh was built at.
                                            "box": [[-13.300, -5.878, -13.269],
                                                    [-5.559, 4.987, -1.684]]}},
-            "launchertube":    {"surfaces": ["#3"], "role": "action", "subject": "foregrip"},
+            # NOT AN ACTION (2026-10-02). It carried role = action, which is what
+            # gives a gun its CYCLE verb -- so "racking" this machine gun slid the
+            # UNDERSLUNG GRENADE LAUNCHER'S TUBE forward. The role also earned it
+            # `detach = 0.95` from the emitter, so pulling the tube far enough took
+            # it off the gun. Both faults have the one cause and both go with it.
+            #
+            # The M249's own bolt is not a separate surface, so there is nothing
+            # here to rack; the card gives the tube an `open breech` verb instead,
+            # as Vanilla's WM_MachineGun does with this same part map.
+            "launchertube":    {"surfaces": ["#3"], "subject": "foregrip"},
             "launchertrigger": {"surfaces": ["#2"]},
             "launcherlatch":   {"surfaces": ["#0"]},
         },
         "fixed":     ["#1"],
+        # IN THE CARD AND NOT HERE, because emit_card writes no verb blocks at all:
+        #
+        #   open breech   on launchertube, latched by launcherlatch, latchreturn spring.
+        #                 What the tube is actually for. BD's own ReloadGrenade plays
+        #                 GRLLO1 / insertshell / GRLLO2 (Machinegun.txt:222-236).
+        #   swap magwell  on magazine, SynthSwap's own numbers. NOT optional and NOT
+        #                 new: SynthesiseVerbs is all-or-nothing (card.zs:918), so the
+        #                 open verb above stopped the magazine's swap being synthesised.
+        #                 Declaring one verb means declaring them all.
+        #
+        # NOT CARDED: the grenade launcher itself (a `store gl`, a `load grenade` and a
+        # `barrel launcher` on altfire, as Vanilla's WM_MachineGun has). A card has ONE
+        # magfamily and this gun has already spent it on bd_762 -- unlike Vanilla's, this
+        # machine gun has a carved magazine a hand swaps, where Vanilla's is reserve-fed
+        # and a grenade is the only thing a hand ever brings it. Carding the grenade here
+        # would stop the 7.62 magazine fitting. The grenade still fires off BD's AltFire.
         # ITS MAGAZINE IS NOT DECLARED: in the shipped mesh that part is an island
         # cut by hand inside this gun's body surface, and no box reproduces
         # the cut. The gun builds whole without it.
@@ -651,6 +712,7 @@ GUNS = {
     },
     "plasma": {
         "class":     "BD_Plasma",
+        "casing":    "none",   # a cell gun: no case
         # FIRES FROM THE MAGAZINE, not through a chamber (owner, 2026-10-02).
         #
         # This gun HAS a feed part, so SynthesiseVerbs gives it a SWAP and the magazine
@@ -680,6 +742,7 @@ GUNS = {
     },
     "rpg": {
         "class":     "BD_RPG",
+        "casing":    "none",   # rockets leave by the bore; nothing is thrown out
         # FIRES FROM THE MAGAZINE, not through a chamber (owner, 2026-10-02).
         #
         # This gun HAS a feed part, so SynthesiseVerbs gives it a SWAP and the magazine
@@ -697,7 +760,13 @@ GUNS = {
         "actor":     "Rocket_Launcher",
         "hand":      "main",
         "type":      "launcher",
-        "capacity":  1,
+        # SIX, NOT ONE. BD's own RocketLauncher.txt states it twice: the magazine is
+        # the RocketRounds ammo class at Inventory.MaxAmount 6 (line 395-401), and the
+        # reload loop stops at A_JumpIfInventory("RocketRounds", 6, "NoNeedToReload")
+        # (lines 264, 287). The drum has SEVEN chambers and the seventh is never
+        # loaded, which is why the count and the chamber count differ -- see the
+        # roundsurface lines on `part drum` in the card.
+        "capacity":  6,
         "magfamily": "bd_rocket",
         "sounds":    {"magoutsound": "bd22/rpg/magout", "maginsound": "bd22/rpg/magin"},
         "body":      "#0",
@@ -713,10 +782,41 @@ GUNS = {
                      # stays on the gun, so it is not carved.
                      "chambers": 7},
         },
+        # #6..#12 ARE THE SEVEN ROCKETS and they are not merely fixed scenery any
+        # more: six of them are `roundsurface` lines on the drum in the card, so the
+        # drum shows its count, and the seventh is a hidden `part emptychamber`.
         "fixed":     ["#1", "#10", "#11", "#12", "#2", "#3", "#6", "#7", "#8", "#9"],
+        # IN THE CARD AND NOT HERE. emit_card writes no index block, no roundsurface
+        # lines and no muzzle load, so the drum's whole carding is hand-written:
+        #
+        #   store drum       counted, 6. Declared so the lines below can name it.
+        #   part drum        dof slide (0, -0.944, 0.329) x 10.75, NO detach (there is
+        #                    no loose drum mesh in this set, and feed + detach + no
+        #                    magmodel is something coming off with nothing to draw).
+        #   roundsurface x6  fixed2, fixed3, fixed4, fixed7, fixed8, fixed9 -- the
+        #                    chambers IN FIRING ORDER, which had to be measured: the
+        #                    emitter named them off a counter, so the names carry no
+        #                    order. Sorted by clock angle about the drum's own axis.
+        #   index            hinge -51.43 (a seventh of a turn) about +x through
+        #                    3.636, -4.595, 2.353. The emitter MEASURED this turn and
+        #                    wrote it as the drum's pull-off dof, which is why the
+        #                    drum's reload was a 51-degree twist in place.
+        #   part emptychamber  role = hidden on fixed10: the seventh chamber, never
+        #                    loaded, as Vanilla's WM_RPG has it.
+        #   load muzzle      rockets go in the front of the tube. Not generated because
+        #                    emit_card places a load from set.py's `where` face, which
+        #                    is under | left | right | breech -- there is no muzzle face.
+        #
+        # THE NUMBERS ARE VANILLA WM_RPG'S, and that is checked rather than assumed:
+        # both cards draw a file called rpg_wm.md3 but the two files have 13 and 10
+        # surfaces. Measured in THIS donor, the out axis over insert frames 30-33 is
+        # (0, -0.9458, 0.3248) against Vanilla's quoted (0, -0.944, 0.329), the drum
+        # centroid lands on Vanilla's index pivot x of 3.636, and the trigger slides
+        # 1.386 here against 1.397 there. Same asset, exported twice.
     },
     "railgun": {
         "class":     "BD_Railgun",
+        "casing":    "none",   # a rail: no case
         # FIRES FROM THE MAGAZINE, not through a chamber (owner, 2026-10-02).
         #
         # This gun HAS a feed part, so SynthesiseVerbs gives it a SWAP and the magazine
@@ -779,6 +879,7 @@ GUNS = {
     },
     "unmaker": {
         "class":     "BD_Unmaker",
+        "casing":    "none",   # a cell gun: no case
         # FIRES FROM THE MAGAZINE, not through a chamber (owner, 2026-10-02).
         #
         # This gun HAS a feed part, so SynthesiseVerbs gives it a SWAP and the magazine

@@ -100,6 +100,13 @@ def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
         L.append(f'  magfamily = "{gun.magfamily}"')
     if gun.firesfrom:
         L.append(f"  firesfrom = {gun.firesfrom}")
+    # WHETHER A CASE LEAVES THE GUN. Unstated, the card already means yes, so this only
+    # ever writes a line to turn brass OFF -- on a plasma rifle, a rail, a rocket, a
+    # flame. The ejectport below is still written at `none`: it is the emptier wall of
+    # the receiver either way, and rig.zs:3122 throws LIVE rounds from that same point
+    # when a breech opens, so dropping it would break a gun that ejects loaded rounds.
+    if getattr(gun, "casing", ""):
+        L.append(f"  casing    = {gun.casing}")
     if gun.mechanism:
         L.append(f"  mechanism = {gun.mechanism}")
 

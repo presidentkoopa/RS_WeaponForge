@@ -247,6 +247,21 @@ GUNS = {
     },
     "flamecannon": {
         "class":     "BD_FlameCannon",
+        # FIRES FROM THE RESERVE, as Brutal Doom does (owner, 2026-10-02).
+        #
+        # Without this the gun fires ONCE and stops, and the usual explanation --
+        # "it has no magazine" -- is wrong. With no `store` and no `firesfrom`,
+        # SynthesiseStores (card.zs:715-730) gives it a COUNTED detachable magazine at
+        # the stated capacity plus a live chamber. The magazine is not absent, it is
+        # UNREACHABLE: SynthesiseVerbs (card.zs:917-926) makes a SWAP only on a
+        # `role = feed` part and a CYCLE only on `role = action`, and this gun carries
+        # neither -- so nothing in the card can ever refill either store.
+        #
+        # Reserve is also what BD itself does: FlameCannon.dec and HellishMissile.dec
+        # have no A_ReFire and simply spend from the ammo pool. Carving a real magazine
+        # would need a magazine class, a MODELDEF prop per gun and a mesh for four of
+        # the five -- none of which exist.
+        "firesfrom": "reserve",
         "donor":     r"Models\Weapons\Hud\FlameCannon\FlameCannon.md3",
         "modeldef":  "Modeldef.FlameCannon.def",
         "decorate":  "FlameCannon.txt",
@@ -262,6 +277,21 @@ GUNS = {
     },
     "hellish": {
         "class":     "BD_Hellish",
+        # FIRES FROM THE RESERVE, as Brutal Doom does (owner, 2026-10-02).
+        #
+        # Without this the gun fires ONCE and stops, and the usual explanation --
+        # "it has no magazine" -- is wrong. With no `store` and no `firesfrom`,
+        # SynthesiseStores (card.zs:715-730) gives it a COUNTED detachable magazine at
+        # the stated capacity plus a live chamber. The magazine is not absent, it is
+        # UNREACHABLE: SynthesiseVerbs (card.zs:917-926) makes a SWAP only on a
+        # `role = feed` part and a CYCLE only on `role = action`, and this gun carries
+        # neither -- so nothing in the card can ever refill either store.
+        #
+        # Reserve is also what BD itself does: FlameCannon.dec and HellishMissile.dec
+        # have no A_ReFire and simply spend from the ammo pool. Carving a real magazine
+        # would need a magazine class, a MODELDEF prop per gun and a mesh for four of
+        # the five -- none of which exist.
+        "firesfrom": "reserve",
         "donor":     r"Models\Weapons\Hud\HellishMissile\HellishMissile.md3",
         "modeldef":  "Modeldef.HellishMissile.def",
         "decorate":  "HellishMissile.txt",
@@ -277,6 +307,17 @@ GUNS = {
     },
     "buzzsaw": {
         "class":     "BD_Buzzsaw",
+        # FIRES FROM THE MAGAZINE, not through a chamber (owner, 2026-10-02).
+        #
+        # This gun HAS a feed part, so SynthesiseVerbs gives it a SWAP and the magazine
+        # can be changed -- but it has no `role = action` part, so it gets no CYCLE.
+        # With firesfrom unstated the card defaults to firing through a CHAMBER
+        # (card.zs:916-926), and nothing can ever refill that chamber: one shot per
+        # magazine, which is not a plasma rifle.
+        #
+        # Saying `magazine` takes the chamber out of the path: a pull spends a round
+        # straight from the magazine, which is how a gun with no bolt to work behaves.
+        "firesfrom": "magazine",
         "donor":     r"Models\Weapons\Hud\HitlersBuzzsaw\HitlersBuzzsaw.md3",
         "modeldef":  "Modeldef.HitlersBuzzsaw.def",
         "decorate":  "Mp40.txt",
@@ -380,6 +421,21 @@ GUNS = {
     },
     "bfg": {
         "class":     "BD_BFG",
+        # FIRES FROM THE RESERVE, as Brutal Doom does (owner, 2026-10-02).
+        #
+        # Without this the gun fires ONCE and stops, and the usual explanation --
+        # "it has no magazine" -- is wrong. With no `store` and no `firesfrom`,
+        # SynthesiseStores (card.zs:715-730) gives it a COUNTED detachable magazine at
+        # the stated capacity plus a live chamber. The magazine is not absent, it is
+        # UNREACHABLE: SynthesiseVerbs (card.zs:917-926) makes a SWAP only on a
+        # `role = feed` part and a CYCLE only on `role = action`, and this gun carries
+        # neither -- so nothing in the card can ever refill either store.
+        #
+        # Reserve is also what BD itself does: FlameCannon.dec and HellishMissile.dec
+        # have no A_ReFire and simply spend from the ammo pool. Carving a real magazine
+        # would need a magazine class, a MODELDEF prop per gun and a mesh for four of
+        # the five -- none of which exist.
+        "firesfrom": "reserve",
         "donor":     r"Models\Weapons\Hud\BFG\BFG.md3",
         "modeldef":  "Modeldef.BFG.def",
         "decorate":  "BFG.txt",
@@ -396,6 +452,21 @@ GUNS = {
     },
     "bfg10k": {
         "class":     "BD_BFG10k",
+        # FIRES FROM THE RESERVE, as Brutal Doom does (owner, 2026-10-02).
+        #
+        # Without this the gun fires ONCE and stops, and the usual explanation --
+        # "it has no magazine" -- is wrong. With no `store` and no `firesfrom`,
+        # SynthesiseStores (card.zs:715-730) gives it a COUNTED detachable magazine at
+        # the stated capacity plus a live chamber. The magazine is not absent, it is
+        # UNREACHABLE: SynthesiseVerbs (card.zs:917-926) makes a SWAP only on a
+        # `role = feed` part and a CYCLE only on `role = action`, and this gun carries
+        # neither -- so nothing in the card can ever refill either store.
+        #
+        # Reserve is also what BD itself does: FlameCannon.dec and HellishMissile.dec
+        # have no A_ReFire and simply spend from the ammo pool. Carving a real magazine
+        # would need a magazine class, a MODELDEF prop per gun and a mesh for four of
+        # the five -- none of which exist.
+        "firesfrom": "reserve",
         "donor":     r"Models\Weapons\Hud\BFG\BFG_10k.md3",
         "modeldef":  "Modeldef.BFG10k.def",
         "decorate":  "BFG10k.txt",
@@ -412,6 +483,17 @@ GUNS = {
     },
     "smg": {
         "class":     "BD_SMG",
+        # FIRES FROM THE MAGAZINE, not through a chamber (owner, 2026-10-02).
+        #
+        # This gun HAS a feed part, so SynthesiseVerbs gives it a SWAP and the magazine
+        # can be changed -- but it has no `role = action` part, so it gets no CYCLE.
+        # With firesfrom unstated the card defaults to firing through a CHAMBER
+        # (card.zs:916-926), and nothing can ever refill that chamber: one shot per
+        # magazine, which is not a plasma rifle.
+        #
+        # Saying `magazine` takes the chamber out of the path: a pull spends a round
+        # straight from the magazine, which is how a gun with no bolt to work behaves.
+        "firesfrom": "magazine",
         "donor":     r"Models\Weapons\Hud\BrutalSMG\BrutalSMG.md3",
         "modeldef":  "Modeldef.SMG.def",
         "decorate":  "SubMachinegun.txt",
@@ -430,6 +512,17 @@ GUNS = {
     },
     "flamethrower": {
         "class":     "BD_Flamethrower",
+        # FIRES FROM THE MAGAZINE, not through a chamber (owner, 2026-10-02).
+        #
+        # This gun HAS a feed part, so SynthesiseVerbs gives it a SWAP and the magazine
+        # can be changed -- but it has no `role = action` part, so it gets no CYCLE.
+        # With firesfrom unstated the card defaults to firing through a CHAMBER
+        # (card.zs:916-926), and nothing can ever refill that chamber: one shot per
+        # magazine, which is not a plasma rifle.
+        #
+        # Saying `magazine` takes the chamber out of the path: a pull spends a round
+        # straight from the magazine, which is how a gun with no bolt to work behaves.
+        "firesfrom": "magazine",
         "donor":     r"Models\Weapons\Hud\Flamethrower2\Flamethrower2.md3",
         "modeldef":  "Modeldef.Flamethrower2.def",
         "decorate":  "Flamethrower.txt",
@@ -520,6 +613,21 @@ GUNS = {
     },
     "minigun": {
         "class":     "BD_Minigun",
+        # FIRES FROM THE RESERVE, as Brutal Doom does (owner, 2026-10-02).
+        #
+        # Without this the gun fires ONCE and stops, and the usual explanation --
+        # "it has no magazine" -- is wrong. With no `store` and no `firesfrom`,
+        # SynthesiseStores (card.zs:715-730) gives it a COUNTED detachable magazine at
+        # the stated capacity plus a live chamber. The magazine is not absent, it is
+        # UNREACHABLE: SynthesiseVerbs (card.zs:917-926) makes a SWAP only on a
+        # `role = feed` part and a CYCLE only on `role = action`, and this gun carries
+        # neither -- so nothing in the card can ever refill either store.
+        #
+        # Reserve is also what BD itself does: FlameCannon.dec and HellishMissile.dec
+        # have no A_ReFire and simply spend from the ammo pool. Carving a real magazine
+        # would need a magazine class, a MODELDEF prop per gun and a mesh for four of
+        # the five -- none of which exist.
+        "firesfrom": "reserve",
         "donor":     r"Models\Weapons\Hud\Minigun\minigun.md3",
         "modeldef":  "Modeldef.Minigun.def",
         "decorate":  "Minigun.txt",
@@ -543,6 +651,17 @@ GUNS = {
     },
     "plasma": {
         "class":     "BD_Plasma",
+        # FIRES FROM THE MAGAZINE, not through a chamber (owner, 2026-10-02).
+        #
+        # This gun HAS a feed part, so SynthesiseVerbs gives it a SWAP and the magazine
+        # can be changed -- but it has no `role = action` part, so it gets no CYCLE.
+        # With firesfrom unstated the card defaults to firing through a CHAMBER
+        # (card.zs:916-926), and nothing can ever refill that chamber: one shot per
+        # magazine, which is not a plasma rifle.
+        #
+        # Saying `magazine` takes the chamber out of the path: a pull spends a round
+        # straight from the magazine, which is how a gun with no bolt to work behaves.
+        "firesfrom": "magazine",
         "donor":     r"Models\Weapons\Hud\Plasma_Gun\Plasma.md3",
         "modeldef":  "Modeldef.Plasma.def",
         "decorate":  "Plasma.txt",
@@ -561,6 +680,17 @@ GUNS = {
     },
     "rpg": {
         "class":     "BD_RPG",
+        # FIRES FROM THE MAGAZINE, not through a chamber (owner, 2026-10-02).
+        #
+        # This gun HAS a feed part, so SynthesiseVerbs gives it a SWAP and the magazine
+        # can be changed -- but it has no `role = action` part, so it gets no CYCLE.
+        # With firesfrom unstated the card defaults to firing through a CHAMBER
+        # (card.zs:916-926), and nothing can ever refill that chamber: one shot per
+        # magazine, which is not a plasma rifle.
+        #
+        # Saying `magazine` takes the chamber out of the path: a pull spends a round
+        # straight from the magazine, which is how a gun with no bolt to work behaves.
+        "firesfrom": "magazine",
         "donor":     r"Models\Weapons\Hud\RPG\RPG.md3",
         "modeldef":  "Modeldef.RPG.def",
         "decorate":  "RocketLauncher.txt",
@@ -587,6 +717,17 @@ GUNS = {
     },
     "railgun": {
         "class":     "BD_Railgun",
+        # FIRES FROM THE MAGAZINE, not through a chamber (owner, 2026-10-02).
+        #
+        # This gun HAS a feed part, so SynthesiseVerbs gives it a SWAP and the magazine
+        # can be changed -- but it has no `role = action` part, so it gets no CYCLE.
+        # With firesfrom unstated the card defaults to firing through a CHAMBER
+        # (card.zs:916-926), and nothing can ever refill that chamber: one shot per
+        # magazine, which is not a plasma rifle.
+        #
+        # Saying `magazine` takes the chamber out of the path: a pull spends a round
+        # straight from the magazine, which is how a gun with no bolt to work behaves.
+        "firesfrom": "magazine",
         "donor":     r"Models\Weapons\Hud\RailGun\RailGun.md3",
         "modeldef":  "Modeldef.Railgun.def",
         "decorate":  "Railgun.txt",
@@ -638,6 +779,17 @@ GUNS = {
     },
     "unmaker": {
         "class":     "BD_Unmaker",
+        # FIRES FROM THE MAGAZINE, not through a chamber (owner, 2026-10-02).
+        #
+        # This gun HAS a feed part, so SynthesiseVerbs gives it a SWAP and the magazine
+        # can be changed -- but it has no `role = action` part, so it gets no CYCLE.
+        # With firesfrom unstated the card defaults to firing through a CHAMBER
+        # (card.zs:916-926), and nothing can ever refill that chamber: one shot per
+        # magazine, which is not a plasma rifle.
+        #
+        # Saying `magazine` takes the chamber out of the path: a pull spends a round
+        # straight from the magazine, which is how a gun with no bolt to work behaves.
+        "firesfrom": "magazine",
         "donor":     r"Models\Weapons\Hud\Unmaker\Unmaker.md3",
         "modeldef":  "Modeldef.Unmaker.def",
         "decorate":  "Unmaker.txt",

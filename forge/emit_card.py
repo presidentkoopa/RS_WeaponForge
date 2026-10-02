@@ -145,6 +145,15 @@ def write_card(gun, prop, muzzle: Sequence[float], barrel: Sequence[float],
             L.append(f"  capacity = {st.capacity}")
         if st.slots is not None:
             L.append(f"  slots    = {st.slots}")
+        # A SELECTED POSITION, AND WHETHER THE SHOT TURNS IT. Missing, a slotted store
+        # has no selection at all -- SelectedSlot always answers 0 (store.zs:269-273) --
+        # so a six-chamber cylinder fires chamber 0 for ever and the gun takes one shot
+        # per load. Written only when set, because a break-action's chambers are slotted
+        # and must NOT be indexed: a pull there fires every live one.
+        if getattr(st, "indexed", False):
+            L.append("  indexed  = yes")
+        if getattr(st, "advance", ""):
+            L.append(f"  advance  = {st.advance}")
         if st.detach:
             L.append(f"  detach   = {st.detach}")
         L.append("end")

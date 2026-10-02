@@ -144,6 +144,15 @@ class Store:
     capacity: Optional[int] = None
     slots: Optional[int] = None
     detach: str = ""
+    # SLOTTED ONLY. `indexed` is whether the store has a SELECTED position -- a
+    # cylinder under a hammer. Without it WM_Store.SelectedSlot always answers 0
+    # (store.zs:269-273), so a six-chamber revolver fires chamber 0 for ever: ONE
+    # SHOT PER LOAD. `advance = onshot` turns it a chamber on every pull, click
+    # included, which is the half that makes it a revolver rather than a magazine
+    # with holes in it. Both are DECISIONS: a break-action's chambers are slotted
+    # too and are NOT indexed, because a pull there fires every live one.
+    indexed: bool = False
+    advance: str = ""              # onshot | none
 
 
 @dataclass
@@ -305,6 +314,23 @@ def load_set(path: str) -> SetFile:
                      f"meant how the gun works rather than how it is held, that is "
                      f"`mechanism`.")
 
+        # THE RELOAD PARSER'S OWN TWO RULES ABOUT AN INDEXED STORE
+        # (parser.zs:2095, 2102), checked here so a set file fails at build time with
+        # the gun named rather than at load time with the whole card skipped.
+        for sid, sraw in (raw.get("stores") or {}).items():
+            if not isinstance(sraw, dict):
+                continue
+            skind = str(sraw.get("kind", "counted"))
+            if skind != "slotted" and (sraw.get("indexed") or sraw.get("advance")):
+                raise SetError(f"{where}, store '{sid}': indexed and advance belong to a "
+                               f"slotted store -- this one is {skind}.")
+            adv = str(sraw.get("advance", ""))
+            if adv and adv not in ("onshot", "none"):
+                raise SetError(f"{where}, store '{sid}': advance = {adv!r} is onshot or none.")
+            if adv == "onshot" and not sraw.get("indexed"):
+                raise SetError(f"{where}, store '{sid}': advance = onshot needs indexed = yes "
+                               f"-- a store with no selected position has nothing to advance.")
+
         if "casing" in raw:
             _require(str(raw["casing"]).strip().lower() in CASING,
                      f"{where}: casing = {raw['casing']!r} is not one of {sorted(CASING)}. "
@@ -376,7 +402,9 @@ def load_set(path: str) -> SetFile:
             stores=[Store(id=k,
                           kind=str(v.get("kind", "counted")),
                           capacity=v.get("capacity"), slots=v.get("slots"),
-                          detach=str(v.get("detach", "")))
+                          detach=str(v.get("detach", "")),
+                          indexed=bool(v.get("indexed", False)),
+                          advance=str(v.get("advance", "")))
                     for k, v in (raw.get("stores") or {}).items()],
             load=(Load(id=str((raw.get("load") or {}).get("id", "gate")),
                        where=str((raw.get("load") or {}).get("where", "under")),

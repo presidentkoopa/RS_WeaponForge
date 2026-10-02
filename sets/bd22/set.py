@@ -147,7 +147,15 @@ GUNS = {
         # so the gun could not be reloaded by hand.
         # its cylinder swings out, as its own card named a cylinder part
         "mechanism": "swingout_revolver",
-        "stores":    {"cylinder": {"kind": "slotted", "slots": 6}},   # the archetype names it
+        # INDEXED, AND IT TURNS ON THE SHOT (2026-10-02). Six slots alone are not a
+        # revolver: with no `indexed`, WM_Store.SelectedSlot always answers 0
+        # (store.zs:269-273), so every pull fires chamber 0 and the gun takes ONE SHOT
+        # PER LOAD. `advance = onshot` turns it a chamber on each pull, a click
+        # included. A break-action's chambers are slotted too and are deliberately NOT
+        # indexed -- a pull there fires every live one -- which is why this is a
+        # decision per store and not a property of being slotted.
+        "stores":    {"cylinder": {"kind": "slotted", "slots": 6,
+                                   "indexed": True, "advance": "onshot"}},   # the archetype names it
         "load":      {"into": "cylinder", "id": "cylinder", "where": "breech"},   # id MUST match the archetype's load
         "body":      "#0",
         "parts": {

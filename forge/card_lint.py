@@ -724,6 +724,18 @@ def lint(block):
                 vk.get("from") if v["kind"] == "eject" or (v["kind"] == "open" and vk.get("onopen") == "ejectall") else None)
             if named == "chamber" and "chamber" not in declared:
                 ff.append(f"firesfrom = magazine: {v['kind']} {v['id']} names chamber, and there is none")
+    elif fires == "chamber":
+        # IT FIRES ONCE. A chamber gun needs something to put the NEXT round in the chamber.
+        # SynthesiseVerbs is all-or-nothing (card.zs:918): a card declaring NO verbs is given a
+        # full set including a cycle and works, but a card declaring ONE gets only that one. So
+        # `swap magwell` and nothing else leaves the gun unable to chamber -- and it reads as MORE
+        # complete than the empty card that works, which is why this shipped twelve times on BD22
+        # past every other check. A mechanism brings its own loading, so it is exempt.
+        kinds = {v["kind"] for v in card["verbs"]}
+        if kinds and not mech and not (kinds & {"cycle", "open", "load", "eject"}):
+            ff.append("fires from the chamber and declares " + ", ".join(sorted(kinds)) +
+                      " -- no cycle, open, load or eject to chamber the next round, so it FIRES ONCE. "
+                      "Declare a cycle, or say firesfrom = magazine / reserve")
     # barrels -- G-UBL, as uzdxrema-11 specified it
     bf = []
     altfire = 0

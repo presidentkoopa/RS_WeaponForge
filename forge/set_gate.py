@@ -95,13 +95,19 @@ def parse_cards(folder):
             if m:
                 cur = guns.setdefault(m.group(1), {"file": os.path.basename(path), "line": n, "prop": "",
                                                    "roles": [], "ruling": "", "firesfrom": "", "models": [],
-                                                   "base": "", "mechanism": "", "stores": []})
+                                                   "base": "", "mechanism": "", "stores": [], "verbs": []})
                 continue
             if cur is None:
                 continue
             st = re.match(r"store\s+(\w+)", line.split("#", 1)[0].strip(), re.I)
             if st:
                 cur["stores"].append(st.group(1).lower())
+                continue
+            # VERBS THE CARD DECLARES. Which ones are stated matters more than it looks -- see
+            # fires_once below. Anchored to end of line so a key line (`load = ...`) cannot match.
+            vb = re.match(r"(cycle|swap|open|load|eject|barrel)\s+(\w+)\s*$", line.split("#", 1)[0].strip(), re.I)
+            if vb:
+                cur["verbs"].append(vb.group(1).lower())
                 continue
             r = re.match(r"#\s*RULING\s*:\s*(.+)", line, re.I)
             if r:
@@ -140,6 +146,8 @@ def parse_cards(folder):
             c["roles"] = list(pc["roles"])
         if not c["stores"]:
             c["stores"] = list(pc["stores"])
+        if not c["verbs"]:
+            c["verbs"] = list(pc["verbs"])
         c["base"] = ""
         return c
     for name in list(guns):
@@ -147,10 +155,41 @@ def parse_cards(folder):
     return guns
 
 
+# The verbs that can put a round IN THE CHAMBER. `swap` changes the magazine and `barrel` is a
+# second barrel's shot: neither chambers anything, which is the whole point of listing them apart.
+RECHAMBER = ("cycle", "open", "load", "eject")
+
+
+def fires_once(c):
+    """A chamber gun with no way to chamber the NEXT round: it fires one shot and then clicks.
+
+    THIS IS THE BD22 BUG AND IT PASSED EVERY OTHER CHECK. Twelve cards were well formed, had
+    parts, meshes, stores and a prop, and each fired exactly once.
+
+    DECLARING NO VERBS IS NOT THE SAME AS HAVING NONE, and getting that backwards is why the
+    rule is worth writing down. RS_VR_Reload's SynthesiseVerbs is all-or-nothing (card.zs:918,
+    `if (verbs.Size() > 0 || mechanism != "") return;`): a card that declares NOTHING is given a
+    full synthesised set, cycle included, and works. A card that declares ONE verb gets that verb
+    and nothing else -- so stating `swap magwell` and no cycle leaves the gun unable to chamber,
+    and the card LOOKS more complete than the one that works. An `open breech` added to BD22's
+    machinegun silently cancelled its magazine swap exactly this way on 2026-10-02.
+    """
+    if c["firesfrom"] in ("magazine", "reserve", "none"):
+        return False                      # it does not take its rounds from the chamber
+    if c["mechanism"]:
+        return False                      # a pump, a break action, a revolver: brings its own loading
+    if not c["verbs"]:
+        return False                      # declares none -> a full set is synthesised, cycle included
+    return not any(v in RECHAMBER for v in c["verbs"])
+
+
 def reloadable(c):
     """How a hand reloads it, or "" for no way: a magazine part, a mechanism (pump, break action,
     revolver ... supply their own loading), or a store other than the chamber (a tube, a cylinder)."""
-    if "feed" in c["roles"]:
+    # A FEED PART IS NOT A RELOAD UNLESS SOMETHING CAN WORK IT. This used to answer "magazine" for
+    # any card with a feed role, so a gun carrying a magazine it had no verb to change counted as
+    # reloadable and FEED passed it. A card declaring no verbs is fine -- a swap is synthesised.
+    if "feed" in c["roles"] and (not c["verbs"] or "swap" in c["verbs"] or "load" in c["verbs"]):
         return "magazine"
     if c["mechanism"]:
         return f"mechanism {c['mechanism']}"
@@ -254,6 +293,17 @@ def main():
             else:
                 g.add(FAIL, "FEED", f"{gun}: no magazine, no mechanism, no store to load -- fires from {c['firesfrom'] or 'chamber'} -- "
                       "cannot be reloaded. Owner: carve a magazine, or rule it in RULINGS.txt", where)
+        # FIRES ONCE -- a different question from FEED. FEED asks whether a hand can reload it;
+        # this asks whether it can fire a SECOND round at all. A gun can fail this while passing
+        # FEED (a magazine it can swap but no cycle to chamber from it), and a RULING that it
+        # needs no reload does not make firing once acceptable -- a melee weapon that swings once
+        # per pickup is the same bug. So rulings are reported, not accepted.
+        if fires_once(c):
+            why = c["ruling"] or rulings.get(gun.lower(), "")
+            said = f" (ruled '{why}', which excuses the reload but not the one shot)" if why else ""
+            g.add(FAIL, "FIRES1", f"{gun}: fires from its chamber and declares {', '.join(c['verbs'])} -- "
+                  f"no cycle, open, load or eject to chamber the next round, and no mechanism, so it fires ONCE{said}. "
+                  "Declare a cycle, or say firesfrom = magazine / reserve", where)
         # PROPS / PLACEMENT
         if not c["prop"]:
             g.add(FAIL, "PROPS", f"{gun}: card names no prop -- nothing is drawn", where)

@@ -1,0 +1,19 @@
+# Everything here except page.html is DERIVED. Rebuild it, do not carry it in history.
+#
+#   forge/palm_render.py        meshes -> geometry.json          (the renders)
+#   forge/palm_marks.py         adds the trigger and the support seed
+#   forge/palm_page_build.py    page.html + geometry.json -> index.inline.html
+#
+# geometry.json is 8 MB of base64 PNG and index.inline.html is the same again with the page
+# wrapped round it. Both change completely whenever a mesh or a draw frame changes, so in git
+# they would be a new 8 MB blob per run and tell no one anything.
+geometry.json
+index.inline.html
+
+# The first version of the page, which drew the guns as point clouds. Superseded by page.html
+# and kept on disk only so the change is visible; a gun drawn as dots cannot be judged, which
+# is the whole reason the renderer exists.
+index.html
+
+# Sample renders pulled out of geometry.json to look at. Regenerate them when needed.
+sample_*.png

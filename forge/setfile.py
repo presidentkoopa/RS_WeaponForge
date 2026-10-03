@@ -50,8 +50,22 @@ GUN_KEYS = {
     "class", "donor", "modeldef", "decorate", "actor", "hand", "type",
     "capacity", "magfamily", "sounds", "body", "parts", "hidden", "fixed",
     "rest_frame", "notes", "firesfrom", "stores", "load", "mechanism",
-    "casing",
+    "casing", "fire",
 }
+
+# THE `fire` BLOCK: HOW A GUN FIRES, AS OPPOSED TO HOW IT IS HELD OR LOADED.
+#
+# Before this the schema had no way to say it. `firesfrom` and `casing` lived loose
+# among the seating and loading keys, and fullauto, firetics and chambersperpull had
+# no home at all -- they were written straight into WMSHEET by hand, which is how
+# BD22's twelve one-shot guns happened: the set file could not state that a gun fires
+# more than once, so nobody noticed that it did not.
+#
+# `firesfrom` and `casing` ARE STILL ACCEPTED AT GUN LEVEL. Two real sets state them
+# there and silently relocating a key is how a set file stops meaning what it says.
+# Stating one in BOTH places is refused rather than resolved, because a resolution
+# rule is a thing nobody remembers and either answer would be a guess at intent.
+FIRE_KEYS = {"firesfrom", "fullauto", "firetics", "chambersperpull", "casing"}
 # WHAT `casing` MAY SAY, in the parser's own words (RS_VR_Reload parser.zs:1776-1781).
 # `no` is taken there as a synonym of `none` and so is accepted here, but a set file
 # should write `none`: `no` reads like "no, it does not throw one", which is what
@@ -209,6 +223,16 @@ class Gun:
     # swingout_revolver. A DECISION about the gun -- nothing in a mesh says how a
     # breech opens -- and it is what gives the gun its loading verbs.
     mechanism: str = ""
+    # ---- THE FIRE BLOCK ------------------------------------------------------
+    # None means UNSTATED, which is not the same as a default. An unstated value is
+    # left out of the sheet entirely so the gun keeps its class Default; writing a
+    # default in would state something nobody decided, and a stated value is one a
+    # later pass will not question.
+    fullauto: Optional[bool] = None
+    # Tics between shots. Brutal Doom's own DECORATE is the authority for BD guns.
+    firetics: Optional[int] = None
+    # How many chambers one trigger pull spends. 2 is a double-barrel firing both.
+    chambersperpull: Optional[int] = None
     sounds: Dict[str, str] = field(default_factory=dict)
     actor: Optional[str] = None
     body: Optional[int] = None
@@ -344,11 +368,72 @@ def load_set(path: str) -> SetFile:
                 raise SetError(f"{where}, store '{sid}': advance = onshot needs indexed = yes "
                                f"-- a store with no selected position has nothing to advance.")
 
+        # ---- THE FIRE BLOCK ----------------------------------------------------------
+        # Read BEFORE the casing check below, so a casing stated inside `fire` is checked
+        # by the same rule as one stated at gun level rather than slipping past it.
+        fire_raw = raw.get("fire")
+        if fire_raw is not None:
+            _require(isinstance(fire_raw, dict),
+                     f"{where}: `fire` is a block of keys ({', '.join(sorted(FIRE_KEYS))}), "
+                     f"not {type(fire_raw).__name__}.")
+            unknown = sorted(set(fire_raw) - FIRE_KEYS)
+            _require(not unknown,
+                     f"{where}: `fire` has no key(s) {unknown}. It takes "
+                     f"{', '.join(sorted(FIRE_KEYS))}. A misspelt key here is silent -- the "
+                     f"value simply never reaches the sheet and the gun keeps its class "
+                     f"default, which is a plausible number.")
+            # STATED TWICE IS REFUSED, NOT RESOLVED. Either precedence would be a guess at
+            # which one the author meant, and a precedence rule is a thing nobody remembers.
+            for k in ("firesfrom", "casing"):
+                _require(not (k in fire_raw and k in raw),
+                         f"{where}: {k!r} is stated both at gun level and inside `fire`. "
+                         f"Pick one -- this is refused rather than resolved because either "
+                         f"answer would be a guess at which you meant.")
+            raw = dict(raw)
+            for k, v in fire_raw.items():
+                raw[k] = v
+
         if "casing" in raw:
             _require(str(raw["casing"]).strip().lower() in CASING,
                      f"{where}: casing = {raw['casing']!r} is not one of {sorted(CASING)}. "
                      f"The reload parser refuses an unknown value and skips the whole card, "
                      f"so this gun would have no world weapon at all.")
+
+        # ---- WHAT THE FIRE VALUES MAY BE ---------------------------------------------
+        # Each is refused rather than coerced. A sheet carrying firetics = 0 asks the gun
+        # to fire every tic, and a sheet carrying chambersperpull = 0 asks it to spend
+        # nothing -- both load, neither looks wrong in the file, and both are a gun that
+        # does not work in the hand.
+        if "fullauto" in raw and raw["fullauto"] is not None:
+            _require(isinstance(raw["fullauto"], bool),
+                     f"{where}: fullauto = {raw['fullauto']!r} is yes or no, not a number. "
+                     f"In YAML an unquoted `on` is already a bool; a quoted \"yes\" is a string "
+                     f"and would be silently false here.")
+        for k, low in (("firetics", 1), ("chambersperpull", 1)):
+            if k in raw and raw[k] is not None:
+                _require(isinstance(raw[k], int) and not isinstance(raw[k], bool),
+                         f"{where}: {k} = {raw[k]!r} is a whole number of "
+                         f"{'tics' if k == 'firetics' else 'chambers'}.")
+                _require(raw[k] >= low,
+                         f"{where}: {k} = {raw[k]} is below {low}. "
+                         + ("firetics is the gap BETWEEN shots -- 0 fires every tic."
+                            if k == "firetics" else
+                            "chambersperpull = 0 spends nothing and the gun never empties."))
+
+        # A GUN THAT FIRES FROM THE CHAMBER AND HAS NO MECHANISM CANNOT SAY HOW IT RECHAMBERS.
+        # firesfrom = chamber means the shot comes from a chamber that something must refill,
+        # and `mechanism` is what gives the gun the verb that does it. Without one the card
+        # is built, loads, fires once and then cannot be worked -- which is the BD22 shape
+        # from step 7, arrived at from the other direction.
+        if str(raw.get("firesfrom", "")).strip().lower() == "chamber" and not raw.get("mechanism"):
+            # A single-chamber gun that is reloaded by a magazine swap is the honest
+            # exception: its chamber is refilled by the store, not by an action.
+            if not raw.get("stores"):
+                raise SetError(
+                    f"{where}: firesfrom = chamber with no `mechanism` and no `stores`. "
+                    f"Nothing can refill the chamber, so this gun fires once and then cannot "
+                    f"be worked. State the mechanism (pump, breakaction, breaktop_revolver, "
+                    f"swingout_revolver) or give it a store to feed from.")
 
         parts: Dict[str, Part] = {}
         for pname, praw in (raw.get("parts") or {}).items():
@@ -405,6 +490,12 @@ def load_set(path: str) -> SetFile:
             firesfrom=raw.get("firesfrom", ""),
             casing=str(raw.get("casing", "")),
             mechanism=raw.get("mechanism", ""),
+            # None, not a default. Unstated must stay unstated all the way to the sheet
+            # so the gun keeps its class Default -- writing a default in here would state
+            # something nobody decided, and a stated value is one a later pass trusts.
+            fullauto=raw.get("fullauto"),
+            firetics=raw.get("firetics"),
+            chambersperpull=raw.get("chambersperpull"),
             sounds=dict(raw.get("sounds") or {}), actor=raw.get("actor"),
             body=None if body is None else _surface_index(body, f"{where}, body"),
             parts=parts,

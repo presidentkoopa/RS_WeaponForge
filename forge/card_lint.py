@@ -1106,9 +1106,23 @@ def lint_resolved(block, index):
 # A gun is its Weapon Card: which Model Card it uses (`model =`, unset = the card with the gun's own name) and what it
 # shoots. The reload lane's reader (RS_VR_Reload/zscript/wm/sheet.zs) refuses unknown keys at load; this says so before
 # the build, and checks what the reader cannot: that every gun has a class and that its capacity fits the model.
+# THE NINE KEYS AN `instead` BLOCK MAY STATE -- purely how a gun LOOKS. Mirrors
+# RS_VR_Reload's WM_Sheet.LookKey, which refuses anything else at load; this refuses it at
+# build so a sheet never reaches the game stating a damage change the switch would ignore.
+#
+# shotclass IS NOT HERE ON PURPOSE. For most guns the projectile and the look are separate,
+# but for some the projectile IS the look -- Brutal Doom's flame gout is the fire you see and
+# the burn it does, Doom's rocket likewise -- so moving it would move damage with it.
+SHEET_LOOK_KEYS = {"roundprofile", "flashprofile", "altflashprofile", "ejectaprofile",
+                   "trailprofile", "recoilprofile", "altrecoilprofile", "muzzlethrow",
+                   "railcolors"}
+
 SHEET_GUN_KEYS = {"shotpellets", "shotspread", "shotdamage", "firetics", "chambersperpull", "fullauto",
                   "firstshotsaccurate", "roundspershot", "shotclass", "shotrail", "railcolors", "trailprofile", "chargetics",
                   "chargesound", "shotsaw", "sawsounds", "sawpuff", "releasetics", "roundprofile", "flashprofile",
+                  # THE GUN'S OWN EXTRA ACTORS and a cycling shot (RS_VR_Reload, 2026-10-02),
+                  # added the same night the reader learned them rather than after a build fails.
+                  "muzzlethrow", "shotclasses",
                   # THE THROW (RS_VR_Reload 12:02): altmode = thrown, plus what leaves the hand
                   # and how long you wind up first. Added here the same hour the reader learned
                   # them -- a lint that refuses what the real consumer accepts is the `modelscale`
@@ -1255,6 +1269,11 @@ def lint_sheets():
                 seen[gun] = f"{fn} line {n}"
                 continue
             if gun is None:
+                # THE LUMP'S ONE EFFECT SWITCH, before its first gun -- the only thing that
+                # legitimately sits outside a gun block. `effectswitch = <server cvar>` names
+                # the cvar every `instead` block in this file answers to.
+                if re.match(r"effectswitch\s*=\s*\w+$", line):
+                    continue
                 results.append((fn, "?", [f"line {n}: `{line}` is outside any `gun` block"]))
                 continue
             if line == "end":
@@ -1270,8 +1289,18 @@ def lint_sheets():
                     sub, has_class, depth = "class", True, 2
                 elif len(w) == 2 and w[0] == "barrel":
                     sub, depth = "barrel", 2
+                elif w == ["instead"]:
+                    # THE SET'S OTHER LOOK (2026-10-03). A gun may carry one, holding the keys
+                    # used when the lump's `effectswitch` cvar is on. Its keys are checked
+                    # against SHEET_LOOK_KEYS rather than the full set, because the switch may
+                    # move how a gun LOOKS and must never move what it DOES -- the owner's rule
+                    # that a set's damage, rate of fire and alt fires are its identity.
+                    #
+                    # It is its own `sub`, so a key repeated between the two modes is NOT "set
+                    # twice": stating flashprofile in both is the entire point of the block.
+                    sub, depth = "instead", 2
                 else:
-                    issues.append(f"line {n}: `{line}` is not a block this card knows (class, barrel <id>)")
+                    issues.append(f"line {n}: `{line}` is not a block this card knows (class, barrel <id>, instead)")
                 continue
             km = re.match(r"(\w+)\s*=\s*(.+?)\s*$", line)
             if not km:
@@ -1283,6 +1312,12 @@ def lint_sheets():
             if sub == "barrel":
                 if key not in SHEET_BARREL_KEYS:
                     issues.append(f"line {n}: `{key}` is not a barrel shot key ({', '.join(sorted(SHEET_BARREL_KEYS))})")
+                continue
+            if sub == "instead":
+                if key not in SHEET_LOOK_KEYS:
+                    issues.append(f"line {n}: `{key}` is not a look -- an instead block may only "
+                                  f"state {', '.join(sorted(SHEET_LOOK_KEYS))}. A set's damage, rate "
+                                  f"of fire and alt fires are the same in both of its modes")
                 continue
             if key not in SHEET_GUN_KEYS:
                 issues.append(f"line {n}: `{key}` is not a Weapon Card key")

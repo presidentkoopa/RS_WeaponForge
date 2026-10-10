@@ -414,6 +414,60 @@ def run(set_name: str, do_copy: bool = True, reference: Optional[str] = None) ->
     return 0
 
 
+def run_unit_tests() -> int:
+    """Every tests/test_*.py, run as its own process. Must be green.
+
+    THEY WERE NOT IN CHECK_ALL AT ALL (CODER_PLAN step 59). CHECK_ALL re-ran the
+    accepted SETS and nothing else, so five test files sat beside them and were
+    never executed by anything -- test_donor, test_emit, test_md3, test_motion and
+    test_setfile. All five pass today, which is the worst version of this: a green
+    suite nobody runs looks exactly like a suite that is being kept green, right up
+    to the day it is not.
+
+    DISCOVERED, NEVER LISTED. The step names five files; hard-coding five names is
+    how a sixth test gets written and goes unrun the same way. Anything matching
+    tests/test_*.py is picked up, so adding a test is enough to have it checked.
+
+    They are standalone scripts with a main() and a __main__ guard, not pytest
+    cases -- pytest is not installed in this environment, and `python -m pytest`
+    on them fails with "No module named pytest", which reads as a broken test
+    rather than a missing tool. Run them the documented way, as their own
+    docstrings say: python tests/test_x.py.
+    """
+    tests_dir = os.path.join(ROOT, "tests")
+    files = sorted(f for f in os.listdir(tests_dir)
+                   if f.startswith("test_") and f.endswith(".py"))
+    if not files:
+        print("CHECK_ALL: no tests/test_*.py found, so there is nothing to run.")
+        return 0
+
+    print("\n=== unit tests")
+    bad = []
+    for f in files:
+        path = os.path.join(tests_dir, f)
+        # Each in its own process: these write into temporary directories and
+        # import forge modules, and one that dies must not take the sweep with it.
+        r = subprocess.run([sys.executable, path], cwd=ROOT,
+                           capture_output=True, text=True)
+        ok = (r.returncode == 0)
+        tail = (r.stdout or r.stderr or "").strip().splitlines()
+        last = tail[-1][:96] if tail else ""
+        print("  %-4s %-18s %s" % ("ok" if ok else "FAIL", f[:-3], last))
+        if not ok:
+            bad.append(f)
+            # The whole output, because a failure the sweep hides is a failure
+            # somebody has to reproduce by hand to read.
+            for line in (r.stdout or "").splitlines()[-20:]:
+                print("       | " + line)
+            for line in (r.stderr or "").splitlines()[-20:]:
+                print("       ! " + line)
+    if bad:
+        print("\nCHECK_ALL: %d test file(s) failed: %s" % (len(bad), bad))
+        return 1
+    print("  %d test file(s) green" % len(files))
+    return 0
+
+
 def check_all(reference: Optional[str] = None) -> int:
     """Every set that has passed, re-run and compared against its accepted output.
 
@@ -435,10 +489,19 @@ def check_all(reference: Optional[str] = None) -> int:
         print(f"\n=== {name}")
         if run(name, do_copy=False, reference=os.path.join(tests, name)) != 0:
             bad.append(name)
+    # THE UNIT TESTS RUN EVEN WHEN A SET HAS MOVED (step 59). Returning early on a
+    # set mismatch would hide a test failure behind it, and the two answer different
+    # questions: a set comparison says "the numbers did not move", a test says "the
+    # tool still refuses what it must refuse". Both have to be reported in one run,
+    # or the second is only ever read after the first is fixed.
+    rc_tests = run_unit_tests()
+
     if bad:
         print(f"\nCHECK_ALL: {len(bad)} set(s) no longer match their accepted "
               f"output: {bad}")
         return 1
+    if rc_tests != 0:
+        return rc_tests
     print(f"\nCHECK_ALL: {len(sets)} set(s) still match")
     return 0
 

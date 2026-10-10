@@ -1,6 +1,6 @@
 // Written by WeaponForge for set vanilla_check. Do not edit by hand.
-// The owner tunes ofs_* in the headset; the angles are what the offset
-// arithmetic is valid at.
+// A gun with a grip (its card's `grip` block) is held by it: grip_* trims that point, in mesh
+// units, and ofs_* is not read. The angles are what the offset arithmetic is valid at.
 
 user float vc_assaultshotgun_yaw = -90;
 user float vc_assaultshotgun_pitch = 0;
@@ -12,6 +12,9 @@ user float vc_assaultshotgun_scale_z = 1;
 user float vc_assaultshotgun_ofs_x = 0;
 user float vc_assaultshotgun_ofs_y = 9.69;
 user float vc_assaultshotgun_ofs_z = 2.295;
+user float vc_assaultshotgun_grip_x = 0;
+user float vc_assaultshotgun_grip_y = 0;
+user float vc_assaultshotgun_grip_z = 0;
 
 user float vc_smg_yaw = -90;
 user float vc_smg_pitch = 0;
@@ -23,6 +26,9 @@ user float vc_smg_scale_z = 1;
 user float vc_smg_ofs_x = 0;
 user float vc_smg_ofs_y = 9.69;
 user float vc_smg_ofs_z = 2.295;
+user float vc_smg_grip_x = 0;
+user float vc_smg_grip_y = 0;
+user float vc_smg_grip_z = 0;
 
 user float vc_rifle_yaw = -90;
 user float vc_rifle_pitch = 0;
@@ -34,6 +40,9 @@ user float vc_rifle_scale_z = 1;
 user float vc_rifle_ofs_x = 0;
 user float vc_rifle_ofs_y = 9.69;
 user float vc_rifle_ofs_z = 2.295;
+user float vc_rifle_grip_x = 0;
+user float vc_rifle_grip_y = 0;
+user float vc_rifle_grip_z = 0;
 
 user float vc_rpg_yaw = -90;
 user float vc_rpg_pitch = 0;
@@ -45,6 +54,9 @@ user float vc_rpg_scale_z = 1;
 user float vc_rpg_ofs_x = 0;
 user float vc_rpg_ofs_y = 9.69;
 user float vc_rpg_ofs_z = 2.295;
+user float vc_rpg_grip_x = 0;
+user float vc_rpg_grip_y = 0;
+user float vc_rpg_grip_z = 0;
 
 user float vc_plasmarifle_yaw = -90;
 user float vc_plasmarifle_pitch = 0;
@@ -56,6 +68,9 @@ user float vc_plasmarifle_scale_z = 1;
 user float vc_plasmarifle_ofs_x = 0;
 user float vc_plasmarifle_ofs_y = 9.69;
 user float vc_plasmarifle_ofs_z = 2.295;
+user float vc_plasmarifle_grip_x = 0;
+user float vc_plasmarifle_grip_y = 0;
+user float vc_plasmarifle_grip_z = 0;
 
 user float vc_bfgheavy_yaw = -90;
 user float vc_bfgheavy_pitch = 0;
@@ -67,6 +82,9 @@ user float vc_bfgheavy_scale_z = 1;
 user float vc_bfgheavy_ofs_x = 0;
 user float vc_bfgheavy_ofs_y = 9.69;
 user float vc_bfgheavy_ofs_z = 2.295;
+user float vc_bfgheavy_grip_x = 0;
+user float vc_bfgheavy_grip_y = 0;
+user float vc_bfgheavy_grip_z = 0;
 
 user float vc_machinegun_yaw = -90;
 user float vc_machinegun_pitch = 0;
@@ -78,6 +96,9 @@ user float vc_machinegun_scale_z = 1;
 user float vc_machinegun_ofs_x = 0;
 user float vc_machinegun_ofs_y = 9.69;
 user float vc_machinegun_ofs_z = 2.295;
+user float vc_machinegun_grip_x = 0;
+user float vc_machinegun_grip_y = 0;
+user float vc_machinegun_grip_z = 0;
 
 user float vc_chaingun_yaw = -90;
 user float vc_chaingun_pitch = 0;
@@ -89,6 +110,9 @@ user float vc_chaingun_scale_z = 1;
 user float vc_chaingun_ofs_x = 0;
 user float vc_chaingun_ofs_y = 9.69;
 user float vc_chaingun_ofs_z = 2.295;
+user float vc_chaingun_grip_x = 0;
+user float vc_chaingun_grip_y = 0;
+user float vc_chaingun_grip_z = 0;
 
 user float vc_railgun_yaw = -90;
 user float vc_railgun_pitch = 0;
@@ -100,6 +124,9 @@ user float vc_railgun_scale_z = 1;
 user float vc_railgun_ofs_x = 0;
 user float vc_railgun_ofs_y = 9.69;
 user float vc_railgun_ofs_z = 2.295;
+user float vc_railgun_grip_x = 0;
+user float vc_railgun_grip_y = 0;
+user float vc_railgun_grip_z = 0;
 
 user float vc_unmaker_yaw = -90;
 user float vc_unmaker_pitch = 0;
@@ -111,6 +138,9 @@ user float vc_unmaker_scale_z = 1;
 user float vc_unmaker_ofs_x = 0;
 user float vc_unmaker_ofs_y = 9.69;
 user float vc_unmaker_ofs_z = 2.295;
+user float vc_unmaker_grip_x = 0;
+user float vc_unmaker_grip_y = 0;
+user float vc_unmaker_grip_z = 0;
 
 user float vc_flamethrower_yaw = -90;
 user float vc_flamethrower_pitch = 0;
@@ -122,6 +152,9 @@ user float vc_flamethrower_scale_z = 1;
 user float vc_flamethrower_ofs_x = 0;
 user float vc_flamethrower_ofs_y = 9.69;
 user float vc_flamethrower_ofs_z = 2.295;
+user float vc_flamethrower_grip_x = 0;
+user float vc_flamethrower_grip_y = 0;
+user float vc_flamethrower_grip_z = 0;
 
 user float vc_grenade_yaw = -90;
 user float vc_grenade_pitch = 0;
@@ -133,3 +166,6 @@ user float vc_grenade_scale_z = 1;
 user float vc_grenade_ofs_x = 0;
 user float vc_grenade_ofs_y = 9.69;
 user float vc_grenade_ofs_z = 2.295;
+user float vc_grenade_grip_x = 0;
+user float vc_grenade_grip_y = 0;
+user float vc_grenade_grip_z = 0;

@@ -19,6 +19,12 @@ weapon "WM_AssaultShotgun"
   magcenter = -10.056, 0.065, -9.462
 end
 
+# THE GRIP: the point of this mesh that is in the palm (CardPipeline/GUN_IN_HAND_PLAN.md).
+# From this gun's MODELDEF Offset and seat as WeaponForge placed it (vanilla_check).
+grip
+  seat = -26.156, 0.047, -1.012
+end
+
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
 # body there. The length along the gun is an ESTIMATE: the middle of the
 # body's thick run forward of the magazine, since a handguard is thick and
@@ -88,6 +94,12 @@ weapon "WM_SMG"
   magcenter = 4.006, -0.182, -8.224
 end
 
+# THE GRIP: the point of this mesh that is in the palm (CardPipeline/GUN_IN_HAND_PLAN.md).
+# From this gun's MODELDEF Offset and seat as WeaponForge placed it (vanilla_check).
+grip
+  seat = -9.938, -0.156, 5.081
+end
+
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
 # body there. The length along the gun is an ESTIMATE: the middle of the
 # body's thick run forward of the magazine, since a handguard is thick and
@@ -155,6 +167,12 @@ weapon "WM_Rifle"
   magskin   = "models/vanilla_check" "rifle.png"
   magscale  = 0.34
   magcenter = 1.343, 0.069, -8.068
+end
+
+# THE GRIP: the point of this mesh that is in the palm (CardPipeline/GUN_IN_HAND_PLAN.md).
+# From this gun's MODELDEF Offset and seat as WeaponForge placed it (vanilla_check).
+grip
+  seat = -11.016, -0.344, -4.819
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -227,6 +245,12 @@ weapon "WM_RPG"
   magcenter = 3.636, -4.595, 2.353
 end
 
+# THE GRIP: the point of this mesh that is in the palm (CardPipeline/GUN_IN_HAND_PLAN.md).
+# From this gun's MODELDEF Offset and seat as WeaponForge placed it (vanilla_check).
+grip
+  seat = 14.328, 3.250, -12.694
+end
+
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
 # body there. The length along the gun is an ESTIMATE: the middle of the
 # body's thick run forward of the magazine, since a handguard is thick and
@@ -281,6 +305,12 @@ weapon "WM_PlasmaRifle"
   magcenter = -12.701, 0.469, -13.239
 end
 
+# THE GRIP: the point of this mesh that is in the palm (CardPipeline/GUN_IN_HAND_PLAN.md).
+# From this gun's MODELDEF Offset and seat as WeaponForge placed it (vanilla_check).
+grip
+  seat = -32.188, 0.469, -0.581
+end
+
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
 # body there. The length along the gun is an ESTIMATE: the middle of the
 # body's thick run forward of the magazine, since a handguard is thick and
@@ -331,6 +361,12 @@ weapon "WM_BFGHeavy"
   ejectdir  = -0.2914, 0.8742, 0.3885
 end
 
+# THE GRIP: the point of this mesh that is in the palm (CardPipeline/GUN_IN_HAND_PLAN.md).
+# From this gun's MODELDEF Offset and seat as WeaponForge placed it (vanilla_check).
+grip
+  seat = -26.000, 0.078, -3.319
+end
+
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
 # body there. The length along the gun is an ESTIMATE: the middle of the
 # body's thick run forward of the magazine, since a handguard is thick and
@@ -370,6 +406,12 @@ weapon "WM_MachineGun"
   magskin   = "models/vanilla_check" "machinegun.png"
   magscale  = 0.34
   magcenter = -9.390, -0.351, -5.410
+end
+
+# THE GRIP: the point of this mesh that is in the palm (CardPipeline/GUN_IN_HAND_PLAN.md).
+# From this gun's MODELDEF Offset and seat as WeaponForge placed it (vanilla_check).
+grip
+  seat = -24.094, -0.203, -3.075
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -457,6 +499,12 @@ weapon "WM_Chaingun"
   ejectdir  = -0.2914, -0.8742, 0.3885
 end
 
+# THE GRIP: the point of this mesh that is in the palm (CardPipeline/GUN_IN_HAND_PLAN.md).
+# From this gun's MODELDEF Offset and seat as WeaponForge placed it (vanilla_check).
+grip
+  seat = -40.828, -0.484, 8.063
+end
+
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
 # body there. The length along the gun is an ESTIMATE: the middle of the
 # body's thick run forward of the magazine, since a handguard is thick and
@@ -510,6 +558,12 @@ weapon "WM_Railgun"
   magcenter = -2.481, -0.098, -10.079
 end
 
+# THE GRIP: the point of this mesh that is in the palm (CardPipeline/GUN_IN_HAND_PLAN.md).
+# From this gun's MODELDEF Offset and seat as WeaponForge placed it (vanilla_check).
+grip
+  seat = -24.016, -0.141, -5.400
+end
+
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
 # body there. The length along the gun is an ESTIMATE: the middle of the
 # body's thick run forward of the magazine, since a handguard is thick and
@@ -548,7 +602,7 @@ end
 
 weapon "WM_Unmaker"
   hand      = main
-  type      = unmaker
+  type      = bfg
   prop      = "WM_PropUnmaker"
   model     = "models/vanilla_check" "unmaker_wm.md3"
   skin      = "models/vanilla_check" "unmaker.png"
@@ -563,6 +617,12 @@ weapon "WM_Unmaker"
   magskin   = "models/vanilla_check" "unmaker.png"
   magscale  = 0.34
   magcenter = -16.828, -0.126, 6.614
+end
+
+# THE GRIP: the point of this mesh that is in the palm (CardPipeline/GUN_IN_HAND_PLAN.md).
+# From this gun's MODELDEF Offset and seat as WeaponForge placed it (vanilla_check).
+grip
+  seat = -28.016, 0.016, -5.156
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
@@ -605,6 +665,12 @@ weapon "WM_Flamethrower"
   ejectdir  = -0.2914, 0.8742, 0.3885
 end
 
+# THE GRIP: the point of this mesh that is in the palm (CardPipeline/GUN_IN_HAND_PLAN.md).
+# From this gun's MODELDEF Offset and seat as WeaponForge placed it (vanilla_check).
+grip
+  seat = -28.531, -0.469, 7.931
+end
+
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
 # body there. The length along the gun is an ESTIMATE: the middle of the
 # body's thick run forward of the magazine, since a handguard is thick and
@@ -639,6 +705,12 @@ weapon "RS_VRGrenade"
   # side measured (22 vertices on -y against 22 on +y), the emptier wall of the receiver; the point and the direction are estimates
   ejectport = 0.862, 3.641, -1.661
   ejectdir  = -0.2914, 0.8742, 0.3885
+end
+
+# THE GRIP: the point of this mesh that is in the palm (CardPipeline/GUN_IN_HAND_PLAN.md).
+# From this gun's MODELDEF Offset and seat as WeaponForge placed it (vanilla_check).
+grip
+  seat = 0.953, -0.297, 1.444
 end
 
 # WHERE THE OFF HAND GOES. The height is measured -- the underside of the
